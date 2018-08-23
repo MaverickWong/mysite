@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}患者详情{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'home' %}"></a></li>
+  <li class="breadcrumb-item active">New topic</li>
+{% endblock %}
+
+{% block content %}
+  <h2>{{ patient.subject }}</h2>
+    <img src="{{ picurl }}" alt="" width="280" height="180">
+{% endblock %}

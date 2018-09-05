@@ -2,19 +2,23 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Django Boards{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <title>{% block title %}病例管理系统{% endblock %}</title>
+    {% block link %}
+{#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    {% endblock %}
   </head>
   <body>
+{#    <nav class=" navbar-inverse navbar-expand-lg navbar-dark bg-dark ">#}
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class=" navbar-inverse navbar-expand-lg navbar-dark bg-dark " >
       <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">病例管理系统 v1.0</a>
-          <form class="navbar-form navbar-right form-inline" role="search">
+          <form action="/search/" method="get" class="navbar-form navbar-right form-inline" role="search">
               <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
+                <input type="text"  name="s" class="form-control" placeholder="搜索内容..">
               </div>
-              <button type="submit" class="btn btn-default">Submit</button>
+              <button type="submit" class="btn btn-default">搜索</button>
           </form>
       </div>
     </nav>
@@ -24,8 +28,11 @@
         {% block breadcrumb %}
         {% endblock %}
       </ol>
-      {% block content %}
-      {% endblock %}
+
+
+        {% block content %}
+        {% endblock %}
     </div>
+
   </body>
 </html>

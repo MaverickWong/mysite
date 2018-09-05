@@ -6,22 +6,55 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
+class Person(models.Model):
+	name = models.CharField(max_length=255)
+	idnum = models.IntegerField(null=True)
+	clinic = models.CharField(null=True, max_length=20)
+	birth = models.DateField(null=True)
+	sex = models.IntegerField(null=True)# 男1 女2
+	tags = models.TextField(max_length=2000, null=True)
+	icon = models.TextField(null=True, max_length=100)
+	isEnd = models.NullBooleanField(null=True)  # 是否结束
+	startDate = models.DateTimeField(null=True)
+	last_updated = models.DateTimeField(auto_now_add=True)
+	# total_post = models.IntegerField(null=True)
+	def __str__(self):
+		return self.name
+
+
+# 不同复诊阶段
+class Post(models.Model):
+	isFirst = models.NullBooleanField(null=True)  # 是否初诊
+	isLast = models.NullBooleanField(null=True)  # 是否结束照
+	type = models.IntegerField(null=False)  # 0初诊 9结束 23456...
+	upLoadTime = models.DateTimeField(auto_now_add=True)
+	person = models.ForeignKey('Person', related_name='posts')
+
+	def __str__(self):
+		return str(self.type)
+
+
+class Image(models.Model):
+	path = models.TextField(max_length=100, null=True)  # 存放路径
+	thumbnail = models.TextField(max_length=100, null=True)  # 缩略图存放路径
+	isAvatar = models.NullBooleanField(null=True)
+	upLoadTime = models.DateTimeField(auto_now_add=True)
+	person = models.ForeignKey('Person', related_name='images')
+	post = models.ForeignKey('Post', related_name='images')
+	type = models.TextField(null=True)  # 1正面 2微笑 3侧面 4 56...
+	tags = models.TextField(max_length=2000, null=True)
+
+	def __str__(self):
+		return self.path
+
+
+
 # class Board(models.Model):
 # 	name = models.CharField(max_length=30, unique = True)
 # 	description = models.CharField(max_length=100)
 # 	def __str__(self):
 # 		return self.name
-		
-
-class Person(models.Model):
-	subject = models.CharField(max_length=255)
-	# message = models.TextField(max_length=400)
-	last_updated = models.DateTimeField(auto_now_add=True)
-	# board = models.ForeignKey(Board, related_name='topics')
-	# starter = models.ForeignKey(User, related_name='topics')
-
-	def __str__(self):
-		return self.subject
 
 # class Post(models.Model):
 #     message = models.TextField(max_length=4000)

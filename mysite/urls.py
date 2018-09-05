@@ -26,6 +26,10 @@ urlpatterns = [
     url(r'^(\d+)/$', person_detail, name='person_detail'),
     url(r'^filer/', include('filer.urls')),
     url(r'new/$', new_person, name='new_person'),
+    url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
+	url(r'^wrong/', wrong, name='wrong'),
+    url(r'^search/', search, name='search'),
+
     # url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),
 ]

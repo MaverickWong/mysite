@@ -18,7 +18,7 @@ $(function () {
     $('#fileupload').fileupload({
         // Uncomment the following to send cross-domain cookies:
         //xhrFields: {withCredentials: true},
-        url: '' //有用
+        url: '' //有用，如果留空，则采用Form里面的地址
     });
 
     // Enable iframe cross-domain access via redirect option:

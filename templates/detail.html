@@ -3,12 +3,49 @@
 {% block title %}患者详情{% endblock %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'home' %}"></a></li>
-  <li class="breadcrumb-item active">New topic</li>
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
+  <li class="breadcrumb-item active">患者信息</li>
 {% endblock %}
 
 {% block content %}
-  <h2>{{ patient.subject }}</h2>
-    <img src="{{ picurl }}" alt="" width="280" height="180">
+    <div class="mb-4">
+    <a href="./addpost" class="btn btn-primary">添加新复诊</a>
+    </div>
+
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">  </h3>
+        </div>
+        <div class="panel-body">
+            <h2>{{ patient.name }}</h2>
+            <img src="{{  picurl }}" alt="" width="280" height="180">
+        </div>
+    </div>
+
+        {% if posts %}
+            {% for post in posts.all  %}
+
+                <div class="panel panel-primary ">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                        复诊 <strong>{{ post.type }}</strong>    {{ post.upLoadTime }}
+                    </h4>
+                  </div>
+                  <div class="panel-body row">
+                    {% if post %}
+                        {% for img in post.images.all %}
+                            <div class="col-sm-6 col-md-3">
+                                <a href="{{ img.path }}" class="thumbnail">
+                                    <img src="{{ img.thumbnail }}" alt="通用的占位符缩略图">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+
 {% endblock %}

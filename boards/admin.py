@@ -10,3 +10,4 @@ from .models import *
 admin.site.register(Person)
 admin.site.register(Post)
 admin.site.register(Image)
+admin.site.register(Tag)

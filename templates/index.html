@@ -9,18 +9,20 @@
 {% endblock %}
 
 {% block content %}
-  <div class="mb-4">
+    <div class="mb-4">
     <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>
   </div>
+<div class="col-lg-9">
+
   <table class="table table-hover">
     <thead class="thead-inverse">
       <tr>
         <th>患者姓名</th>
           <th>病历号</th>
-        <th>复诊数</th>
+        <th>复诊次数</th>
         <th>性别</th>
-        <th>PK</th>
-        <th>最后更新时间</th>
+        <th>序号</th>
+        <th>最后上传时间</th>
       </tr>
     </thead>
     <tbody>
@@ -38,4 +40,26 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+
+
+<div class="col-lg-3">
+{#    {% if article_tags_list %}#}
+    <div class="panel panel-default">
+        <div class="panel-heading">标签</div>
+        <div class="panel-body">
+
+            {% for t in tags %}
+                <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+                   title="{{ t.name }}">
+                    {{ t.name }}
+                    <span class="badge">{{ t.persons.count }}</span>
+                </a>
+            {% endfor %}
+
+        </div>
+    </div>
+{#{% endif %}#}
+</div>
+
 {% endblock %}

@@ -13,7 +13,7 @@ class Person(models.Model):
 	clinic = models.CharField(null=True, max_length=20)
 	birth = models.DateField(null=True)
 	sex = models.IntegerField(null=True)# 男1 女2
-	tags = models.TextField(max_length=2000, null=True)
+	comment = models.TextField(max_length=2000, null=True)
 	icon = models.TextField(null=True, max_length=100)
 	isEnd = models.NullBooleanField(null=True)  # 是否结束
 	startDate = models.DateTimeField(null=True)
@@ -30,6 +30,7 @@ class Post(models.Model):
 	type = models.IntegerField(null=False)  # 0初诊 9结束 23456...
 	upLoadTime = models.DateTimeField(auto_now_add=True)
 	person = models.ForeignKey('Person', related_name='posts')
+	comment = models.TextField(max_length=2000, null=True)
 
 	def __str__(self):
 		return str(self.type)
@@ -43,18 +44,22 @@ class Image(models.Model):
 	person = models.ForeignKey('Person', related_name='images')
 	post = models.ForeignKey('Post', related_name='images')
 	type = models.TextField(null=True)  # 1正面 2微笑 3侧面 4 56...
-	tags = models.TextField(max_length=2000, null=True)
+	comment = models.TextField(max_length=2000, null=True)
 
 	def __str__(self):
 		return self.path
 
 
+#
+class Tag(models.Model):
+	name = models.CharField(max_length=30, unique=True)
+	type = models.IntegerField(null=False, default=1)  # 0初诊 9结束 23456...
+	comment = models.CharField(max_length=100)
+	images = models.ManyToManyField(Image, related_name='tags')
+	persons = models.ManyToManyField(Person, related_name='tags')
 
-# class Board(models.Model):
-# 	name = models.CharField(max_length=30, unique = True)
-# 	description = models.CharField(max_length=100)
-# 	def __str__(self):
-# 		return self.name
+	def __str__(self):
+		return self.name
 
 # class Post(models.Model):
 #     message = models.TextField(max_length=4000)

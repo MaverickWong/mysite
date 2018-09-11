@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import json
 import os
 import re
+import json
 from PIL import Image as Image2
 
 
@@ -17,7 +18,11 @@ import os
 # Create your views here.
 def home(request):
 	persons = Person.objects.all()
-	return render(request, 'index.html', {'persons': persons})
+	tags = Tag.objects.all()
+	return render(request, 'index.html', {'persons': persons, 'tags':tags})
+
+def test(request):
+	return HttpResponse("good")
 
 def search(request):
 	s = request.GET['s']
@@ -28,13 +33,11 @@ def search(request):
 
 	return render(request, 'search.html', {'persons': persons})
 
-# def board_topics(request, pk):
-# 	board = get_object_or_404(Topics)
-# return render(request, 'topics.html', {'board': board})
-
-# def new(request):
-# 	# return render(request, 'upload.html')
-# 	return render(request, 'upload/index.html')
+def tag_search(request, tag):
+	ut = unicode(tag)
+	t = Tag.objects.get(name=ut)
+	ps= t.persons.all()
+	return render(request, 'search.html', {'persons': ps})
 
 
 def handle_file(request, person, post):
@@ -67,7 +70,7 @@ def handle_file(request, person, post):
 		ff.close()
 		i = i+1
 
-		# 缩略图函数
+		# 制作缩略图函数
 		if os.path.exists(path):
 			im= Image2.open(path)
 			size = (800, 600)
@@ -81,11 +84,28 @@ def handle_file(request, person, post):
 
 		path = '../' + path
 		iconpath = '../' +iconpath
-		if i==0:
+		if post.type ==0 and i ==1:
 			person.icon = path
 			person.save()
+		# 保存到image
 		image = Image.objects.create(path=path, thumbnail=iconpath, post=post, person=person)
 
+		# info = {
+		# 	"name": path,
+		# 	"size": 111,
+		# 	"url": '',
+		# 	"thumbnailUrl": '',
+		# 	"deleteUrl": '',
+		# 	"deleteType": "DELETE", }
+		#
+		# result = {}
+		# result["files"] = [{
+		# 	"name": '图片',
+		# 	"size": 111,
+		# 	"url": '',
+		# 	"thumbnailUrl": '',
+		# 	"deleteUrl": '',
+		# 	"deleteType": "DELETE", }]
 
 	return 1
 
@@ -96,8 +116,10 @@ def new_person(request):
 
 		# message = request.POST['ID']
 		# user = User.objects.first()  # TODO: 临时使用一个账号作为登录用户
-		name = request.POST['name']
+		name = unicode( request.POST['name'])
 		idnum = request.POST['ID']
+		tag_list = request.POST['newTags']
+
 		if Person.objects.filter(name=name, idnum=idnum).exists():
 			# person = Person.objects.get(name=name, idnum=idnum)
 			return redirect('wrong')
@@ -111,13 +133,28 @@ def new_person(request):
 		# post = Post.objects.get(type=0, isFirst=1, person=person)
 		# if not post:
 		# post = Post.objects.create(type=0, isFirst=1, person=person)
+
 		# 处理上传文件
 		handle_file(request, person, post)
+
+		# 处理新增tags
+		new_tag_list = tag_list.split(' ')
+		if new_tag_list:
+			for t in new_tag_list:
+				tags = Tag.objects.filter(name__contains=t)
+				if tags.count() == 1: # 查到一个
+					tags[0].persons.add(person)
+					tags[0].save()
+				elif tags.count() ==0: # 未查到
+					tag2 = Tag.objects.create(name=t)
+					tag2.persons.add(person)
+					tag2.save()
 
 		return redirect('home')  # TODO: redirect to the created topic page
 
 	if request.method == 'GET':
-		return render(request, 'upload/index.html')
+		tags = Tag.objects.all()
+		return render(request, 'upload/index.html', {"tags":tags})
 
 
 def addpost(request, pk):
@@ -149,8 +186,20 @@ def addpost(request, pk):
 	# 	if postnum == p.posts.count():
 	# 		post = p.posts.last()
 	# 		#更新post的图片 handleFile(request, person)
+	# generating json response array
+	result = {}
+	result["files"]=[{
+		"name": '图片',
+        "size": 111,
+        "url": '',
+        "thumbnailUrl": '',
+        "deleteUrl": '',
+        "deleteType": "DELETE", }]
+	# response_data = simplejson.dumps(result)
+	result2 = json.dumps(result)
+	return HttpResponse(result2,  content_type='application/json')
 
-	return HttpResponse("good " + pk)
+	# return HttpResponse('{"status":"success"}', content_type='application/json')
 
 
 # 患者详细信息展示
@@ -171,4 +220,4 @@ def person_detail(request, pk):
 
 
 def wrong(request):
-	return HttpResponse('wrong.html')
+	return render(request, 'upload/wrong.html',{})

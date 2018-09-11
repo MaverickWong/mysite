@@ -14,11 +14,27 @@
 
     <div class="panel panel-success">
         <div class="panel-heading">
-            <h3 class="panel-title">  </h3>
+            <h3 class="panel-title"> 信息汇总</h3>
         </div>
-        <div class="panel-body">
-            <h2>{{ patient.name }}</h2>
-            <img src="{{  picurl }}" alt="" width="280" height="180">
+        <div class="panel-body row">
+            <div class="col-sm-6 col-md-3">
+                <a href="{{ picurl }}" class="thumbnail">
+                    <img src="{{ picurl }}" alt="头像缩略图" width="100" height="150"> </a>
+            </div>
+            <div class="col-sm-8 col-md-8">
+                <div><h2><a href="/{{patient.pk}}">{{ patient.name }}</a> </h2> </div>
+                <div>病历号：{{ patient.idnum }}</div>
+{#                <div>标签：{{ patient.tags.all }} </div>#}
+                <div >标签：
+                    {% for t in patient.tags.all %}
+                        <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+                           title="{{ t.name }}">
+                            {{ t.name }}
+                            <span class="badge">{{ count }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -28,7 +44,7 @@
                 <div class="panel panel-primary ">
                   <div class="panel-heading">
                     <h4 class="panel-title">
-                        复诊 <strong>{{ post.type }}</strong>    {{ post.upLoadTime }}
+                        复诊 <strong>{{ post.type }}</strong>
                     </h4>
                   </div>
                   <div class="panel-body row">
@@ -36,7 +52,7 @@
                         {% for img in post.images.all %}
                             <div class="col-sm-6 col-md-3">
                                 <a href="{{ img.path }}" class="thumbnail">
-                                    <img src="{{ img.thumbnail }}" alt="通用的占位符缩略图">
+                                    <img src="{{ img.thumbnail }}" alt="复诊缩略图" width="200" height="300">
                                 </a>
                             </div>
                         {% endfor %}

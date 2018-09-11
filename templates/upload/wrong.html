@@ -3,8 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>wrong</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"> </script>
 </head>
 <body>
-患者姓名、id重复，请重新输入
+    患者姓名、id重复，请重新输入
+    <p></p>
+    <div id="test">
+        <form id="form1">
+            <input type="text" id="text1">
+            <button id="btn" type="button"  onclick="test(this)">good</button>
+            <button id="btn" type="button"  onclick="test(this)">fuck</button>
+            <button id="btn" type="button"  onclick="test(this)">bad</button>
+            <button id="btn" type="button"  onclick="test(this)">ugly</button>
+
+        </form>
+
+    </div>
+<script>
+    function test(t) {
+       var x =  document.forms["form1"]["text1"].value + " "+ t.innerHTML;
+       {#document.forms["form1"]["text1"].value = x;#}
+       document.getElementById("text1").value = "";
+        //alert("fff");
+
+    }
+$(function () {
+    $("#form1").change(function () {
+        {#$("#text1").val($("#text1").val() + " " + $(this).text());#}
+        $.ajax('/test', function () {
+
+        })
+
+    });
+});
+
+</script>
 </body>
 </html>

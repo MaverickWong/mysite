@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
 	url(r'^wrong/', wrong, name='wrong'),
     url(r'^search/', search, name='search'),
+    url(r'^tags/(?P<tag>\w+)', tag_search),
+    url(r'^test/', test, name='test'),
 
     # url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),

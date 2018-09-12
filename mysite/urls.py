@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^$', home, name='home'),
     # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
     # url(r'^creat_new/$', creat_new_person, name='new_person'),
-    url(r'^(\d+)/$', person_detail, name='person_detail'),
+    url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),
     url(r'^filer/', include('filer.urls')),
     url(r'new/$', new_person, name='new_person'),
     url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
@@ -31,7 +31,9 @@ urlpatterns = [
     url(r'^search/', search, name='search'),
     url(r'^tags/(?P<tag>\w+)', tag_search),
     url(r'^test/', test, name='test'),
+	url(r'^del/person/(?P<pk>\d+)', delperson),
+	url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 
-    # url(r'upfile/$', upfile),
+	# url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),
 ]

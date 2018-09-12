@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-import json
 import os
 import re
 import json
@@ -9,7 +9,7 @@ from PIL import Image as Image2
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from boards.models import *
 from datetime import date, time, datetime
 import os
@@ -39,12 +39,26 @@ def tag_search(request, tag):
 	ps= t.persons.all()
 	return render(request, 'search.html', {'persons': ps})
 
+def delperson(request, pk):
+	p = Person.objects.get(pk=pk)
+	p.delete()
+	return redirect('home')
+
+def delpost(request,ppk,postpk):
+	po = Post.objects.get(pk=postpk)
+	po.delete()
+	# pk = int(ppk)
+	# return HttpResponseRedirect( reverse('person_detail', args=(ppk)) )
+	return redirect('person_detail', ppk)
+
 
 def handle_file(request, person, post):
 	files = request.FILES.getlist('files[]')  # 类型为mutilist
 	# n = request.POST.get('name')
-
+	results = {}
+	results["files"] = []
 	print(files)
+
 	i = 0
 	for f in files:
 		dt = datetime.now()
@@ -59,7 +73,8 @@ def handle_file(request, person, post):
 
 		n2 = f.name
 		suf = n2.split('.')[-1]
-		path = dir + person.name + '.p' + str(post.type) + '.' + str(i) + time + '.' + suf
+		fname= person.name + '.p' + str(post.type) + '.' + str(i) + time + '.' + suf
+		path = dir + fname
 		iconpath = icondir + person.name + '.p' + str(post.type) + '.' + 'small'+'.' +str(i) + time + '.' + suf
 		ff = open(path, 'wb+')
 		# ff.name
@@ -73,7 +88,7 @@ def handle_file(request, person, post):
 		# 制作缩略图函数
 		if os.path.exists(path):
 			im= Image2.open(path)
-			size = (800, 600)
+			size = (400, 400)
 			if im:
 				try:
 					# im = Image.open(infile)
@@ -82,32 +97,30 @@ def handle_file(request, person, post):
 				except IOError:
 					print("cannot create thumbnail")
 
-		path = '../' + path
+		pathU = '../' + path
 		iconpath = '../' +iconpath
 		if post.type ==0 and i ==1:
-			person.icon = path
+			person.icon = iconpath
 			person.save()
 		# 保存到image
-		image = Image.objects.create(path=path, thumbnail=iconpath, post=post, person=person)
+		image = Image.objects.create(path=pathU, thumbnail=iconpath, post=post, person=person)
 
-		# info = {
-		# 	"name": path,
-		# 	"size": 111,
-		# 	"url": '',
-		# 	"thumbnailUrl": '',
-		# 	"deleteUrl": '',
-		# 	"deleteType": "DELETE", }
-		#
-		# result = {}
-		# result["files"] = [{
-		# 	"name": '图片',
-		# 	"size": 111,
-		# 	"url": '',
-		# 	"thumbnailUrl": '',
-		# 	"deleteUrl": '',
-		# 	"deleteType": "DELETE", }]
+		# 上传后返回信息
+		if os.path.exists(path): # 再次确认文件是否保存
+			t1 = "文件名称:  " + fname
+		else:
+			t1 ="服务器保存失败"
 
-	return 1
+		info = {
+			"name": t1,
+			"size": os.path.getsize(path),
+			"url": pathU,
+			"thumbnailUrl": iconpath,
+			"deleteUrl": '',
+			"deleteType": "DELETE", }
+		results["files"].append(info)
+
+	return results
 
 
 def new_person(request):
@@ -121,21 +134,14 @@ def new_person(request):
 		tag_list = request.POST['newTags']
 
 		if Person.objects.filter(name=name, idnum=idnum).exists():
-			# person = Person.objects.get(name=name, idnum=idnum)
 			return redirect('wrong')
 		else:
 			person = Person.objects.create(name=name, idnum=idnum)
 
 		post = Post.objects.create(type=0, isFirst=1, person=person)
 
-		# n = Post.objects.get(person=person).count()
-		# post = Post.objects.create(type=n + 1, person=person)
-		# post = Post.objects.get(type=0, isFirst=1, person=person)
-		# if not post:
-		# post = Post.objects.create(type=0, isFirst=1, person=person)
-
 		# 处理上传文件
-		handle_file(request, person, post)
+		results = handle_file(request, person, post)
 
 		# 处理新增tags
 		new_tag_list = tag_list.split(' ')
@@ -150,7 +156,8 @@ def new_person(request):
 					tag2.persons.add(person)
 					tag2.save()
 
-		return redirect('home')  # TODO: redirect to the created topic page
+		result2 = json.dumps(results)
+		return HttpResponse(result2, content_type='application/json')
 
 	if request.method == 'GET':
 		tags = Tag.objects.all()
@@ -162,12 +169,14 @@ def addpost(request, pk):
 
 	if request.method == 'GET':
 		# TODO 应该获取posts总数，然后发到网页内部
-
-		return render(request, 'upload/addpost.html', {'patient': p})
+		tags = Tag.objects.all()
+		print(tags)
+		return render(request, 'upload/addpost.html', {'patient': p}, {"tags":tags})
 
 	if request.method == 'POST':
 		# p = Person.objects.get(pk=pk)
 		postnum = request.POST.get('postType')
+		tag_list = request.POST['newTags']
 
 		# 如果没有，直接新建。如果有，则添加
 		# 	isLast = request.POST.get('isLast')
@@ -180,24 +189,27 @@ def addpost(request, pk):
 			# n = p.posts.count()
 			post = Post.objects.create(type=n + 1, person=p)
 		# Image保存生成path
-		handle_file(request, p, post)
+		results = handle_file(request, p, post)
 
 	# 	# post数目相等时，不创建新post，只更新最后post
 	# 	if postnum == p.posts.count():
 	# 		post = p.posts.last()
 	# 		#更新post的图片 handleFile(request, person)
-	# generating json response array
-	result = {}
-	result["files"]=[{
-		"name": '图片',
-        "size": 111,
-        "url": '',
-        "thumbnailUrl": '',
-        "deleteUrl": '',
-        "deleteType": "DELETE", }]
-	# response_data = simplejson.dumps(result)
-	result2 = json.dumps(result)
-	return HttpResponse(result2,  content_type='application/json')
+		# 处理新增tags
+		new_tag_list = tag_list.split(' ')
+		if new_tag_list:
+			for t in new_tag_list:
+				tags = Tag.objects.filter(name__contains=t)
+				if tags.count() == 1:  # 查到一个
+					tags[0].persons.add(p)
+					tags[0].save()
+				elif tags.count() == 0:  # 未查到
+					tag2 = Tag.objects.create(name=t)
+					tag2.persons.add(p)
+					tag2.save()
+
+		result2 = json.dumps(results)
+		return HttpResponse(result2,  content_type='application/json')
 
 	# return HttpResponse('{"status":"success"}', content_type='application/json')
 
@@ -214,7 +226,7 @@ def person_detail(request, pk):
 
 	posts = p.posts
 
-	contex = {'patient': p, 'picurl': picurl, 'posts': posts}
+	contex = {'patient': p,  'posts': posts}
 
 	return render(request, 'detail.html', contex)
 

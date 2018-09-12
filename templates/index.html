@@ -50,7 +50,7 @@
         <div class="panel-body">
 
             {% for t in tags %}
-                <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+                <a class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)" href="/tags/{{ t.name }}"
                    title="{{ t.name }}">
                     {{ t.name }}
                     <span class="badge">{{ t.persons.count }}</span>

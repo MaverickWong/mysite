@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'easy_thumbnails',
-    'filer',
+    # 'filer',
     'mptt',
     'boards',
-    'taggit',
+    # 'taggit',
 ]
 
 MIDDLEWARE = [

@@ -25,6 +25,7 @@ class Person(models.Model):
 
 # 不同复诊阶段
 class Post(models.Model):
+	name = models.CharField(max_length=255,null=True)
 	isFirst = models.NullBooleanField(null=True)  # 是否初诊
 	isLast = models.NullBooleanField(null=True)  # 是否结束照
 	type = models.IntegerField(null=False)  # 0初诊 9结束 23456...
@@ -37,6 +38,7 @@ class Post(models.Model):
 
 
 class Image(models.Model):
+	name = models.CharField(max_length=255,null=True)
 	path = models.TextField(max_length=100, null=True)  # 存放路径
 	thumbnail = models.TextField(max_length=100, null=True)  # 缩略图存放路径
 	isAvatar = models.NullBooleanField(null=True)

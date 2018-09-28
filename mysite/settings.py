@@ -25,9 +25,13 @@ SECRET_KEY = '$-p-x5&eif3cjfwv+jfksjd#jwr60eb2er8*mcwj6&-h-$4@#p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = [u'192.168.3.60',]
-ALLOWED_HOSTS = []
+# # # ALLOWED_HOSTS = [u'192.168.3.60',]
+# ALLOWED_HOSTS = [u'192.168.0.109',
+#                  u'zdl.free.idcfengye.com',
+#                  u'zzz.vipgz1.idcfengye.com',
+#                  ]
 
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -38,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'easy_thumbnails',
+    # 'easy_thumbnails',
     # 'filer',
-    'mptt',
+    # 'mptt',
     'boards',
     # 'taggit',
 ]

@@ -24,7 +24,7 @@ urlpatterns = [
     # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
     # url(r'^creat_new/$', creat_new_person, name='new_person'),
     url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),
-    url(r'^filer/', include('filer.urls')),
+    # url(r'^filer/', include('filer.urls')),
     url(r'new/$', new_person, name='new_person'),
     url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
 	url(r'^wrong/', wrong, name='wrong'),

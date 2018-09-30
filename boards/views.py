@@ -2,24 +2,26 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+
+from boards.models import *
+
+from datetime import date, time, datetime
 import os
-import re
 import json
 from PIL import Image as Image2
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from boards.models import *
-from datetime import date, time, datetime
-import os
-
-
 # Create your views here.
+@login_required()
 def home(request):
-	persons = Person.objects.all()
-	tags = Tag.objects.all()
-	return render(request, 'index.html', {'persons': persons, 'tags':tags})
+	if request.user.is_authenticated:
+		persons = Person.objects.all()
+		tags = Tag.objects.all()
+		return render(request, 'index.html', {'persons': persons, 'tags':tags})
+	else:
+		return redirect('login')
 
 def test(request):
 	return HttpResponse("good")
@@ -215,6 +217,7 @@ def addpost(request, pk):
 
 
 # 患者详细信息展示
+@login_required()
 def person_detail(request, pk):
 	p = Person.objects.get(pk=pk)
 	name = p.name

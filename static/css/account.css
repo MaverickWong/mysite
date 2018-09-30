@@ -1,0 +1,18 @@
+body {
+  /*background-image: url(/static/w1080.jpeg);*/
+  background-color: #e2e2e2;
+
+}
+
+.logo {
+  /*font-family: 'Peralta', cursive;*/
+}
+
+.logo a {
+  color: rgba(0,0,0,.9);
+}
+
+.logo a:hover,
+.logo a:active {
+  text-decoration: none;
+}

@@ -17,6 +17,9 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from mysite.views import hello
 from boards.views import *
+from accounts import views as accounts_views
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -33,6 +36,12 @@ urlpatterns = [
     url(r'^test/', test, name='test'),
 	url(r'^del/person/(?P<pk>\d+)', delperson),
 	url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
+
+	# account
+	url(r'^signup/$', accounts_views.signup, name='signup'),
+	url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+	url(r'^login/$',accounts_views.login, name='login'),
+	# url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 
 	# url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),

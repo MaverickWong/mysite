@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-
+# 患者信息
 class Person(models.Model):
 	name = models.CharField(max_length=255)
 	idnum = models.IntegerField(null=True)
@@ -18,6 +18,8 @@ class Person(models.Model):
 	isEnd = models.NullBooleanField(null=True)  # 是否结束
 	startDate = models.DateTimeField(null=True)
 	last_updated = models.DateTimeField(auto_now_add=True)
+	# doctor = models.ForeignKey(User, related_name='persons')
+
 	# total_post = models.IntegerField(null=True)
 	def __str__(self):
 		return self.name
@@ -30,7 +32,7 @@ class Post(models.Model):
 	isLast = models.NullBooleanField(null=True)  # 是否结束照
 	type = models.IntegerField(null=False)  # 0初诊 9结束 23456...
 	upLoadTime = models.DateTimeField(auto_now_add=True)
-	person = models.ForeignKey('Person', related_name='posts')
+	person = models.ForeignKey('Person', related_name='posts', null=True, on_delete=models.SET_NULL)
 	comment = models.TextField(max_length=2000, null=True)
 
 	def __str__(self):
@@ -43,8 +45,8 @@ class Image(models.Model):
 	thumbnail = models.TextField(max_length=100, null=True)  # 缩略图存放路径
 	isAvatar = models.NullBooleanField(null=True)
 	upLoadTime = models.DateTimeField(auto_now_add=True)
-	person = models.ForeignKey('Person', related_name='images')
-	post = models.ForeignKey('Post', related_name='images')
+	person = models.ForeignKey('Person', related_name='images', null=True, on_delete=models.SET_NULL)
+	post = models.ForeignKey('Post', related_name='images', null=True, on_delete=models.SET_NULL)
 	type = models.TextField(null=True)  # 1正面 2微笑 3侧面 4 56...
 	comment = models.TextField(max_length=2000, null=True)
 

@@ -4,21 +4,22 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, authenticate
-
+from django.http import HttpResponse
 
 # Create your views here.
 
 def signup(request):
-	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			auth_login(request, user)
-			return redirect('home')
-	else:
-		form = UserCreationForm()
-
-	return  render(request,'signup.html', {'form':form})
+	# if request.method == 'POST':
+	# 	form = UserCreationForm(request.POST)
+	# 	if form.is_valid():
+	# 		user = form.save()
+	# 		auth_login(request, user)
+	# 		return redirect('home')
+	# else:
+	# 	form = UserCreationForm()
+	#
+	# return  render(request,'signup.html', {'form':form})
+	return HttpResponse("暂未开放注册！")
 
 def login(request):
 	if request.method == 'POST':

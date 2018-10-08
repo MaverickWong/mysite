@@ -241,6 +241,37 @@ def person_detail(request, pk):
 
     return render(request, 'detail.html', contex)
 
+def person_detail2(request, pk):
+	p = Person.objects.get(pk=pk)
+	name = p.name
+
+	picurl = ''
+	if p.icon:
+		picurl = p.icon
+		print(picurl)
+
+	posts = p.posts
+
+	contex = {'patient': p,  'posts': posts}
+
+	return render(request, 'detail2.html', contex)
+
+def person_detail3(request, pk):
+	p = Person.objects.get(pk=pk)
+	name = p.name
+
+	picurl = ''
+	if p.icon:
+		picurl = p.icon
+		print(picurl)
+
+	posts = p.posts
+
+	contex = {'patient': p,  'posts': posts}
+
+	return render(request, 'detail3.html', contex)
+
+
 
 def wrong(request):
     return render(request, 'upload/wrong.html',{})

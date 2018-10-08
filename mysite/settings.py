@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'taggit',
     'boards',
     'accounts',
+    'record',
 ]
 
 MIDDLEWARE = [

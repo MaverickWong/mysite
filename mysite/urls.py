@@ -19,8 +19,7 @@ from mysite.views import hello
 from boards.views import *
 from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
-
-
+from record import urls as recordurls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home, name='home'),
@@ -30,19 +29,25 @@ urlpatterns = [
     # url(r'^filer/', include('filer.urls')),
     url(r'new/$', new_person, name='new_person'),
     url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
-	url(r'^wrong/', wrong, name='wrong'),
+    url(r'^wrong/', wrong, name='wrong'),
     url(r'^search/', search, name='search'),
     url(r'^tags/(?P<tag>\w+)', tag_search),
-    url(r'^test/', test, name='test'),
-	url(r'^del/person/(?P<pk>\d+)', delperson),
-	url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
+    # url(r'^test/', test, name='test'),
+    url(r'^del/person/(?P<pk>\d+)', delperson),
+    url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 
-	# account
-	url(r'^signup/$', accounts_views.signup, name='signup'),
-	url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
-	url(r'^login/$',accounts_views.login, name='login'),
-	# url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    url(r'^test2/(?P<pk>\d+)/$', person_detail2, name='person_detail2'),
+    url(r'^test3/(?P<pk>\d+)/$', person_detail3, name='person_detail3'),
 
-	# url(r'upfile/$', upfile),
+    # account
+    url(r'^signup/$', accounts_views.signup, name='signup'),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    url(r'^login/$', accounts_views.login, name='login'),
+    # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+
+    # record
+	url(r'record/',include(recordurls))
+
+    # url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),
 ]

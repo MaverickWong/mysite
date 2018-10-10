@@ -1,77 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新复诊</title>
 
-{% extends 'base.html' %}
-{% load static %}
-
-{% block link %}
-<title>新复诊</title>
-<meta name="description" content="File Upload">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Bootstrap styles -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-{#<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
-
-
-<!-- Generic page styles -->
-{#<link rel="stylesheet" href="../static/upload/css/style.css">#}
-<!-- blueimp Gallery styles -->
-<link rel="stylesheet" href="../static/upload/css/blueimp-gallery.min.css">
-<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
-<link rel="stylesheet" href="../static/upload/css/jquery.fileupload.css">
-<link rel="stylesheet" href="../static/upload/css/jquery.fileupload-ui.css">
-<!-- CSS adjustments for browsers with JavaScript disabled -->
-{#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-noscript.css"></noscript>#}
-{#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-ui-noscript.css"></noscript>#}
-{% endblock %}
-
-{% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
-  <li class="breadcrumb-item active">添加新复诊</li>
-{% endblock %}
+    <meta name="description" content="File Upload">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    {#<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
 
 
-{% block content %}
-{#    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">#}
-{#      <div class="container">#}
-{#        <a class="navbar-brand" href="{% url 'home' %}">Django Boards</a>#}
-{#      </div>#}
-{#    </nav>#}
+    <!-- Generic page styles -->
+    {#<link rel="stylesheet" href="../static/upload/css/style.css">#}
+    <!-- blueimp Gallery styles -->
+    <link rel="stylesheet" href="/static/upload/css/blueimp-gallery.min.css">
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="/static/upload/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="/static/upload/css/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    {#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-noscript.css"></noscript>#}
+    {#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-ui-noscript.css"></noscript>#}
+    {#{% endblock %}#}
 
-{#    <div class="container">#}
-{#      <ol class="breadcrumb my-4">#}
-{#        {% block breadcrumb %}#}
-{#        {% endblock %}#}
-{#      </ol>#}
-{#    </div>#}
+</head>
+<body>
+{#<div class="container">#}
 
-<div class="container">
-
-    <h1>资料上传</h1>
-{#    <h2 class="lead">患者信息</h2>#}
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <h3 class="panel-title"> 患者</h3>
-        </div>
-        <div class="panel-body row">
-            <div class="col-sm-6 col-md-3">
-                <a href="{{ patient.icon }}" class="thumbnail">
-                    <img src="{{ patient.icon }}" alt="头像" width="100" height="150"> </a>
-            </div>
-            <div class="col-sm-8 col-md-8">
-                <div><h2><a href="/{{patient.pk}}">{{ patient.name }}</a></h2> </div>
-                <div>病历号：{{ patient.idnum }}</div>
-                <div>标签：
-                     {% for t in patient.tags.all %}
-                        <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
-                           title="{{ t.name }}">
-                            {{ t.name }}
-                            <span class="badge">{{ count }}</span>
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <h2>资料上传</h2>
 
     <!-- The file upload form used as target for the file upload widget -->
     <form type="file" id="fileupload" name="img" action="" method="POST" enctype="multipart/form-data">
@@ -123,11 +79,6 @@
                 var obj = document.getElementById("newTagsText");
                 obj.setAttribute("value", "");
             };
-            {#$(function () {#}
-            {#    $("#clear").click(function () {#}
-            {#        $("#newTagsText").val("");#}
-            {#    });#}
-            {#});#}
 
         </script>
 
@@ -188,7 +139,7 @@
             </ul>
         </div>
     </div>
-</div>
+{#</div>#}
 
 
 
@@ -269,41 +220,46 @@
 {% } %}
 </script>
 {% endverbatim %}
-<script src="../static/upload/js/jquery.min.js"></script>
+<script src="/static/upload/js/jquery.min.js"></script>
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-<script src="../static/upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="/static/upload/js/vendor/jquery.ui.widget.js"></script>
 <!-- The Templates plugin is included to render the upload/download listings -->
-<script src="../static/upload/js/tmpl.min.js"></script>
+<script src="/static/upload/js/tmpl.min.js"></script>
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-<script src="../static/upload/js/load-image.all.min.js"></script>
+<script src="/static/upload/js/load-image.all.min.js"></script>
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->
-<script src="../static/upload/js/canvas-to-blob.min.js"></script>
+<script src="/static/upload/js/canvas-to-blob.min.js"></script>
 <!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
-<script src="../static/bootstrap.min.js"></script>
+<script src="/static/bootstrap.min.js"></script>
 <!-- blueimp Gallery script -->
-<script src="../static/upload/js/jquery.blueimp-gallery.min.js"></script>
+<script src="/static/upload/js/jquery.blueimp-gallery.min.js"></script>
 <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-<script src="../static/upload/js/jquery.iframe-transport.js"></script>
+<script src="/static/upload/js/jquery.iframe-transport.js"></script>
 <!-- The basic File Upload plugin -->
-<script src="../static/upload/js/jquery.fileupload.js"></script>
+<script src="/static/upload/js/jquery.fileupload.js"></script>
 <!-- The File Upload processing plugin -->
-<script src="../static/upload/js/jquery.fileupload-process.js"></script>
+<script src="/static/upload/js/jquery.fileupload-process.js"></script>
 <!-- The File Upload image preview & resize plugin -->
-<script src="../static/upload/js/jquery.fileupload-image.js"></script>
+<script src="/static/upload/js/jquery.fileupload-image.js"></script>
 <!-- The File Upload audio preview plugin -->
-<script src="../static/upload/js/jquery.fileupload-audio.js"></script>
+<script src="/static/upload/js/jquery.fileupload-audio.js"></script>
 <!-- The File Upload video preview plugin -->
-<script src="../static/upload/js/jquery.fileupload-video.js"></script>
+<script src="/static/upload/js/jquery.fileupload-video.js"></script>
 <!-- The File Upload validation plugin -->
-<script src="../static/upload/js/jquery.fileupload-validate.js"></script>
+<script src="/static/upload/js/jquery.fileupload-validate.js"></script>
 <!-- The File Upload user interface plugin -->
-<script src="../static/upload/js/jquery.fileupload-ui.js"></script>
+<script src="/static/upload/js/jquery.fileupload-ui.js"></script>
 <!-- The main application script -->
-<script src="../static/upload/js/main.js"></script>
+<script src="/static/upload/js/main.js"></script>
 <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
 <!--[if (gte IE 8)&(lt IE 10)]>
 <script src="js/cors/jquery.xdr-transport.js"></script>
 <![endif]-->
 
+</body>
+</html>
 
-{% endblock %}
+
+
+
+

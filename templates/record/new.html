@@ -8,7 +8,8 @@
 </head>
 <body>
 
-    <form>
+    <form action="/record/new/{{ pk }}/" method="POST">
+        {% csrf_token %}
       <div class="form-group">
         <label for="complain" class="control-label">主诉</label>
         <input id="complain" name="complain" type="text" class="form-control">

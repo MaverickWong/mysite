@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'boards',
     'accounts',
     'record',
+    'netdisk',
 ]
 
 MIDDLEWARE = [

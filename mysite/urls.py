@@ -15,20 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from mysite.views import hello
+from mysite.views import *
 from boards.views import *
 from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
 from record import urls as recordurls
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home, name='home'),
     # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
     # url(r'^creat_new/$', creat_new_person, name='new_person'),
-    url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),
+    # url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),
     # url(r'^filer/', include('filer.urls')),
-    url(r'new/$', new_person, name='new_person'),
-    url(r'^(?P<pk>\d+)/addpost$', addpost, name='addpost'),
+    url(r'^new/$', new_person, name='new_person'),
     url(r'^wrong/', wrong, name='wrong'),
     url(r'^search/', search, name='search'),
     url(r'^tags/(?P<tag>\w+)', tag_search),
@@ -36,8 +37,11 @@ urlpatterns = [
     url(r'^del/person/(?P<pk>\d+)', delperson),
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 
-    url(r'^test2/(?P<pk>\d+)/$', person_detail2, name='person_detail2'),
-    url(r'^test3/(?P<pk>\d+)/$', person_detail3, name='person_detail3'),
+    url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
+
+    #post
+    url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
+    url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
 
     # account
     url(r'^signup/$', accounts_views.signup, name='signup'),
@@ -46,8 +50,9 @@ urlpatterns = [
     # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 
     # record
-	url(r'record/',include(recordurls))
+    url(r'^record/', include(('record.urls', 'record'), namespace='record')),
 
+    url(r'^netdisk/', include('netdisk.urls')),
     # url(r'upfile/$', upfile),
     # url(r'^p/', person_detail),
 ]

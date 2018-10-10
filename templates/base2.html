@@ -5,7 +5,7 @@
     <title>{% block title %}病例管理系统{% endblock %}</title>
     {% block link %}
         {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
-{#        <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
 {#        <script src="{% static 'bootstrap.min.js' %}"></script>#}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
         <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
@@ -27,7 +27,7 @@
         <div class="container-fluid">
           <div class="navbar-header">
               <a class="navbar navbar-brand" href="{% url 'home' %}">病例管理系统 v1.0
-{#                  <img src="{% static 'logo.png' %}" alt="logo" >#}
+{#                  <img src="{% static 'logo.png' %}" alt="logo" title style>#}
                 </a>
           </div>
 
@@ -39,11 +39,11 @@
               <button type="submit" class="btn btn-default">搜索</button>
           </form>
             <ul class="nav navbar-nav">
-                        <li class="active"><a href={% url 'home' %}>病例</a></li>
-                        <li><a href="/netdisk/">网盘</a></li>
+                        <li class="active"><a href="#">iOS</a></li>
+                        <li><a href="#">SVN</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                其他
+                                Java
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">

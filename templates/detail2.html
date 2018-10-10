@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}患者详情{% endblock %}
+
+{#{% block breadcrumb %}#}
+{#  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>#}
+{#  <li class="breadcrumb-item active">患者信息</li>#}
+{#{% endblock %}#}
+
+{% block content %}
+    <!---个人信息--->
+
+ <div id="content" class="panel">
+    <div class="panel-body ">
+        <div class="row">
+            <div class="col-md-3">
+                <h2><a href= {% url 'person_detail' patient.pk %}>{{ patient.name }}</a> </h2>
+            </div>
+            <div class="col-md-3">病历号：{{ patient.idnum }}</div>
+    {#                <div>标签：{{ patient.tags.all }} </div>#}
+            <div class="col-lg-8">标签：
+                {% for t in patient.tags.all %}
+                    <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+                       title="{{ t.name }}">
+                        {{ t.name }}
+                        <span class="badge">{{ count }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+ </div>
+
+<div >
+    <ul class="list-inline bg-info">
+        <li><a href="" target="iframe_a">基本信息</a></li>
+        <li><a href={% url 'posts'  patient.pk  %} target="iframe_a">图像</a></li>
+
+        <li><a href={% url 'record:recordHome' patient.pk%} target="iframe_a">病历</a></li>
+        <li><a href=""target="iframe_a">收费</a></li>
+        <li><a href="" target="iframe_a">其他</a></li>
+
+    </ul>
+ </div>
+
+    <!---内部框架--->
+ <iframe src='/posts/{{patient.pk}}'  width="100%" height="800" name="iframe_a" id="iframepage" frameborder="0"  marginheight="0" marginwidth="0"  >
+
+ </iframe>
+
+{% endblock %}

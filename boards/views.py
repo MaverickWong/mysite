@@ -82,6 +82,7 @@ def handle_file(request, person, post):
         suf = n2.split('.')[-1]
         fname= person.name + '.p' + str(post.type) + '.' + str(i) + time + '.' + suf
         path = dir + fname
+        # static / picture / 张飞233 / 张飞.p0.041411.jpg
         iconpath = icondir + person.name + '.p' + str(post.type) + '.' + 'small'+'.' +str(i) + time + '.' + suf
         ff = open(path, 'wb+')
         # ff.name
@@ -104,13 +105,13 @@ def handle_file(request, person, post):
                 except IOError:
                     print("cannot create thumbnail")
 
-        pathU = '../' + path
-        iconpath = '../' +iconpath
+        pathU = '/' + path
+        iconpathU = '/' +iconpath
         if post.type ==0 and i ==1:
             person.icon = iconpath
             person.save()
         # 保存到image
-        image = Image.objects.create(path=pathU, thumbnail=iconpath, post=post, person=person)
+        image = Image.objects.create(path=path, thumbnail=iconpath, post=post, person=person)
 
         # 上传后返回信息
         if os.path.exists(path): # 再次确认文件是否保存
@@ -121,8 +122,8 @@ def handle_file(request, person, post):
         info = {
             "name": t1,
             "size": os.path.getsize(path),
-            "url": pathU,
-            "thumbnailUrl": iconpath,
+            "url": path,
+            "thumbnailUrl": iconpathU,
             "deleteUrl": '',
             "deleteType": "DELETE", }
         results["files"].append(info)
@@ -224,39 +225,27 @@ def addpost(request, pk):
     # return HttpResponse('{"status":"success"}', content_type='application/json')
 
 
-# 患者详细信息展示
-@login_required()
-def person_detail(request, pk):
-    p = Person.objects.get(pk=pk)
-    name = p.name
+# # 患者详细信息展示
+# @login_required()
+# def person_detail(request, pk):
+#     p = Person.objects.get(pk=pk)
+#     name = p.name
+#
+#     picurl = ''
+#     if p.icon:
+#         picurl = p.icon
+#         print(picurl)
+#
+#     posts = p.posts
+#
+#     contex = {'patient': p,  'posts': posts}
+#
+#     # return render(request, 'detail.html', contex)
+#     return render(request, 'detail2.html', contex)
+#
 
-    picurl = ''
-    if p.icon:
-        picurl = p.icon
-        print(picurl)
-
-    posts = p.posts
-
-    contex = {'patient': p,  'posts': posts}
-
-    return render(request, 'detail.html', contex)
-
-def person_detail2(request, pk):
-	p = Person.objects.get(pk=pk)
-	name = p.name
-
-	picurl = ''
-	if p.icon:
-		picurl = p.icon
-		print(picurl)
-
-	posts = p.posts
-
-	contex = {'patient': p,  'posts': posts}
-
-	return render(request, 'detail2.html', contex)
-
-def person_detail3(request, pk):
+# 所有图片post
+def posts(request, pk):
 	p = Person.objects.get(pk=pk)
 	name = p.name
 

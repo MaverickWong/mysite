@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}患者详情{% endblock %}
+
+{#{% block breadcrumb %}#}
+{#  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>#}
+{#  <li class="breadcrumb-item active">患者信息</li>#}
+{#{% endblock %}#}
+
+{% block content %}
+
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>网盘</title>#}
+{#</head>#}
+{#<body>#}
+    <h2>目录列表：  /{{ cwd }}</h2>
+    <a href="/netdisk/">首页</a>
+    <hr>
+
+    <table>
+     {% for name in  dirlist %}
+            <tr>
+                <td></td>
+                <td><a href="./{{ name }}">{{ name }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+     <table>
+        {% for name in  filelist %}
+            <tr>
+                <td></td>
+                <td><a href="./{{ name }}">{{ name }}</a></td>
+            </tr>
+
+        {% endfor %}
+    </table>
+    <hr>
+
+{#</body>#}
+{#</html>#}
+
+{% endblock %}

@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 </head>
 <body>
+{#<div class="container">#}
+     <div class="mb-4">
+            <a class="btn btn-primary" href={% url 'record:newRecord' pk %} > 创建新病历</a>
+     </div>
+
+    {% if records %}
+        {% for record in records.all  %}
+
+            <div class="panel panel-default ">
+
+                <div class="panel-heading">
+                    <div class="col-lg-2"> <span >复诊 -  {{record.createdAt }}  </span> </div>
+                </div>
+
+                  <div class="panel-body row">
+                      <div class="col-sm-6 col-md-3">
+                            检查： {{ record.exam }}<br>
+                            治疗： {{ record.treatmentPlan }}<br>
+                            医嘱： {{ record.note }}<br>
+
+                        </div>
+                  </div>
+            </div>
+
+        {% endfor %}
+
+        {% else %}
+        该患者暂无病例，请创建新病例。
+    {% endif %}
+{#</div>#}
+
 
 </body>
 </html>

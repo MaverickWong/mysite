@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>{% block title %}病例管理系统{% endblock %}</title>
-    {% block link %}
+
         {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
 {#        <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
 {#        <script src="{% static 'bootstrap.min.js' %}"></script>#}
@@ -11,15 +11,16 @@
         <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+        {% block link %}
+        {% endblock %}
 
-    {% endblock %}
       {% block stylesheet %}
       <link rel="stylesheet" href="{% static 'css/account.css' %}">
-        {% endblock %}
+    {% endblock %}
   </head>
 
 
-  <body>
+  <body>]
   {% block body %}
 
 

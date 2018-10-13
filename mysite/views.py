@@ -6,7 +6,7 @@ from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from boards.models import Person
 def hello(request):
-    return HttpResponse("Hello world, "+ request.get_host())
+    return render(request, 'upload-vue2.html')
 
 def home(request):
 	t = get_template('index.html')

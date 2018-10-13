@@ -1,84 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, FileResponse, HttpResponseRedirect
+from django.shortcuts import render, reverse, redirect
 import os
+import mimetypes
+from mysite.settings import BASE_DIR
 
 
 # Create your views here.
 
-# def showPath(request, repath):
-#
-#     base = '/Users/wcy/Documents/mysite2/'
-#     path = base + repath
-#     if os.path.isdir(path):
-#         try:
-#             list = os.listdir(repath)
-#             list.sort(key=lambda a: a.lower())
-#             return render(request, 'disk/index.html', {'cwd':repath, 'list':list})
-#         except os.error:
-#             return HttpResponse("No permission to list directory")
-#
-#     elif os.path.isfile(path):
-#         try:
-#             with open(path, 'rb') as f:
-#                 content = f.read()
-#                 # self.send_header('Content-type', mimetype)
-#             return HttpResponse(content)
-#
-#         except IOError:
-#             return HttpResponse("File Not Found: ")
-
-#
-# def home(request):
-#     showPath(request, '/')
-
-def showPath(request):
-    repath = request.path[9:]
-    base = '/Users/wcy/Documents/mysite2/'
-    path = base + repath
-
-    if os.path.isdir(path):
-        try:
-            list = os.listdir(path)
-            # list.sort(key=lambda a: a.lower())
-            list2 = []
-            dirlist = []
-            filelist = []
-            for name in list:
-                fullname = os.path.join(path, name)
-                displayname = linkname = name
-                # Append / for directories or @ for symbolic links
-                if os.path.isdir(fullname):
-                    displayname = name + "/"
-                    linkname = name + "/"
-                    dirlist.append(displayname)
-                else:
-                    filelist.append(name)
-
-                if os.path.islink(fullname):
-                    displayname = name + "@"
-                # list2.append(displayname)
-
-            return render(request, 'disk/index.html', {'cwd': repath, 'dirlist': dirlist, 'filelist':filelist})
-        except os.error:
-            return HttpResponse("No permission to list directory")
-
-    elif os.path.isfile(path):
-        try:
-            with open(path, 'r') as f:
-                content = f.readlines()
-                # self.send_header('Content-type', mimetype)
-            return HttpResponse(content)
-
-        except IOError:
-            return HttpResponse("File Not Found: ")
-
-
-
-
-
-
-"""
 
 # MIME-TYPE
 mimedic = [
@@ -93,32 +22,85 @@ mimedic = [
                         ('.txt', 'text/plain'),
                         ('.avi', 'video/x-msvideo'),
                     ]
-                    
-                    
-    for e in mimedic:
-            if e[0] == fileext:
-                mimetype = e[1]
-                sendReply = True                  
-                    
-def list_directory(self, path):
-    Helper to produce a directory listing (absent index.html).
 
-    Return value is either a file object, or None (indicating an
-    error).  In either case, the headers are sent, making the
-    interface the same as for send_head().
+def showPath(request):
+    repath = request.path[9:]
+    base = BASE_DIR
+    # base = '/Users/wcy/Documents/mysite2/'
+    path = base + repath
 
-   
-  
-    f = StringIO()
-    displaypath = cgi.escape(urllib.unquote(self.path))
-    f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-    f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
-    f.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
-    f.write("<hr>\n<ul>\n")
-    
-    
+    if request.method == 'GET':
 
-"""
+        # 判断请求地址是文件夹还是文件
+        if os.path.isdir(path):  # 文件夹
+            try:
+                list = os.listdir(path) #读取目录列表
+                # list.sort(key=lambda a: a.lower())
+                dirlist = []  # 文件夹列表
+                filelist = []  # 文件名列表
+                for name in list:
+                    fullname = os.path.join(path, name)
+                    displayname = linkname = name
+                    # Append / for directories or @ for symbolic links
+                    if os.path.isdir(fullname):
+                        displayname = name + "/"
+                        linkname = name + "/"
+                        dirlist.append(displayname)
+                    else:
+                        filelist.append(name)
+                    if os.path.islink(fullname):
+                        displayname = name + "@"
+
+                if len(repath.split('/')) >2:
+                    t = repath.split('/')[:-2]
+                    pre = '/netdisk/' + '/'.join(t)
+                else:
+                    pre = '/netdisk/'
+
+
+                return render(request, 'disk/index.html',
+                              {'cwd': repath, 'pre':pre, 'dirlist': dirlist, 'filelist':filelist})
+            except os.error:
+                return HttpResponse("No permission to list directory")
+
+        elif os.path.isfile(path):
+            # 请求内容是文件
+
+            # fileext = os.path.splitext(path)[1]
+            # for e in mimedic:
+            #     if e[0] == fileext:
+            #         mimetype = e[1]
+            #         sendReply = True
+
+            content_type, encoding = mimetypes.guess_type(str(path))
+            content_type = content_type or 'application/octet-stream'
+
+            try:
+                f = open(path, 'rb')
+                response = FileResponse(f, content_type=content_type)
+                return response
+                f.close()
+            except IOError:
+                return HttpResponse(" 无法打开该文件，请检查文件名 ")
+
+    else:  # POST
+        files = request.FILES.getlist('files')  # 类型为mutilist
+        # n = request.POST.get('name')
+
+        i = 0
+        for f in files:
+            path = path + f.name
+
+            ff = open(path, 'wb+')
+            # print(path)
+            # print(f.name)
+            for chunk in f.chunks():
+                ff.write(chunk)
+            ff.close()
+            i = i + 1
+        return HttpResponseRedirect(request.path)
+
+
 
 
 

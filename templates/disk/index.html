@@ -7,9 +7,18 @@
 {#  <li class="breadcrumb-item active">患者信息</li>#}
 {#{% endblock %}#}
 
+{% block link %}
+    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
+{#    <style>#}
+{#        .dropbox {#}
+{#            border: .25rem dashed #007bff;#}
+{#            min-height: 5rem;#}
+{#        }#}
+{#    </style>#}
+{% endblock %}
+
+
 {% block content %}
-
-
 
 {#<!DOCTYPE html>#}
 {#<html lang="en">#}
@@ -18,32 +27,106 @@
 {#    <title>网盘</title>#}
 {#</head>#}
 {#<body>#}
-    <h2>目录列表：  /{{ cwd }}</h2>
+<h2>目录列表：  /<a href="#">{{ cwd }}</a> </h2>
+<div id="app" class=" container">
     <a href="/netdisk/">首页</a>
-    <hr>
-
-    <table>
-     {% for name in  dirlist %}
-            <tr>
-                <td></td>
-                <td><a href="./{{ name }}">{{ name }}</a></td>
-            </tr>
-        {% endfor %}
-    </table>
+    <a href="{{ pre }}">上一级</a>
 
     <hr>
+    <div class="dropbox">
+        <table>
+         {% for name in  dirlist %}
+                <tr>
+                    <td><i class="glyphicon glyphicon-folder-open"> </i> </td>
+                    <td><a href="./{{ name }}"><span>{{ name }}</span> </a></td>
+                </tr>
+            {% endfor %}
+        </table>
 
-     <table>
-        {% for name in  filelist %}
-            <tr>
-                <td></td>
-                <td><a href="./{{ name }}">{{ name }}</a></td>
-            </tr>
+        <hr>
 
-        {% endfor %}
-    </table>
-    <hr>
+         <table>
+            {% for name in  filelist %}
+                <tr>
+                    <td><i class="glyphicon glyphicon-file"></i> </td>
+                    <td><a href="./{{ name }}"><span>{{ name }}</span> </a></td>
+                </tr>
 
+            {% endfor %}
+        </table>
+        <hr>
+    </div>
+
+{#<div class="dropbox p-3">#}
+        <h2 v-if="files.length===0" class="text-center">把要上传的文件拖动到本窗口</h2>
+        <div class="border m-2 d-inline-block p-4" style="width:15rem" v-for="file in files">
+            <h5 class="mt-0">{{ file.name }}</h5>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped"
+                     :style="{ width: file.uploadPercentage+'%' }"></div>
+            </div>
+        </div>
+    </div>
+{#</div>#}
+
+
+{#<div id="app" class="m-5">#}
+{#    <div class="dropbox p-3">#}
+{#        <h2 v-if="files.length===0" class="text-center">把要上传的文件拖动到这里</h2>#}
+{#        <div class="border m-2 d-inline-block p-4" style="width:15rem" v-for="file in files">#}
+{#            <h5 class="mt-0">{{ file.name }}</h5>#}
+{#            <div class="progress">#}
+{#                <div class="progress-bar progress-bar-striped"#}
+{#                     :style="{ width: file.uploadPercentage+'%' }"></div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            files: []
+        },
+        methods: {
+            uploadFile: function (file) {
+                var item = {
+                    name: file.name,
+                    uploadPercentage: 0
+                };
+                this.files.push(item);
+                var fd = new FormData();
+                fd.append('files', file);
+                fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', './', true);
+                xhr.upload.addEventListener('progress', function (e) {
+                    item.uploadPercentage = Math.round((e.loaded * 100) / e.total);
+                }, false);
+                xhr.send(fd);
+            },
+            onDrag: function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            },
+            onDrop: function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var dt = e.dataTransfer;
+                for (var i = 0; i !== dt.files.length; i++) {
+                    this.uploadFile(dt.files[i]);
+                }
+            }
+        },
+        mounted: function () {
+            var dropbox = document.querySelector('.dropbox');
+            dropbox.addEventListener('dragenter', this.onDrag, false);
+            dropbox.addEventListener('dragover', this.onDrag, false);
+            dropbox.addEventListener('drop', this.onDrop, false);
+        }
+    });
+</script>
 {#</body>#}
 {#</html>#}
 

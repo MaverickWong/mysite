@@ -9,19 +9,46 @@ from django.contrib.auth.models import User
 
 # 患者信息
 class Person(models.Model):
-    name = models.CharField(max_length=255)
-    idnum = models.IntegerField(null=True)
-    clinic = models.CharField(null=True, max_length=20)
-    birth = models.DateField(null=True)
+    name = models.CharField(max_length=255, null=True)
+    nameCode = models.CharField(max_length=20, null=True)
+    # privateId
+    idnum = models.CharField(max_length=30, null=True)
+    otherPrivateId = models.CharField(max_length=20, null=True)
+    birth = models.DateField(null=True)  # linedcare- "birth": "1991-12-07T00:00:00",
     sex = models.IntegerField(null=True)  # 男1 女2
-    comment = models.TextField(max_length=2000, null=True)
-    icon = models.TextField(null=True, max_length=100)
+
+    comment = models.TextField(max_length=2000, null=True)  # 备注
+    icon = models.TextField(null=True, max_length=100)  # 头像path
     isEnd = models.NullBooleanField(null=True)  # 是否结束
     startDate = models.DateTimeField(null=True)
     last_updated = models.DateTimeField(auto_now_add=True)
 
-    # doctor = models.ForeignKey(User, related_name='persons')
+    doctor = models.CharField(max_length=20, null=True)
+    doctorId = models.IntegerField(null=True)
+    officeId = models.IntegerField(null=True)
+    clinic = models.CharField(null=True, max_length=20)
 
+    mobile = models.CharField(max_length=20, null=True)
+    email = models.CharField(max_length=40, null=True)
+    occupation = models.CharField(max_length=20, null=True)
+    qq = models.IntegerField(null=True)
+    weixin = models.CharField(max_length=40, null=True)
+    identityCard = models.CharField(max_length=20, null=True)
+    homeAddress = models.CharField(max_length=50, null=True)
+
+    patientType = models.CharField(max_length=20, null=True)
+    lastVisit = models.DateTimeField(null=True)
+    lastDoctorId = models.IntegerField(null=True)
+
+    # "name": "\u738b\u5929\u8212A", "nameCode": null, "sex": 2, "birth": "1991-12-07T00:00:00",
+    # "mobile": "\u672c\u4eba:15210957869"
+    # "email": null, "occupation": null, "qq": null, "weixin": null,
+    #  "identityCard": null, "homeAddress": null,
+    # "patientType": "\u666e\u901a"
+    # "doctorId": null, "nickName": null, "lastVisit": null, "lastDoctorId": null,
+    # "tag": null,
+
+    # doctor = models.ForeignKey(User, related_name='persons',  on_delete=models.SET_NULL)
     # total_post = models.IntegerField(null=True)
     def __str__(self):
         return self.name

@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
+    url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
 
     #post
     url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),

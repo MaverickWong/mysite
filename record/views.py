@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from boards.models import *
 from record.models import *
 
@@ -19,12 +19,14 @@ def newRecord(request, personPk):
         p = Person.objects.get(pk=personPk)
         try:
             new = Record.objects.create(doctor=request.user,
-                                        complain= complain,
+                                        exam=exam,
+                                        complain=complain,
                                         treatmentPlan=treat,
                                         note=note,
                                         )
             new.person.add(p)
             return HttpResponse('保存成功')
+            # return redirect('recordHome')
         except:
             return HttpResponse('保存失败')
 

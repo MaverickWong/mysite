@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+    <h3> 当前所有患者数目：{{ total }}</h3>
     <div class="mb-4">
     <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>
   </div>
@@ -21,10 +22,14 @@
           <th>病历号</th>
         <th>复诊次数</th>
         <th>性别</th>
+          {% if user.username == 'zdl' %}
+          <td> 医生</td>
+          {% endif %}
         <th>序号</th>
         <th>最后上传时间</th>
       </tr>
     </thead>
+  <!--- 列表 --->
     <tbody>
       {% for person in persons.all %}
         <tr>
@@ -34,6 +39,11 @@
           <td>{{ person.idnum }}</td>
           <td> <span class="badge">{{ person.posts.count }} </span></td>
             <td>{{ person.sex }}</td>
+            {% if user.username == 'zdl' %}
+                {% if not person.doctor %} <td> 无 </td>{% endif %}
+                {% if person.doctor %}  <td> {{ person.doctor }}</td> {% endif %}
+            {% endif %}
+
             <td>{{ person.pk }}</td>
           <td>{{ person.last_updated }}</td>
         </tr>
@@ -42,6 +52,7 @@
   </table>
 </div>
 
+<!--- 标签 --->
 
 <div class="col-lg-3">
 {#    {% if article_tags_list %}#}

@@ -15,37 +15,44 @@ import json
 from PIL  import Image as Image2
 
 # Create your views here.
-@login_required()
-def home(request):
-    if request.user.is_authenticated:
-        persons = Person.objects.all()
-        tags = Tag.objects.all()
-        return render(request, 'index.html', {'persons': persons, 'tags':tags})
-    else:
-        return redirect('login')
+# TODO 高级用户名是zdl
 
 def test(request):
     return HttpResponse("good")
 
 def search(request):
+    docname = request.user.username
     s = request.GET['s']
     if s.isnumeric():
-        persons = Person.objects.filter(idnum=s)
+        if docname == 'zdl':
+            persons = Person.objects.filter(idnum=s)
+        else:
+            persons = Person.objects.filter(idnum=s, doctor=docname)
     else:
-        persons = Person.objects.filter(name__contains=s)
+        if docname == 'zdl':
+            persons = Person.objects.filter(name__contains=s)
+        else:
+            persons = Person.objects.filter(name__contains=s, doctor=docname)
 
     return render(request, 'search.html', {'persons': persons})
 
 def tag_search(request, tag):
-    ut = unicode(tag)
+    docname = request.user.username
+    ut = str(tag)
     t = Tag.objects.get(name=ut)
-    ps= t.persons.all()
+    if docname == 'zdl':
+        ps = t.persons.all()
+    else:
+        ps= t.persons.filter(doctor=docname)
     return render(request, 'search.html', {'persons': ps})
+
+
 
 def delperson(request, pk):
     p = Person.objects.get(pk=pk)
     p.delete()
     return redirect('home')
+
 # TODO
 def delpost(request,ppk,postpk):
     # try:
@@ -56,12 +63,13 @@ def delpost(request,ppk,postpk):
     #     return  HttpResponse(err)
     # pk = int(ppk)
     # return HttpResponseRedirect( reverse('person_detail', args=(ppk)) )
-    return redirect('person_detail', ppk)
+    return redirect('posts', ppk)
 
 # 处理上传文件
 def handle_file(request, person, post):
     files = request.FILES.getlist('files[]')  # 类型为mutilist
     # n = request.POST.get('name')
+    sep = '_'
     results = {}
     results["files"] = []
     print(files)
@@ -71,7 +79,7 @@ def handle_file(request, person, post):
         dt = datetime.now()
         time = dt.strftime("%f")
 
-        dir = 'static/picture/' + person.name + '.'+ str(person.idnum) + '/'
+        dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
         icondir = dir  + 'small' + '/'
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -80,10 +88,10 @@ def handle_file(request, person, post):
 
         n2 = f.name
         suf = n2.split('.')[-1]
-        fname= person.name + '.p' + str(post.type) + '.' + str(i) + time + '.' + suf
+        fname= person.name + sep+ 'p' + str(post.type) + sep + str(i) + time + '.' + suf
         path = dir + fname
         # static / picture / 张飞233 / 张飞.p0.041411.jpg
-        iconpath = icondir + person.name + '.p' + str(post.type) + '.' + 'small'+'.' +str(i) + time + '.' + suf
+        iconpath = icondir + person.name + sep+ 'p' + str(post.type) + sep  + 'small'+sep +str(i) + time + '.' + suf
         ff = open(path, 'wb+')
         # ff.name
         print(path)
@@ -134,17 +142,17 @@ def handle_file(request, person, post):
 def new_person(request):
     # board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
-
+        docname = request.user.username
         # message = request.POST['ID']
-        # user = User.objects.first()  # TODO: 临时使用一个账号作为登录用户
+        # user = User.objects.first()
         name = request.POST['name']
         idnum = request.POST['ID']
         tag_list = request.POST['newTags']
 
-        if Person.objects.filter(name=name, idnum=idnum).exists():
+        if Person.objects.filter(name=name, idnum=idnum, doctor=docname).exists():
             return redirect('wrong')
         else:
-            person = Person.objects.create(name=name, idnum=idnum)
+            person = Person.objects.create(name=name, idnum=idnum, doctor=docname)
 
         post = Post.objects.create(type=0, isFirst=1, person=person)
 
@@ -260,7 +268,9 @@ def posts(request, pk):
 
 	return render(request, 'detail3.html', contex)
 
-
+def baseinfo(request,pk):
+    p = Person.objects.get(pk=pk)
+    return render(request,'baseInfo.html', {'person':p})
 
 def wrong(request):
     return render(request, 'upload/wrong.html',{})

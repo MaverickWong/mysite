@@ -20,7 +20,7 @@
   </head>
 
 
-  <body>]
+  <body>
   {% block body %}
 
 
@@ -73,42 +73,13 @@
       </div>
     </nav>
 
-{#    <nav class="nav navbar-inverse navbar-expand-lg navbar-dark bg-dark " >#}
-{#        <div class="container-fluid">#}
-{#          <div class="navbar-header">#}
-{#              <a class="navbar-brand" href="{% url 'home' %}">病例管理系统 v1.0#}
-{#                  <img src="{% static 'logo.png' %}" alt="logo" title style>#}
-{#                </a>#}
-{#          </div>#}
-{##}
-{#            <!---  搜索框 --->#}
-{#          <form action="/search/" method="get" class="navbar-form navbar-left form-inline" role="search">#}
-{#              <div class="form-group">#}
-{#                <input type="text"  name="s" class="form-control" placeholder="姓名或病历号..">#}
-{#              </div>#}
-{#              <button type="submit" class="btn btn-default">搜索</button>#}
-{#          </form>#}
-{##}
-{#          <!---  登陆验证 --->#}
-{#          {% if user.is_authenticated %}#}
-{#              <div class="navbar-right" id="mainMenu">#}
-{#                  <a href="/logout" class="label label-warning"> {{ user.username }} </a>#}
-{#                  <a href="/logout" class="label label-warning"> 注销 </a>#}
-{#              </div>#}
-{#          {% else %}#}
-{#              <form class="form-inline ml-auto">#}
-{#                  <a href="{% url 'login' %}" class="btn btn-outline-secondary">登陆</a>#}
-{#                  <a href="{% url 'signup' %}" class="btn btn-primary ml-2">注册</a>#}
-{#              </form>#}
-{#          {% endif %}#}
-{#      </div>#}
-{#    </nav>#}
+
 
     <div class="container">
-      <ol class="breadcrumb my-4">
-        {% block breadcrumb %}
-        {% endblock %}
-      </ol>
+{#      <ol class="breadcrumb my-4">#}
+{#        {% block breadcrumb %}#}
+{#        {% endblock %}#}
+{#      </ol>#}
 
         {% block content %}
         {% endblock %}

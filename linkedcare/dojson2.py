@@ -2,11 +2,9 @@
 import mysite
 import os
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gallery.settings")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 # django版本大于1.7时需要这两句
 import django
-
 django.setup()
 
 import json
@@ -26,7 +24,7 @@ succeded = []
 
 for item in data['items']:
     n = Person.objects.filter(idnum__contains=item['privateId']).count()
-    if n > 0:
+    if n > 0: #  先根据id判断是否有重复患者，如果有则登记。没有则新建患者
         repeated.append(item['privateId'] + item['name'])
     elif n == 0:
 

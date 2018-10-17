@@ -36,6 +36,7 @@ urlpatterns = [
     # url(r'^test/', test, name='test'),
     url(r'^del/person/(?P<pk>\d+)', delperson),
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
+    url(r'^syncDB/', syncDB, name='syncdb'), # 从易看牙同步数据
 
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
     url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),

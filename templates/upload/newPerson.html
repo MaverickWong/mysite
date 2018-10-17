@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}添加新病历
+{% endblock %}
+
+{% block link %}
+<meta name="description" content="File Upload">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap styles -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    <script src="../static/upload/js/jquery.min.js"></script>
+
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
+  <li class="breadcrumb-item active">添加新病例</li>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+    <h2>添加新病例</h2>
+    <h2 class="lead">输入患者信息</h2>
+
+
+    <!-- The file upload form used as target for the file upload widget -->
+    <form role="form" type="file" id="fileupload" name="img" class="form-inline" action="" method="POST" enctype="multipart/form-data">
+        <!-- 新添加的-->
+        {% csrf_token %}
+        <div class=" col-lg-12" style="padding-left: 0px;">
+            <div class="form-group ">
+            <lable class=" control-label">患者姓名：</lable>
+            <input type ="text" name="name" placeholder="Name"  class="form-control" required="required">
+            </div>
+            <div class="form-group">
+                <lable class="control-label">病历号  ：</lable>
+                <input  name="ID"  class="form-control " pattern="[A-Za-z0-9]" title="只能数字及字母"  required="required">
+            </div>
+            <div class="form-group">
+                <input type="radio" name="sex" value="1">男
+                <input type="radio" name="sex" value="2">女
+            </div>
+
+        </div>
+        <div class="col-lg-12">
+              初诊日期: <input type="date" name="startDate">
+        </div>
+        <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">
+            <div class="form-group " >
+                <lable class=" control-label">新标签  ：</lable>
+                <input id="newTagsText" type ="text" name="newTags"  class="form-control" >
+{#                <button id="clear" class="btn btn-default" onclick="clear()">清除</button>#}
+                <div class="col-lg-12" style="padding-left: 0px; padding-top: 12px; padding-bottom: 12px">
+                    {% for t in tags %}
+                    <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div>
+{#            <button type="submit" class="btn btn-default">提交</button>#}
+        </div>
+        <script> //添加标签名到文本框
+            function addText(t) {
+               var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;
+               document.forms["fileupload"]["newTagsText"].value = x;
+            };
+            function clear() {
+                var obj = document.getElementById("newTagsText");
+                obj.setAttribute("value", "");
+            };
+            {#$(function () {#}
+            {#    $("#clear").click(function () {#}
+            {#        $("#newTagsText").val("");#}
+            {#    });#}
+            {#});#}
+
+        </script>
+
+{#        <!-- Redirect browsers with JavaScript disabled to the origin page -->#}
+{#        <noscript><input type="hidden" name="redirect" value="upfile/"></noscript>#}
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar" >
+            <div class="col-lg-7">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>添加文件</span>
+                    <input type="file" name="files[]" multiple directory webkitdirectory >
+                </span>
+                <button type="submit" class="btn btn-primary start">
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>开始上传</span>
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Demo Notes</h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li>病历号只能是<strong>数字字母</strong> </li>
+                <li>只能上传图像文件(<strong>JPG, GIF, PNG</strong></li>
+                <li>支持多文件同时拖拽入窗口上传</li>
+                <li>暂时这么多</li>
+                <li>Please refer to the <a href="https://github.com/blueimp/jQuery-File-Upload">project website</a> and <a href="https://github.com/blueimp/jQuery-File-Upload/wiki">documentation</a> for more information.</li>
+                <li>Built with the <a href="http://getbootstrap.com/">Bootstrap</a> CSS framework and Icons from <a href="http://glyphicons.com/">Glyphicons</a>.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

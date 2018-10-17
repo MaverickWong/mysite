@@ -7,5 +7,6 @@ urlpatterns = [
     # url(r'^new/(?P<personPk>\d+)/$', newRecord, name='newRecord'),
     # url(r'^$', home),
     url(r'^', showPath, name='showPath'),
+    url(r'^makedir/', makedir, name='makedir'),
 
 ]

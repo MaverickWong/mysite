@@ -39,6 +39,7 @@ class Person(models.Model):
     patientType = models.CharField(max_length=20, null=True)
     lastVisit = models.DateTimeField(null=True)
     lastDoctorId = models.IntegerField(null=True)
+    linkedcareId = models.IntegerField(null=True)
 
     # "name": "\u738b\u5929\u8212A", "nameCode": null, "sex": 2, "birth": "1991-12-07T00:00:00",
     # "mobile": "\u672c\u4eba:15210957869"

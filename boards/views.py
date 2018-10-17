@@ -23,12 +23,12 @@ def test(request):
 def search(request):
     docname = request.user.username
     s = request.GET['s']
-    if s.isnumeric():
+    if s.isnumeric(): # 搜索内容是数字
         if docname == 'zdl':
-            persons = Person.objects.filter(idnum=s)
+            persons = Person.objects.filter(idnum__contains=s)
         else:
-            persons = Person.objects.filter(idnum=s, doctor=docname)
-    else:
+            persons = Person.objects.filter(idnum__contains=s, doctor=docname)
+    else: # 搜索内容不是数字
         if docname == 'zdl':
             persons = Person.objects.filter(name__contains=s)
         else:

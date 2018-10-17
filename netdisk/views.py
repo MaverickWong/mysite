@@ -24,10 +24,10 @@ mimedic = [
                     ]
 
 def showPath(request):
-    repath = request.path[9:]
+    repath = request.path[9:] # 跳过/netdisk/
     base = BASE_DIR
     # base = '/Users/wcy/Documents/mysite2/'
-    path = base + repath
+    path = base +'/' + repath
 
     if request.method == 'GET':
 
@@ -100,7 +100,12 @@ def showPath(request):
             i = i + 1
         return HttpResponseRedirect(request.path)
 
+def makedir(request):
 
-
+    repath = request.path[9:] # 跳过/netdisk/
+    base = BASE_DIR
+    # base = '/Users/wcy/Documents/mysite2/'
+    path = base +'/' + repath
+    return HttpResponse("wait")
 
 

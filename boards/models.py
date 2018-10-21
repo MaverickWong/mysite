@@ -17,6 +17,7 @@ class Person(models.Model):
     birth = models.DateField(null=True)  # linedcare- "birth": "1991-12-07T00:00:00",
     sex = models.IntegerField(null=True)  # 男1 女2
 
+    privateDir = models.CharField(max_length=255, null=True) # 个人目录，所有照片存在里面
     comment = models.TextField(max_length=2000, null=True)  # 备注
     icon = models.TextField(null=True, max_length=100)  # 头像path
     isEnd = models.NullBooleanField(null=True)  # 是否结束
@@ -64,6 +65,8 @@ class Post(models.Model):
     upLoadTime = models.DateTimeField(auto_now_add=True)
     person = models.ForeignKey('Person', related_name='posts', null=True, on_delete=models.SET_NULL)
     comment = models.TextField(max_length=2000, null=True)
+    st_ctime = models.IntegerField(null=True) # 对应文件夹的创建时间，用于自动导入时的排序
+    dir = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return str(self.type)
@@ -73,12 +76,15 @@ class Image(models.Model):
     name = models.CharField(max_length=255, null=True)
     path = models.TextField(max_length=100, null=True)  # 存放路径
     thumbnail = models.TextField(max_length=100, null=True)  # 缩略图存放路径
+    size_m = models.TextField(max_length=100, null=True)  # 中等尺寸缩略图存放路径
     isAvatar = models.NullBooleanField(null=True)
     upLoadTime = models.DateTimeField(auto_now_add=True)
     person = models.ForeignKey('Person', related_name='images', null=True, on_delete=models.SET_NULL)
     post = models.ForeignKey('Post', related_name='images', null=True, on_delete=models.SET_NULL)
     type = models.TextField(null=True)  # 1正面 2微笑 3侧面 4 56...
     comment = models.TextField(max_length=2000, null=True)
+    st_ctime = models.IntegerField(null=True) # 对应图像的创建时间，，用于自动导入时的排序
+
 
     def __str__(self):
         return self.path

@@ -24,7 +24,10 @@
                     <div class="panel panel-primary ">
 
                         <div class="panel-heading">
-                            <div class="col-lg-1"> <span style="font-size:20px">阶段- {{ post.type }}</span> </div>
+                            <div class="col-lg-1">
+                                <span style="font-size:20px">阶段- {{ post.type }}--{{ post.name }}</span>
+                                <small class=" d-block">{{ post.comment }}</small>
+                            </div>
                             <div class="col-lg-1 col-lg-offset-8">
                                 <a href="/del/person{{ patient.pk }}/post{{ post.pk }}" class="label label-success">删除</a>
                             </div>
@@ -33,8 +36,8 @@
                             {% if post %}
                                 {% for img in post.images.all %}
                                     <div class="col-sm-6 col-md-3">
-                                        <a href="/{{ img.path }}" class="thumbnail">
-                                            <img src="/{{ img.thumbnail }}" alt="复诊缩略图" height="300">
+                                        <a href="{{ img.path }}" class="thumbnail">
+                                            <img src="{{ img.thumbnail }}" alt="复诊缩略图" height="300">
                                         </a>
                                     </div>
                                 {% endfor %}

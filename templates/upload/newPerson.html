@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}添加新病历
+{% load staticfiles %}
+{% block title %}
+    添加新病历
 {% endblock %}
 
 {% block link %}
-<meta name="description" content="File Upload">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Bootstrap styles -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
     <script src="../static/upload/js/jquery.min.js"></script>
 
 {% endblock %}
@@ -20,35 +20,118 @@
 
 
 <div class="container">
-    <h2>添加新病例</h2>
     <h2 class="lead">输入患者信息</h2>
+    <hr>
+
+<div class="col-lg-12">
 
 
-    <!-- The file upload form used as target for the file upload widget -->
+    <table class="col-lg-12">
     <form role="form" type="file" id="fileupload" name="img" class="form-inline" action="" method="POST" enctype="multipart/form-data">
         <!-- 新添加的-->
         {% csrf_token %}
-        <div class=" col-lg-12" style="padding-left: 0px;">
-            <div class="form-group ">
-            <lable class=" control-label">患者姓名：</lable>
-            <input type ="text" name="name" placeholder="Name"  class="form-control" required="required">
-            </div>
-            <div class="form-group">
-                <lable class="control-label">病历号  ：</lable>
-                <input  name="ID"  class="form-control " pattern="[A-Za-z0-9]" title="只能数字及字母"  required="required">
-            </div>
-            <div class="form-group">
+        <tr>
+            <td>
+                <div class="form-group ">
+                <lable class=" control-label">姓名：</lable>
+                <input type ="text" name="name" placeholder="Name"  class="form-control" required="required">
+                </div>
+            </td>
+
+            <td>
+                <div class="form-group">
+                <lable class="control-label">病历号：</lable>
+                <input  name="ID"  class="form-control "  title="只能数字及字母"  required="required">
+                </div>
+            </td>
+              <td>
+                 <div class="form-group ">
+                <lable class=" control-label">首字母：</lable>
+                <input type ="text" name="nameCode" placeholder="Name"  class="form-control" >
+                </div>
+             </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">性别：</lable>
                 <input type="radio" name="sex" value="1">男
                 <input type="radio" name="sex" value="2">女
-            </div>
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">生   日：</lable>
+                <input type="birth" name="startDate">
+                </div>
+            </td>
+            <td>
 
-        </div>
-        <div class="col-lg-12">
-              初诊日期: <input type="date" name="startDate">
-        </div>
-        <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                 <div class="form-group ">
+                <lable class=" control-label">手机：</lable>
+                <input type ="text" name="mobile" placeholder="手机号"  class="form-control" >
+                </div>
+            </td>
+            <td>
+                <div class="form-group ">
+                <lable class=" control-label">E-mail：</lable>
+                <input type ="text" name="email" placeholder="邮箱"  class="form-control" >
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">QQ  ：</lable>
+                <input  name="QQ"  class="form-control "  title="只能数字"  >
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">微    信：</lable>
+                <input  name="weixin"  class="form-control "  title="只能数字及字母"  >
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                 <div class="form-group ">
+                <lable class=" control-label">工作：</lable>
+                <input type ="text" name="occupation" placeholder="手机号"  class="form-control" >
+                </div>
+            </td>
+            <td>
+                <div class="form-group ">
+                <lable class=" control-label">identityCard：</lable>
+                <input type ="text" name="identityCard" placeholder="邮箱"  class="form-control" >
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">homeAddress  ：</lable>
+                <input  name="homeAddress"  class="form-control "  title="只能数字"  >
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                <lable class="control-label">  linkedcareId：</lable>
+                <input  name="linkedcareId"  class="form-control "  title="只能数字及字母"  >
+                </div>
+            </td>
+        </tr>
+
+    </table>
+         <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">
+            <hr>
             <div class="form-group " >
-                <lable class=" control-label">新标签  ：</lable>
+                <lable class=" control-label">添加标签  ：</lable>
                 <input id="newTagsText" type ="text" name="newTags"  class="form-control" >
 {#                <button id="clear" class="btn btn-default" onclick="clear()">清除</button>#}
                 <div class="col-lg-12" style="padding-left: 0px; padding-top: 12px; padding-bottom: 12px">
@@ -58,9 +141,43 @@
                 </div>
             </div>
         </div>
-        <div>
-{#            <button type="submit" class="btn btn-default">提交</button>#}
+</div>
+
+        <hr>
+
+        <div class="row fileupload-buttonbar" >
+            <div class="col-lg-7">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>添加头像</span>
+                    <input type="file" name="files[]"  >
+                </span>
+                <button type="submit" class="btn btn-primary start">
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>确认提交</span>
+                </button>
+            </div>
         </div>
+
+    </form>
+
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">注意事项</h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li>姓名，病历号必须</li>
+                <li>病历号只能是<strong>数字字母</strong> </li>
+                <li>只能上传图像文件(<strong>JPG, GIF, PNG</strong></li>
+                <li>支持多文件同时拖拽入窗口上传</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
         <script> //添加标签名到文本框
             function addText(t) {
                var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;
@@ -77,45 +194,5 @@
             {#});#}
 
         </script>
-
-{#        <!-- Redirect browsers with JavaScript disabled to the origin page -->#}
-{#        <noscript><input type="hidden" name="redirect" value="upfile/"></noscript>#}
-        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-        <div class="row fileupload-buttonbar" >
-            <div class="col-lg-7">
-                <!-- The fileinput-button span is used to style the file input field as button -->
-                <span class="btn btn-success fileinput-button">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    <span>添加文件</span>
-                    <input type="file" name="files[]" multiple directory webkitdirectory >
-                </span>
-                <button type="submit" class="btn btn-primary start">
-                    <i class="glyphicon glyphicon-upload"></i>
-                    <span>开始上传</span>
-                </button>
-            </div>
-        </div>
-
-    </form>
-
-    <br>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Demo Notes</h3>
-        </div>
-        <div class="panel-body">
-            <ul>
-                <li>病历号只能是<strong>数字字母</strong> </li>
-                <li>只能上传图像文件(<strong>JPG, GIF, PNG</strong></li>
-                <li>支持多文件同时拖拽入窗口上传</li>
-                <li>暂时这么多</li>
-                <li>Please refer to the <a href="https://github.com/blueimp/jQuery-File-Upload">project website</a> and <a href="https://github.com/blueimp/jQuery-File-Upload/wiki">documentation</a> for more information.</li>
-                <li>Built with the <a href="http://getbootstrap.com/">Bootstrap</a> CSS framework and Icons from <a href="http://glyphicons.com/">Glyphicons</a>.</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-
 
 {% endblock %}

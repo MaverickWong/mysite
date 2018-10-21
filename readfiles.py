@@ -1,65 +1,334 @@
 #!/usr/bin/python
 # -*- coding:utf8 -*-
-
+# 这个一定要，不然会报错，但是错误很明显，容易定位。
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+import django
+django.setup()
+# django版本大于1.7时需要这两句
+
 from boards.models import *
+import re
+from PIL  import Image as Image2
+from pathlib import PurePosixPath
+
+
 
 def is_img(ext):
-  ext = ext.lower()
-  if ext in ['jpg', 'png', 'jpeg', 'bmp']:
-    return True
-  else:
-    return False
+    ext = ext.lower()
+    if ext in ['jpg', 'png', 'jpeg', 'bmp']:
+        return True
+    else:
+        return False
 
+def find_creat_Tag(name, person):
+    tags = Tag.objects.filter(name__contains=name)
+    if tags.count() == 1:  # 查到一个，则往该tag增加person
+        tags[0].persons.add(person)
+        tags[0].save()
+    elif tags.count() == 0:  # 未查到则新建tag
+        tag2 = Tag.objects.create(name=name)
+        tag2.persons.add(person)
+        tag2.save()
+
+
+
+base = "/Users/wcy/Documents/mysite2"
 # /Volumes/张栋梁病例照片/正畸患者照片/唇侧正畸/A/
-base = "/Users/Wang/mysite2/static/test"
+dir = "/static/picture/老硬盘照片"
+path = base+ dir
+# base = "\Users\Wang\mysite2/static/老硬盘照片"
 
 allpatients = []
 repeated = []
+# repeatedDic = {'name':'', 'id':'', 'path':''}
 added = []
+# addedDic = {'name':'', 'id':'', 'pk':'', 'path':''}
 created = []
+# createdDic = {'name':'', 'id':'', 'pk':'', 'path':''}
+pics =[]
+posts = []
+
+err = []
+d = u"[\u4e00-\u9fa5]+"  # 中文 匹配
+d2 = u"[d]+"  # 匹配 数字
+patternDigt = re.compile(r'\d+')   # 查找数字
+patternA = re.compile(d)
 
 
-def start():
-	for root, dirs, files in os.walk(base):
-		# if not dirs:
-		post = root.split('/')[-1]
-		p = root.split('/')[-2]
-		print("\n" +p + "  " + post)
+# def start():
+for root, dirs, files in os.walk(path):
+    have_file = False
+    for file in files:
+        # print("File:%s,  %s" %(file, root))fro
+        ext = file.split('.')[-1]
+        if is_img(ext):
+            have_file = True
 
-		pnum = Person.objects.filter(name__contains=p).count()
-		if pnum == 0:
-			newP = Person.objects.create(name=p, comment=p)
-			created.append(p)
-		elif pnum ==1:
-			newP = Person.objects.get(name=p)
-			added.append(p)
-		elif pnum >1:
-			repeated.append(p)
-			print("\n发现重复患者： %s" %p)
-			continue
-			
-		# if Post.objects.filter(name=post)
-		newPost = Post.objects.create(name=post, person=newP, type=1, comment=post)
+    # if not have_file:  # 空文件夹
+    #     continue
+    # else:  # 文件夹内有文件
+    if have_file:
+        post = root.split('/')[-1]  # post文件夹名称
+        if not post=='small':
+            try:
+                pfull = root.split('/')[-2]  # 患者文件夹名
+                print("\n读取。。" + pfull + "  " + post)
 
-		for file in files:
-			# print("File:%s,  %s" %(file, root))fro
-			ext = file.split('.')[-1]
-			if is_img(ext):
-				print("创建image：%s post：%s 患者：%s" %(file, post, p))
-				newImg = Image.objects.create(name=file, post=newPost, person=newP, path=root)
+                newP = Person.objects.get(pk=1) # 先随便取出一个人
 
-	with open('a.txt', 'w+') as f:
-		f.write('\n\n\n重复患者**************************************\n')
-		for line in repeated:
-			f.write(line+'\n')
-		f.write('\n\n\n新建患者**************************************\n')
-		for line in created:
-			f.write(line + '\n')
-		f.write('\n\n\n直接添加图片的患者*****************************\n')
-		for line in added:
-			f.write(line + '\n')
-		f.close()
+                # 提取名字+id ----默认人名文件夹中的数字只可能是id
+                nameList = patternA.findall(pfull)  # 名字
+                idlist = patternDigt.findall(pfull) # id
+
+                #  创建或者提取患者 newPerson
+                name = nameList[0]
+                if idlist: #有病历号
+                    id = idlist[0]
+                    print("\n解析为 " + name + "  " + id)
+                    pquery = Person.objects.filter(name__contains=name, idnum__contains=id)
+                    pnum = pquery.count()
+                    if pnum == 0:
+                        newP = Person.objects.create(name=name, idnum=id, comment=pfull)
+                        d = {'name':name, 'id':str(id), 'pk':str(newP.pk), 'path':root}
+                        created.append(d)
+                    elif pnum == 1:
+                        newP = pquery[0]
+                    elif pnum > 1: #  查询出多个患者，只登记
+                        d = {'name':name, 'id':str(id), 'path':root}
+                        repeated.append(d)
+                        print("\n发现重复患者： %s" % pfull)
+                        continue
+
+                else:  # 无病历号
+                    print("\n解析为 " + name + "  无id " )
+                    pquery = Person.objects.filter(name__contains=name)
+                    pnum = pquery.count()
+                    if pnum == 0:
+                        newP = Person.objects.create(name=name, comment=pfull)
+                        d = {'name':name, 'id':'', 'pk':str(newP.pk), 'path':root}
+                        created.append(d)
+                    elif pnum == 1:
+                        newP = Person.objects.get(name=name)
+                        # d = {'name':name, 'id':'', 'pk':str(newP.pk), 'path':root}
+                        # added.append(d)
+                    elif pnum > 1:
+                        d = {'name':name, 'id':'',  'path':root}
+                        repeated.append(d)
+                        print("\n发现重复患者： %s" % pfull)
+                        continue
+
+                # 设定privateDir
+                p= PurePosixPath(root)
+                priv = str(p.parents[0]).replace(base, '')
+                priv = priv.replace('/', '', 1) # 图片相对地址 static/picture     x/x/x/.jpg
+                newP.privateDir = priv
+                newP.save()
+
+                # 增加tag
+                # 从患者名字文件夹中提取
+                if nameList:
+                    for t in nameList:
+                        if not t == name: #  排除姓名
+                            find_creat_Tag(t, newP)
+                            # tags = Tag.objects.filter(name__contains=t)
+                            # if tags.count() == 1:  # 查到一个，则往该tag增加person
+                            #     tags[0].persons.add(newP)
+                            #     tags[0].save()
+                            # elif tags.count() == 0:  # 未查到则新建tag
+                            #     tag2 = Tag.objects.create(name=t)
+                            #     tag2.persons.add(newP)
+                            #     tag2.save()
+                # 从post文件夹名字中提取
+                postlist = patternA.findall(post)  # post中含有的汉子
+                for t in postlist:
+                    if not t == name:  # 排除姓名
+                        find_creat_Tag(t, newP)
+
+                biglist = ['唇侧', '舌侧', '隐适美', 'Invislign']
+                for t in biglist:
+                    if t in root:
+                        find_creat_Tag(t, newP)
+
+
+                #  开始处理post及图片
+                n = newP.posts.count()
+                #  处理post名称，取出所有数字
+                dd = patternDigt.findall(post)
+                post_re = ''  # 存储post名字中的所有数字，如果未找到数字，则存储post文件夹名
+                if dd:
+                    for d in dd:
+                        post_re = post_re + str(d)
+                else:
+                    post_re = post
+
+                # 如果post已经存在，则跳出循环，不处理内部的照片
+                if Post.objects.filter(comment__contains=post, person=newP).count()>0:
+                    continue
+                else:  # 不存在则新建post
+                    dir = root.replace(base, '') # 图片相对地址 /static/picture/xxx/xxx
+                    newPost = Post.objects.create(name=post_re, person=newP, type=n+1, comment=post, dir=dir)
+                    d = {'name':post, 'person':newP.name, 'pk':str(newPost.pk)}
+                    posts.append(d)
+
+                    # 开始处理图像，存储
+                    for file in files:
+                        ext = file.split('.')[-1]
+                        if is_img(ext):
+                            fpath = root+'/'+file
+                            path2 = fpath.replace(base, '')  # 图片相对地址 /static/picture/x/x/x/.jpg
+                            newImg = Image.objects.create(name=file, post=newPost, person=newP, path=path2)
+                            d = {'pk':str(newPost.pk), 'path':path2}
+                            pics.append(d)
+                            print("创建image：%s post：%s 患者：%s" % (file, post, pfull))
+
+
+                        # ext = file.split('.')[-1]
+                        # if is_img(ext):  # 是图像
+                        #     # dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
+                        #     icondir = root + '/small' + '/'
+                        #     iconpath = icondir+file
+                        #     if not os.path.exists(icondir):
+                        #         os.mkdir(icondir)
+                        #     # 制作缩略图函数
+                        #     fpath = root+'/'+file
+                        #     if os.path.exists(fpath):
+                        #         im = Image2.open(fpath)
+                        #         size = (400, 400)
+                        #         if im:
+                        #             try:
+                        #                 # im = Image.open(infile)
+                        #                 im.thumbnail(size)
+                        #                 im.save(iconpath, "JPEG")
+                        #             except IOError:
+                        #                 print("cannot create thumbnail")
+                        #
+                        #     path2 =   fpath.replace(base, '')  # 图片相对地址 /static/picture/x/x/x/.jpg
+                        #     iconpath2 = iconpath.replace(base, '')
+                        #     newImg = Image.objects.create(name=file, post=newPost, person=newP, path=path2, thumbnail=iconpath2)
+                        #     d = {'pk':str(newPost.pk), 'path':path2}
+                        #     pics.append(d)
+                        #     print("创建image：%s post：%s 患者：%s" % (file, post, pfull))
+            except:
+                pass
+
+
+
+with open('readfileResults.txt', 'w+') as f:
+
+    f.write('\n\n\n多名重复患者**************************************\n')
+    f.write('name' + ' ' +  'id'  + ' ' +  'path'  + '\n')
+    f.write('总计：'+ str(repeated.count())+ '\n')
+    for d in repeated:
+        f.write(d['name'] +' '+ d['id'] +' '+ d['path'] + '\n')
+
+    f.write('\n\n\n新建患者**************************************\n')
+    f.write('总计：'+ str(created.count())+ '\n')
+    f.write('name' + ' ' +  'id'  + ' ' + 'pk' +' '+  'path'  + '\n')
+    for d in created:
+        f.write(d['name'] +' '+ d['id'] +' ' +d['pk']+' '+ d['path'] + '\n')
+
+    # f.write('\n\n\n直接添加图片的患者*****************************\n')
+    # f.write('name' + ' ' +  'id'  + ' ' + 'pk' +' '+  'path'  + '\n')
+    # for d in added:
+    #     f.write(d['name'] +' '+ d['id'] +' ' +d['pk']+' '+ d['path'] + '\n')
+
+    f.write('\n\n\n直接添加 POSTs*****************************\n')
+    f.write('总计：'+ str(posts.count())+ '\n')
+    f.write('name' + ' ' +  'person'  + ' ' + 'pk' +' '+  'path'  + '\n')
+    for d in posts:
+        f.write(d['name'] +' '+ d['person'] +' ' +d['pk']+ '\n')
+
+    f.write('\n\n\n添加图片*****************************\n')
+    f.write('总计：'+ str(pics.count())+ '\n')
+    f.write('name' + ' ' +  'id'  + ' ' + 'pk' +' '+  'path'  + '\n')
+    for d in pics:
+        f.write(d['pk']+ d['path']+'\n')
+
+
+
+
+
+
+print("Log 保存完成，开始创建缩略图。。。")
+
+error=[]
+
+imgs = Image.objects.all()
+for img in imgs:
+    # 图像名
+    img_path= img.path
+    imgName= img_path.split('/')[-1]  # 赵云.p0.0186202.jpg
+    # 图像的目录
+    img_post  = img.post
+    post_path = img_post.dir
+
+    small_path = post_path+'/'+ 'small'+ '_'+ imgName
+    medium_path = post_path+'/'+ 'medium'+ '_'+ imgName
+
+    # 制作缩略图函数
+    if os.path.exists(img_path):
+        im = Image2.open(img_path)
+        size = (400, 400)
+        sizem = (1200, 1200)
+        if im:
+            try:
+                # im = Image.open(infile)
+                im.thumbnail(size)
+                im.save(small_path, "JPEG")
+                img.thumbnail = small_path
+                img.save()
+
+                im.thumbnail(sizem)
+                im.save(medium_path, "JPEG")
+                img.size_m = medium_path
+                img.save()
+
+
+            except IOError:
+                error.append(img.pk)
+
+with open('log_iconMake.txt', 'w+') as f:
+
+    f.write('\n错误**************************************\n')
+    # f.write('name' + ' ' + 'id' + ' ' + 'path' + '\n')
+    f.write('总计：' + str(error.count()) + '\n')
+    for d in error:
+        f.write(d + '\n')
+
+
+# ext = file.split('.')[-1]
+# if is_img(ext):  # 是图像
+#     # dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
+#     icondir = root + '/small' + '/'
+#     iconpath = icondir+file
+#     if not os.path.exists(icondir):
+#         os.mkdir(icondir)
+#     # 制作缩略图函数
+#     fpath = root+'/'+file
+#     if os.path.exists(fpath):
+#         im = Image2.open(fpath)
+#         size = (400, 400)
+#         if im:
+#             try:
+#                 # im = Image.open(infile)
+#                 im.thumbnail(size)
+#                 im.save(iconpath, "JPEG")
+#             except IOError:
+#                 print("cannot create thumbnail")
+#
+#     path2 =   fpath.replace(base, '')  # 图片相对地址 /static/picture/x/x/x/.jpg
+#     iconpath2 = iconpath.replace(base, '')
+#     newImg = Image.objects.create(name=file, post=newPost, person=newP, path=path2, thumbnail=iconpath2)
+#     d = {'pk':str(newPost.pk), 'path':path2}
+#     pics.append(d)
+#     print("创建image：%s post：%s 患者：%s" % (file, post, pfull))
+
+
+
+# start()
+
+
 
 #  walk的结果：root， dirs， filenames
 # 假设根据阶段分文件夹，则将第一个抛弃后，新建post，image，加到person

@@ -8,16 +8,17 @@
 {#{% endblock %}#}
 
 {% block content %}
-    <!---个人信息--->
 
+<!---个人信息 面板--->
  <div id="content" class="panel">
     <div class="panel-body ">
         <div class="row">
             <div class="col-md-3">
                 <h2><a href= {% url 'person_detail' patient.pk %}>{{ patient.name }}</a> </h2>
             </div>
-            <div class="col-md-3">病历号：{{ patient.idnum }}</div>
-    {#                <div>标签：{{ patient.tags.all }} </div>#}
+            <div class="col-md-2">病历号：{{ patient.idnum }}</div>
+            <div class="col-md-2">备注：{% if patient.comment %} {{ patient.comment }}  {% endif %}</div>
+
             <div class="col-lg-8">标签：
                 {% for t in patient.tags.all %}
                     <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"

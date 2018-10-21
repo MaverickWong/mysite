@@ -69,7 +69,7 @@ def delpost(request,ppk,postpk):
 def handle_file(request, person, post):
     files = request.FILES.getlist('files[]')  # 类型为mutilist
     # n = request.POST.get('name')
-    sep = '_'
+    sep = '_' #  文件名中的分隔符
     results = {}
     results["files"] = []
     print(files)
@@ -80,6 +80,12 @@ def handle_file(request, person, post):
         time = dt.strftime("%f")
 
         dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
+        if person.privateDir:
+            dir = person.privateDir
+        else:
+            person.privateDir = dir
+            person.save()
+
         icondir = dir  + 'small' + '/'
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -88,10 +94,10 @@ def handle_file(request, person, post):
 
         n2 = f.name
         suf = n2.split('.')[-1]
-        fname= person.name + sep+ 'p' + str(post.type) + sep + str(i) + time + '.' + suf
+        fname= person.name + sep+ 'S' + str(post.type) + sep + str(i) + time + '.' + suf
         path = dir + fname
-        # static / picture / 张飞233 / 张飞.p0.041411.jpg
-        iconpath = icondir + person.name + sep+ 'p' + str(post.type) + sep  + 'small'+sep +str(i) + time + '.' + suf
+        #  static / picture / 张飞_233 / 张飞_S0_041411.jpg
+        iconpath = icondir + 'small'+sep + person.name + sep+ 'S' + str(post.type) + sep   +str(i) + time + '.' + suf
         ff = open(path, 'wb+')
         # ff.name
         print(path)
@@ -116,10 +122,10 @@ def handle_file(request, person, post):
         pathU = '/' + path
         iconpathU = '/' +iconpath
         if post.type ==0 and i ==1:
-            person.icon = iconpath
+            person.icon = iconpathU
             person.save()
         # 保存到image
-        image = Image.objects.create(path=path, thumbnail=iconpath, post=post, person=person)
+        image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person)
 
         # 上传后返回信息
         if os.path.exists(path): # 再次确认文件是否保存
@@ -144,20 +150,39 @@ def new_person(request):
     if request.method == 'POST':
         docname = request.user.username
         # message = request.POST['ID']
-        # user = User.objects.first()
+        tag_list = request.POST['newTags']
         name = request.POST['name']
         idnum = request.POST['ID']
-        tag_list = request.POST['newTags']
+        # sex = request.POST['sex']
+        # birth = request.POST['nameCode']
+        # nameCode=request.POST['nameCode']
+        # 设定文件夹
+        dir = 'static/picture/' + name + '_' + idnum + '/'
 
         if Person.objects.filter(name=name, idnum=idnum, doctor=docname).exists():
             return redirect('wrong')
         else:
-            person = Person.objects.create(name=name, idnum=idnum, doctor=docname)
+            person = Person.objects.create(name=name, idnum=idnum, doctor=docname, privateDir=dir)
+            # TODO 添加新患者信息
+            # person = Person.objects.create(name=name,
+            #                                idnum=idnum,
+            #                                doctor=docname,
+            #                                mobile=request.POST['mobile'],
+            #                                nameCode=request.POST['nameCode'],
+            #                                email=request.POST['email'],
+            #                                QQ=request.POST['QQ'],
+            #                                weixin=request.POST['weixin'],
+            #                                occupation=request.POST['occupation'],
+            #                                identityCard=request.POST['identityCard'],
+            #                                homeAddress=request.POST['homeAddress'],
+            #                                linkedcareId=request.POST['linkedcareId']
+            #                                )
 
-        post = Post.objects.create(type=0, isFirst=1, person=person)
+
+        # post = Post.objects.create(type=0, isFirst=1, person=person)
 
         # 处理上传文件
-        results = handle_file(request, person, post)
+        # results = handle_file(request, person, post)
 
         # 处理新增tags
         new_tag_list = tag_list.split(' ')
@@ -172,12 +197,12 @@ def new_person(request):
                     tag2.persons.add(person)
                     tag2.save()
 
-        result2 = json.dumps(results)
-        return HttpResponse(result2, content_type='application/json')
+        # result2 = json.dumps(results)
+        return redirect('person_detail', person.pk)
 
     if request.method == 'GET':
         tags = Tag.objects.all()
-        return render(request, 'upload/index.html', {"tags":tags})
+        return render(request, 'upload/newPerson.html', {"tags":tags})
 
 
 def addpost(request, pk):

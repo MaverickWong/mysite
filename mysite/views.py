@@ -6,7 +6,7 @@ from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from boards.models import *
 from linkedcare.syncDB import query
-import json
+import json, datetime
 def hello(request):
     return render(request, 'upload-vue2.html')
 
@@ -66,10 +66,13 @@ def syncDB(request):
     office =['124', '122']
     for id in office:
         data = query(id) # 从易看牙获得数据
+
+        # 保存到文件
         fname = 'patients' + id
         with open(fname, 'w') as f:
             json.dump(data, f)
 
+        # 导入数据
         for item in data['items']:
             n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
             if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
@@ -92,15 +95,19 @@ def syncDB(request):
                                           )
                 succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
 
-    with open('result.txt', 'w') as f:
+    dt = datetime.now()
+    time = dt.strftime("%f")
+    with open('log-syncDB.txt', 'w') as f:
         # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
-        f.write('repeated \n')
-        for i in repeated:
-            f.write(i)
-            f.write('\n')
-        f.write('\n\n\n')
-        f.write('succeded \n')
+        f.write('succeded *******************************\n')
         for i in succeded:
             f.write(i)
             f.write('\n')
+
+        f.write('\n\n\n')
+        f.write('repeated *******************************\n')
+        for i in repeated:
+            f.write(i)
+            f.write('\n')
+
     return redirect('home')

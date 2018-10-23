@@ -7,11 +7,15 @@ import django
 django.setup()
 # django版本大于1.7时需要这两句
 
+# ssh://zdl@192.168.3.104:22/usr/bin/python3 -u /home/zdl/.pycharm_helpers/pydev/pydevd.py --multiproc --qt-support=auto --client '0.0.0.0' --port 33557 --file /home/zdl/mysite2/readfiles.py
+
+
 from boards.models import *
 import re
 from PIL  import Image as Image2
 from pathlib import PurePosixPath
-
+from datetime import date, time, datetime
+import threading
 
 
 def is_img(ext):
@@ -89,7 +93,7 @@ for root, dirs, files in os.walk(path):
                     pquery = Person.objects.filter(name__contains=name, idnum__contains=id)
                     pnum = pquery.count()
                     if pnum == 0:
-                        newP = Person.objects.create(name=name, idnum=id, comment=pfull)
+                        newP = Person.objects.create(name=name, idnum=id, comment=pfull, doctor='zdl')
                         d = {'name':name, 'id':str(id), 'pk':str(newP.pk), 'path':root}
                         created.append(d)
                     elif pnum == 1:
@@ -105,7 +109,7 @@ for root, dirs, files in os.walk(path):
                     pquery = Person.objects.filter(name__contains=name)
                     pnum = pquery.count()
                     if pnum == 0:
-                        newP = Person.objects.create(name=name, comment=pfull)
+                        newP = Person.objects.create(name=name, comment=pfull, doctor='zdl')
                         d = {'name':name, 'id':'', 'pk':str(newP.pk), 'path':root}
                         created.append(d)
                     elif pnum == 1:
@@ -210,20 +214,30 @@ for root, dirs, files in os.walk(path):
                         #     pics.append(d)
                         #     print("创建image：%s post：%s 患者：%s" % (file, post, pfull))
             except:
+                err.append(root)
                 pass
 
 
+print('\n导入完成，正在生成log文件。。。。')
 
-with open('readfileResults.txt', 'w+') as f:
+dt = datetime.now()
+time2 = dt.strftime("%m%d-%H%M%S")
+fname2='log/log_readfile' +time2+ '.txt'
+
+with open(fname2, 'w+') as f:
 
     f.write('\n\n\n多名重复患者**************************************\n')
     f.write('name' + ' ' +  'id'  + ' ' +  'path'  + '\n')
-    f.write('总计：'+ str(repeated.count())+ '\n')
+    f.write('总计：'+ str(len(repeated))+ '\n')
     for d in repeated:
         f.write(d['name'] +' '+ d['id'] +' '+ d['path'] + '\n')
 
-    f.write('\n\n\n新建患者**************************************\n')
-    f.write('总计：'+ str(created.count())+ '\n')
+    f.write('\n\n\n错误文件夹**************************************\n')
+    for e in err:
+        f.write(e+'\n')
+
+    f.write('\n\n\n新建患者*******************************************\n')
+    f.write('总计：'+ str(len(created) )+ '\n')
     f.write('name' + ' ' +  'id'  + ' ' + 'pk' +' '+  'path'  + '\n')
     for d in created:
         f.write(d['name'] +' '+ d['id'] +' ' +d['pk']+' '+ d['path'] + '\n')
@@ -233,14 +247,14 @@ with open('readfileResults.txt', 'w+') as f:
     # for d in added:
     #     f.write(d['name'] +' '+ d['id'] +' ' +d['pk']+' '+ d['path'] + '\n')
 
-    f.write('\n\n\n直接添加 POSTs*****************************\n')
-    f.write('总计：'+ str(posts.count())+ '\n')
+    f.write('\n\n\n直接添加 POSTs***********************************\n')
+    f.write('总计：'+ str(len(posts))+ '\n')
     f.write('name' + ' ' +  'person'  + ' ' + 'pk' +' '+  'path'  + '\n')
     for d in posts:
         f.write(d['name'] +' '+ d['person'] +' ' +d['pk']+ '\n')
 
-    f.write('\n\n\n添加图片*****************************\n')
-    f.write('总计：'+ str(pics.count())+ '\n')
+    f.write('\n\n\n添加图片*****************************************\n')
+    f.write('总计：'+ str(len(pics))+ '\n')
     f.write('name' + ' ' +  'id'  + ' ' + 'pk' +' '+  'path'  + '\n')
     for d in pics:
         f.write(d['pk']+ d['path']+'\n')
@@ -250,52 +264,153 @@ with open('readfileResults.txt', 'w+') as f:
 
 
 
-print("Log 保存完成，开始创建缩略图。。。")
+print("\nLog 保存完成，开始创建缩略图。。。")
+
+# 取出所有Image后，检查image的path，及thumbnail，size_m，如果none，则制作缩略图
+
+
 
 error=[]
-
-imgs = Image.objects.all()
-for img in imgs:
-    # 图像名
-    img_path= img.path
-    imgName= img_path.split('/')[-1]  # 赵云.p0.0186202.jpg
-    # 图像的目录
-    img_post  = img.post
-    post_path = img_post.dir
-
-    small_path = post_path+'/'+ 'small'+ '_'+ imgName
-    medium_path = post_path+'/'+ 'medium'+ '_'+ imgName
-
-    # 制作缩略图函数
-    if os.path.exists(img_path):
-        im = Image2.open(img_path)
-        size = (400, 400)
-        sizem = (1200, 1200)
-        if im:
-            try:
-                # im = Image.open(infile)
-                im.thumbnail(size)
-                im.save(small_path, "JPEG")
-                img.thumbnail = small_path
-                img.save()
-
-                im.thumbnail(sizem)
-                im.save(medium_path, "JPEG")
-                img.size_m = medium_path
-                img.save()
+imgAddIcon =[]
 
 
-            except IOError:
-                error.append(img.pk)
+def makeIconfor(imgs, d):
+    # imgs = Image.objects.all()
+    total = imgs.count()
+    i = 0
+    for img in imgs:
+        i=i+1
+        try:
+            # 图像名
+            img_path= base +  img.path
+            if os.path.exists(img_path):
 
-with open('log_iconMake.txt', 'w+') as f:
+                imgName= img_path.split('/')[-1]  # 赵云.p0.0186202.jpg
+                # 图像的目录
+                img_post  = img.post # TODO warnning 默认img已经有post信息，此处可能出错
+                post_path = base + img_post.dir
 
-    f.write('\n错误**************************************\n')
+                small_path = post_path+'/'+ 'small'+ '_'+ imgName
+                medium_path = post_path+'/'+ 'medium'+ '_'+ imgName
+
+                # 制作缩略图函数
+
+                if not img.thumbnail:
+                    im = Image2.open(img_path)
+                    size = (400, 400)
+                    if im:
+                    # im = Image.open(infile)
+                        im.thumbnail(size)
+                        im.save(small_path, "JPEG")
+                        img.thumbnail = small_path.replace(base, '')
+                        img.save()
+                        imgAddIcon.append(img.pk)
+
+                if not img.size_m:
+                    im = Image2.open(img_path)
+                    sizem = (1200, 1200)
+                    if im:
+                        im.thumbnail(sizem)
+                        im.save(medium_path, "JPEG")
+                        img.size_m = medium_path.replace(base, '')
+                        img.save()
+                        print('成功制作缩略图：' + img.path + '\n')
+
+        except:
+            error.append(img.pk)
+
+        try:
+            print('进度：' + str(i*100/total) + '%\n')
+        except:
+            pass
+
+lasti = Image.objects.all().last()
+biggestpk = lasti.pk
+# 0 - 1/4 2/4 3/4  1
+threads = []
+for ii in range(1, 5):
+    start = int( biggestpk * (ii-1)/4)
+    stop = int( biggestpk * ii/4 -1)
+    img2s = Image.objects.filter(pk__range=(start, stop))
+    t=threading.Thread(target=makeIconfor, args=(img2s, 1))
+    threads.append(t)
+    t.start()  # 开启新线程
+    t.join()  # 等待所有线程完成
+
+
+
+# error=[]
+# imgAddIcon =[]
+#
+# imgs = Image.objects.all()
+# total = imgs.count()
+# i = 0
+# for img in imgs:
+#     i=i+1
+#     try:
+#         # 图像名
+#         img_path= base +  img.path
+#         if os.path.exists(img_path):
+#
+#             imgName= img_path.split('/')[-1]  # 赵云.p0.0186202.jpg
+#             # 图像的目录
+#             img_post  = img.post # TODO warnning 默认img已经有post信息，此处可能出错
+#             post_path = base + img_post.dir
+#
+#             small_path = post_path+'/'+ 'small'+ '_'+ imgName
+#             medium_path = post_path+'/'+ 'medium'+ '_'+ imgName
+#
+#             # 制作缩略图函数
+#
+#             if not img.thumbnail:
+#                 im = Image2.open(img_path)
+#                 size = (400, 400)
+#                 if im:
+#                 # im = Image.open(infile)
+#                     im.thumbnail(size)
+#                     im.save(small_path, "JPEG")
+#                     img.thumbnail = small_path.replace(base, '')
+#                     img.save()
+#                     imgAddIcon.append(img.pk)
+#             if not img.size_m:
+#                 im = Image2.open(img_path)
+#                 sizem = (1200, 1200)
+#                 if im:
+#                     im.thumbnail(sizem)
+#                     im.save(medium_path, "JPEG")
+#                     img.size_m = medium_path.replace(base, '')
+#                     img.save()
+#                     print('成功制作缩略图：' + img.path + '\n')
+#
+#     except:
+#         error.append(img.pk)
+#
+#     try:
+#         print('进度：' + str(i*100/total) + '%\n')
+#     except:
+#         pass
+#
+
+
+print('\n缩略图完成，正在生成log文件。。。。')
+
+
+fname3 = 'log/log_iconMake' + time2 + '.txt'
+with open(fname3, 'w+') as f:
+
+    f.write('\n错误********************************************\n')
     # f.write('name' + ' ' + 'id' + ' ' + 'path' + '\n')
-    f.write('总计：' + str(error.count()) + '\n')
+    f.write('总计：' + str(len(error)) + '\n')
     for d in error:
         f.write(d + '\n')
 
+    f.write('\n\n\n成功添加******************************************\n')
+    # f.write('name' + ' ' + 'id' + ' ' + 'path' + '\n')
+    f.write('总计：' + str(len(imgAddIcon)) + '\n')
+    for d in imgAddIcon:
+        f.write(str(d) + '\n')
+
+print('\n完成。。。。')
 
 # ext = file.split('.')[-1]
 # if is_img(ext):  # 是图像

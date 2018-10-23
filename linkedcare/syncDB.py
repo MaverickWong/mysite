@@ -14,19 +14,20 @@ import json
 import sys
 from boards.models import *
 
+agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
 
+def test():
+    print('tesst')
 
 
 # 开始
-
-
-def query(officeId=122, userId = 745):
-    # 默认劲松
+def logIn(officeId=122, userId = 745):
     # officeId 劲松122 华贸124
     # officeId = 122
+    test()
     userId = 745
-    account ="zhangdongliang"
+    account = "zhangdongliang"
     passwd = "zhangdongliang666"
     # 登陆参数
     logURL = "https://simaier.linkedcare.cn/LogOn"
@@ -36,16 +37,43 @@ def query(officeId=122, userId = 745):
     payload = {"officeId": officeId, "account": account, "password": passwd, "validationCode": "",
                "platform": 1, "kickOther": "false", "clientId": "7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
                "isCheckMobileValidation": "", "mobileValidationCode": ""}
-    # 登录
+    # 登录并获得session
     s = requests.session()
     r = s.post(logURL, params=payload)
-    # print("login: " )
-    # 从cookie中获取token
+
+    return s
+
+# 从cookie中获取token
+def getTokenFromSession(s):
     cookie = s.cookies.get_dict()
     temp = cookie['AresToken']
     tempdict = eval(temp)  # 将字符串转为字典
     token = tempdict["access_token"]
+    return token
 
+# # 组装header
+# def getHeaders():
+#     token=
+#     headers = {'authority': 'api.linkedcare.cn:9001',
+#                "authorization": "bearer " + token, "access_token": token,
+#                # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+#                "origin": "https://simaier.linkedcare.cn",
+#                'Connection': 'keep-alive', 'user-agent': agent,
+#                'referer': 'https://simaier.linkedcare.cn/',
+#                'content-type': 'application/json;charset=UTF-8'
+#                }
+#     return headers
+
+
+def queryPatients(session, officeId=122, userId = 745):
+    # 默认劲松
+    agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+    s = session
+    # s = logIn()
+    # print("login: " )
+
+    # 从cookie中获取token
+    token = getTokenFromSession(s)
     # 组装header
     headers = {'authority': 'api.linkedcare.cn:9001',
                "authorization": "bearer " + token, "access_token": token,
@@ -64,15 +92,14 @@ def query(officeId=122, userId = 745):
         {"searchConfigId": 0, "code": "Sex", "showOrder": 2, "officeId": 0, "id": 0},
         {"searchConfigId": 0, "code": "Birth", "showOrder": 3, "officeId": 0, "id": 0},
         {"searchConfigId": 0, "code": "Mobile", "showOrder": 4, "officeId": 0, "id": 0}]
-    # condFields = [{"searchConfigId": 506, "code": "DoctorId", "comparator": "=", "value": "913", "officeId": 122, "id": 289}]
     condFields = []
-
+    # condFields= [{"searchConfigId": "", "code": "FirstVisit", "comparator": ">", "value": "2018-10-20"}]
     searchConfig = {"searchType": "患者查询", "name": "我的患者", "isPreferred": 'false', "isDefault": 'true',
                     "userId": userId, "isAscending": 'false', "isShowWeiXin": 'false', "orderByField": "p.Id",
                     "searchCondFields": condFields, "searchResultFields": searchResultFields,
                     "officeId": 0, "id": 0}
 
-    searchPayload = {"searchConfig": searchConfig, "pageSize": 3000, "pageIndex": 1, "searchText": ""}
+    searchPayload = {"searchConfig": searchConfig, "pageSize": 10, "pageIndex": 1, "searchText": ""}
 
     # searchResult = s.put(searchURL, params=searchPayload, headers=headers)
     searchResult = s.put(searchURL, headers=headers, data=json.dumps(searchPayload))
@@ -85,7 +112,7 @@ def query(officeId=122, userId = 745):
 
 
 
-# data = query()
+# data = queryPatients()
 
 # with open('a2.txt', 'r') as f:
 #     data = json.load(f)
@@ -100,7 +127,7 @@ def addID():
     office =['124', '122']
     n  = 0
     for id in office:
-        data = query(id) # 从易看牙获得数据
+        data = queryPatients(id) # 从易看牙获得数据
 
         for item in data['items']:
             ps = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name'])
@@ -127,7 +154,8 @@ def get_fill_DB():
 
     office =['124', '122']
     for id in office:
-        data = query(id) # 从易看牙获得数据
+        s = logIn()
+        data = queryPatients(s, id) # 从易看牙获得数据
 
         for item in data['items']:
             n = Person.objects.filter(idnum__contains=item['privateId']).count()
@@ -161,4 +189,44 @@ def get_fill_DB():
         for i in succeded:
             f.write(i)
             f.write('\n')
+
+
+
+def getRecordOfPatient(s,privId):
+    privId = 432349
+    UrlGetApptList = "https://api.linkedcare.cn:9001/api/v1/appointment-record/patient/"
+    # https: // api.linkedcare.cn: 9001 / api / v1 / appointment - record / patient / 432349
+
+    UrlGetImage = "https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId="
+    # https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId=1222210
+    s = logIn()
+
+    # 从cookie中获取token
+    token = getTokenFromSession(s)
+    # 组装header
+    headers = {'authority': 'api.linkedcare.cn:9001',
+               "authorization": "bearer " + token, "access_token": token,
+               # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+               "origin": "https://simaier.linkedcare.cn",
+               'Connection': 'keep-alive', 'user-agent': agent,
+               'referer': 'https://simaier.linkedcare.cn/',
+               'content-type': 'application/json;charset=UTF-8'
+               }
+    # 获取预约列表
+    re = s.get(UrlGetApptList+str(privId), headers=headers)
+    #json  {id: 1222594, officeId: 124, startTime: "2018-11-10T15:30:00", endTime: "2018-11-10T16:00:00",…}
+
+    apptList = json.loads(re.content)
+    if apptList:
+        for appt in apptList:
+            apptId = appt['id'] # 提取预约id
+            # 根据预约id找相对应的图片list
+            reImgList = s.get(UrlGetImage+str(apptId), headers=headers)
+            imgList = json.loads(reImgList.content)
+            for imgItem in imgList:
+                fullImgUrl = imgItem['fullImageUrl']
+                medimImgUrl = imgItem['mediumSizeImageUrl']
+                logoUrl =  imgItem['thumbnailUrl']
+
+
 

@@ -5,8 +5,11 @@ from django.template import Template, Context
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from boards.models import *
-from linkedcare.syncDB import query
-import json, datetime
+from linkedcare.syncDB import queryPatients, logIn
+import json
+from datetime import datetime
+
+
 def hello(request):
     return render(request, 'upload-vue2.html')
 
@@ -55,7 +58,7 @@ def person_detail(request, pk):
     return render(request, 'detail2.html', contex)
 
 
-# 从易看牙同步数据
+# 从易看牙同步患者基本信息
 def syncDB(request):
 
     # officeId 劲松122 华贸124
@@ -64,8 +67,10 @@ def syncDB(request):
     repeated = []
     succeded = []
     office =['124', '122']
+    # s = logIn()
     for id in office:
-        data = query(id) # 从易看牙获得数据
+        s = logIn(officeId=id)
+        data = queryPatients(s) # 从易看牙获得数据
 
         # 保存到文件
         fname = 'patients' + id
@@ -96,8 +101,10 @@ def syncDB(request):
                 succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
 
     dt = datetime.now()
-    time = dt.strftime("%f")
-    with open('log-syncDB.txt', 'w') as f:
+    time2 = dt.strftime("%m%d-%H%M%S")
+    fname2 = 'linkedcare/log-syncDB' + time2 + '.txt'
+
+    with open(fname2, 'w') as f:
         # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
         f.write('succeded *******************************\n')
         for i in succeded:

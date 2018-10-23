@@ -80,6 +80,9 @@ def handle_file(request, person, post):
         time = dt.strftime("%f")
 
         dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
+        post.dir = dir # 保存post的文件夹
+        post.save()
+        # 保存到person作为私人文件夹
         if person.privateDir:
             dir = person.privateDir
         else:

@@ -8,7 +8,7 @@ import django
 django.setup()
 # django版本大于1.7时需要这两句
 
-
+from datetime import datetime
 import requests
 import json
 import sys
@@ -25,7 +25,7 @@ def test():
 def logIn(officeId=122, userId = 745):
     # officeId 劲松122 华贸124
     # officeId = 122
-    test()
+    # test()
     userId = 745
     account = "zhangdongliang"
     passwd = "zhangdongliang666"
@@ -192,41 +192,8 @@ def get_fill_DB():
 
 
 
-def getRecordOfPatient(s,privId):
-    privId = 432349
-    UrlGetApptList = "https://api.linkedcare.cn:9001/api/v1/appointment-record/patient/"
-    # https: // api.linkedcare.cn: 9001 / api / v1 / appointment - record / patient / 432349
-
-    UrlGetImage = "https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId="
-    # https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId=1222210
-    s = logIn()
-
-    # 从cookie中获取token
-    token = getTokenFromSession(s)
-    # 组装header
-    headers = {'authority': 'api.linkedcare.cn:9001',
-               "authorization": "bearer " + token, "access_token": token,
-               # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
-               "origin": "https://simaier.linkedcare.cn",
-               'Connection': 'keep-alive', 'user-agent': agent,
-               'referer': 'https://simaier.linkedcare.cn/',
-               'content-type': 'application/json;charset=UTF-8'
-               }
-    # 获取预约列表
-    re = s.get(UrlGetApptList+str(privId), headers=headers)
-    #json  {id: 1222594, officeId: 124, startTime: "2018-11-10T15:30:00", endTime: "2018-11-10T16:00:00",…}
-
-    apptList = json.loads(re.content)
-    if apptList:
-        for appt in apptList:
-            apptId = appt['id'] # 提取预约id
-            # 根据预约id找相对应的图片list
-            reImgList = s.get(UrlGetImage+str(apptId), headers=headers)
-            imgList = json.loads(reImgList.content)
-            for imgItem in imgList:
-                fullImgUrl = imgItem['fullImageUrl']
-                medimImgUrl = imgItem['mediumSizeImageUrl']
-                logoUrl =  imgItem['thumbnailUrl']
 
 
 
+# s = logIn()
+# getXrayRecordOfPatient(s)

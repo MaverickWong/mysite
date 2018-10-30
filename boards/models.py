@@ -10,37 +10,37 @@ from django.contrib.auth.models import User
 # 患者信息
 class Person(models.Model):
     name = models.CharField(max_length=255, null=True)
-    nameCode = models.CharField(max_length=20, null=True)
+    nameCode = models.CharField(max_length=20, null=True, blank=True)
     # privateId
-    idnum = models.CharField(max_length=30, null=True)
-    otherPrivateId = models.CharField(max_length=20, null=True)
-    birth = models.DateField(null=True)  # linedcare- "birth": "1991-12-07T00:00:00",
-    sex = models.IntegerField(null=True)  # 男1 女2
+    idnum = models.CharField(max_length=30, null=True, blank=True)
+    otherPrivateId = models.CharField(max_length=20, null=True, blank=True)
+    birth = models.DateField(null=True, blank=True)  # linedcare- "birth": "1991-12-07T00:00:00",
+    sex = models.IntegerField(null=True, blank=True)  # 男1 女2
 
-    privateDir = models.CharField(max_length=255, null=True) # 个人目录，所有照片存在里面
-    comment = models.TextField(max_length=2000, null=True)  # 备注
-    icon = models.TextField(null=True, max_length=100)  # 头像path
-    isEnd = models.NullBooleanField(null=True)  # 是否结束
-    startDate = models.DateTimeField(null=True)
-    last_updated = models.DateTimeField(auto_now_add=True)
+    privateDir = models.CharField(max_length=255, null=True, blank=True) # 个人目录，所有照片存在里面
+    comment = models.TextField(max_length=2000, null=True, blank=True)  # 备注
+    icon = models.TextField(null=True, max_length=100, blank=True)  # 头像path
+    isEnd = models.NullBooleanField(null=True, blank=True)  # 是否结束
+    startDate = models.DateTimeField(null=True, blank=True)
+    last_updated = models.DateTimeField(auto_now_add=True, blank=True)
 
-    doctor = models.CharField(max_length=20, null=True) #  zdl
-    doctorId = models.IntegerField(null=True)
-    officeId = models.IntegerField(null=True)
-    clinic = models.CharField(null=True, max_length=20)
+    doctor = models.CharField(max_length=20, null=True, blank=True) #  zdl
+    doctorId = models.IntegerField(null=True, blank=True)
+    officeId = models.IntegerField(null=True, blank=True)
+    clinic = models.CharField(null=True, max_length=20, blank=True)
 
-    mobile = models.CharField(max_length=20, null=True)
-    email = models.CharField(max_length=40, null=True)
-    occupation = models.CharField(max_length=20, null=True)
-    qq = models.IntegerField(null=True)
-    weixin = models.CharField(max_length=40, null=True)
-    identityCard = models.CharField(max_length=20, null=True)
+    mobile = models.CharField(max_length=20, null=True, blank=True)
+    email = models.CharField(max_length=40, null=True, blank=True)
+    occupation = models.CharField(max_length=20, null=True, blank=True)
+    qq = models.IntegerField(null=True, blank=True)
+    weixin = models.CharField(max_length=40, null=True, blank=True)
+    identityCard = models.CharField(max_length=20, null=True, blank=True)
     homeAddress = models.CharField(max_length=50, null=True)
 
-    patientType = models.CharField(max_length=20, null=True)
-    lastVisit = models.DateTimeField(null=True)
-    lastDoctorId = models.IntegerField(null=True)
-    linkedcareId = models.IntegerField(null=True)
+    patientType = models.CharField(max_length=20, null=True, blank=True)
+    lastVisit = models.DateTimeField(null=True, blank=True)
+    lastDoctorId = models.IntegerField(null=True, blank=True)
+    linkedcareId = models.IntegerField(null=True, blank=True)
 
     # "name": "\u738b\u5929\u8212A", "nameCode": null, "sex": 2, "birth": "1991-12-07T00:00:00",
     # "mobile": "\u672c\u4eba:15210957869"
@@ -58,15 +58,17 @@ class Person(models.Model):
 
 # 不同复诊阶段
 class Post(models.Model):
-    name = models.CharField(max_length=255, null=True)
-    isFirst = models.NullBooleanField(null=True)  # 是否初诊
-    isLast = models.NullBooleanField(null=True)  # 是否结束照
-    type = models.IntegerField(null=False)  # 0初诊 9结束 23456...
-    upLoadTime = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    isFirst = models.NullBooleanField(null=True, blank=True)  # 是否初诊
+    isLast = models.NullBooleanField(null=True, blank=True)  # 是否结束照
+    type = models.IntegerField(null=False, blank=True)
+        # 0初诊 9结束 23456...
+        # 100以上为linkedcare 导出图像
+    upLoadTime = models.DateTimeField(auto_now_add=True, blank=True)
     person = models.ForeignKey('Person', related_name='posts', null=True, on_delete=models.SET_NULL)
-    comment = models.TextField(max_length=2000, null=True)
-    st_ctime = models.IntegerField(null=True) # 对应文件夹的创建时间，用于自动导入时的排序
-    dir = models.CharField(max_length=255, null=True)
+    comment = models.TextField(max_length=2000, null=True, blank=True)
+    st_ctime = models.IntegerField(null=True, blank=True) # 对应文件夹的创建时间，用于自动导入时的排序
+    dir = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return str(self.type)
@@ -92,11 +94,11 @@ class Image(models.Model):
 
 #
 class Tag(models.Model):
-    name = models.CharField(max_length=30, unique=True)
-    type = models.IntegerField(null=False, default=1)  # 0初诊 9结束 23456...
-    comment = models.CharField(max_length=100)
-    images = models.ManyToManyField(Image, related_name='tags')
-    persons = models.ManyToManyField(Person, related_name='tags')
+    name = models.CharField(max_length=30, unique=True, blank=True)
+    type = models.IntegerField(null=False, default=1, blank=True)  # 0初诊 9结束 23456...
+    comment = models.CharField(max_length=100, blank=True)
+    images = models.ManyToManyField(Image, related_name='tags', blank=True)
+    persons = models.ManyToManyField(Person, related_name='tags', blank=True)
 
     def __str__(self):
         return self.name

@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="dell" deleteMissingItems="true" createEmptyFolders="true">
+  <component name="PublishConfigData" serverName="192.168.1.12" deleteMissingItems="true" createEmptyFolders="true">
     <serverData>
       <paths name="192.168.1.12">
         <serverdata>
           <mappings>
             <mapping deploy="/mysite" local="$PROJECT_DIR$" web="/" />
           </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/newenv" />
-          </excludedPaths>
         </serverdata>
       </paths>
       <paths name="Copy of project-level server '192.168.1.12'">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/mysite" local="$PROJECT_DIR$" />
+            <mapping deploy="mysite" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -24,9 +21,6 @@
           <mappings>
             <mapping deploy="mysite2" local="$PROJECT_DIR$" />
           </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/newenv" />
-          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

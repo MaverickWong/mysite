@@ -9,13 +9,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import ProtectedError
 from boards.models import *
 
-from datetime import date, time, datetime
+from datetime import  datetime
 import os
 import json
 from PIL  import Image as Image2
 
 # Create your views here.
 # TODO 高级用户名是zdl
+
+sep = '_'
 
 def test(request):
     return HttpResponse("good")
@@ -65,11 +67,34 @@ def delpost(request,ppk,postpk):
     # return HttpResponseRedirect( reverse('person_detail', args=(ppk)) )
     return redirect('posts', ppk)
 
+def save_upload_file_make_logo(file, dir):
+    # 保存文件
+    logoPath = dir + 'logo.jpg'
+    if os.path.exists(logoPath):
+        ff = open(logoPath, 'wb+')
+        for chunk in file.chunks():
+            ff.write(chunk)
+        ff.close()
+
+        # 制作缩略图函数
+        im = Image2.open(logoPath)
+        ssize = (400, 400)
+        if im:
+            try:
+                im.thumbnail(ssize)
+                im.save(logoPath, "JPEG")
+                return logoPath
+            except IOError:
+                print("cannot create thumbnail")
+                return False
+
 # 处理上传文件
 def handle_file(request, person, post):
     files = request.FILES.getlist('files[]')  # 类型为mutilist
     # n = request.POST.get('name')
     sep = '_' #  文件名中的分隔符
+
+    # 返回结果
     results = {}
     results["files"] = []
     print(files)
@@ -77,8 +102,9 @@ def handle_file(request, person, post):
     i = 0
     for f in files:
         dt = datetime.now()
-        time = dt.strftime("%f")
-
+        times = dt.strftime("%f")
+        datestr = dt.strftime("%Y%m%d")
+        # static / picture / 张飞_233 /
         dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
         post.dir = dir # 保存post的文件夹
         post.save()
@@ -89,22 +115,28 @@ def handle_file(request, person, post):
             person.privateDir = dir
             person.save()
 
-        icondir = dir  + 'small' + '/'
+        # icondir = dir  + 'small' + '/'
+        icondir = dir
+        mediumdir = dir
         if not os.path.exists(dir):
             os.mkdir(dir)
         if not os.path.exists(icondir):
             os.mkdir(icondir)
-
-        n2 = f.name
-        suf = n2.split('.')[-1]
-        fname= person.name + sep+ 'S' + str(post.type) + sep + str(i) + time + '.' + suf
+        if not os.path.exists(mediumdir):
+            os.mkdir(icondir)
+        # 文件名及路径
+        # n2 = f.name
+        # # suf = n2.split('.')[-1]
+        suf = 'jpg'
+        # 文件名   张飞_20180101_S0_041411.jpg
+        fname= person.name + sep+ datestr  + sep + 'S'+ str(post.type)+ sep + str(i) + times + '.' + suf
+        # 相对全路径 static / picture / 张飞_233 / 张飞_20180101_041411.jpg
         path = dir + fname
-        #  static / picture / 张飞_233 / 张飞_S0_041411.jpg
-        iconpath = icondir + 'small'+sep + person.name + sep+ 'S' + str(post.type) + sep   +str(i) + time + '.' + suf
+        iconpath = icondir + 'small'+ fname
+        mediumpath = mediumdir + 'medium'+ fname
+
+        # 保存文件
         ff = open(path, 'wb+')
-        # ff.name
-        print(path)
-        print(f.name)
         for chunk in f.chunks():
             ff.write(chunk)
         ff.close()
@@ -113,29 +145,33 @@ def handle_file(request, person, post):
         # 制作缩略图函数
         if os.path.exists(path):
             im= Image2.open(path)
-            size = (400, 400)
+            ssize = (400, 400)
+            msize = (1200, 1200)
             if im:
                 try:
-                    # im = Image.open(infile)
-                    im.thumbnail(size)
+                    im.thumbnail(ssize)
                     im.save(iconpath, "JPEG")
+                    im.thumbnail(msize)
+                    im.save(mediumpath, "JPEG")
                 except IOError:
                     print("cannot create thumbnail")
 
         pathU = '/' + path
         iconpathU = '/' +iconpath
-        if post.type ==0 and i ==1:
-            person.icon = iconpathU
-            person.save()
-        # 保存到image
-        image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person)
 
-        # 上传后返回信息
+        # 保存到image
+        image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person, size_m=mediumpath)
+
+        # 添加头像
+        # if post.type ==0 and i ==1:
+        #     person.icon = iconpathU
+        #     person.save()
+
+        # 返回上传信息
         if os.path.exists(path): # 再次确认文件是否保存
             t1 = "文件名称:  " + fname
         else:
             t1 ="服务器保存失败"
-
         info = {
             "name": t1,
             "size": os.path.getsize(path),
@@ -151,21 +187,29 @@ def handle_file(request, person, post):
 def new_person(request):
     # board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
+
         docname = request.user.username
         # message = request.POST['ID']
         tag_list = request.POST['newTags']
         name = request.POST['name']
         idnum = request.POST['ID']
-        # sex = request.POST['sex']
         # birth = request.POST['nameCode']
         # nameCode=request.POST['nameCode']
         # 设定文件夹
-        dir = 'static/picture/' + name + '_' + idnum + '/'
+        try:
+            sex = request.POST['sex']
+        except:
+            sex = 0
+
+        # dir = 'static/picture/' + name + '_' + idnum + '/'
+        privateDir = 'static/picture/' + name + sep + str(idnum) + '/'
+        if not os.path.exists(privateDir):
+            os.mkdir(privateDir)
 
         if Person.objects.filter(name=name, idnum=idnum, doctor=docname).exists():
             return redirect('wrong')
         else:
-            person = Person.objects.create(name=name, idnum=idnum, doctor=docname, privateDir=dir)
+            person = Person.objects.create(name=name, idnum=idnum, doctor=docname, privateDir=privateDir)
             # TODO 添加新患者信息
             # person = Person.objects.create(name=name,
             #                                idnum=idnum,
@@ -180,12 +224,41 @@ def new_person(request):
             #                                homeAddress=request.POST['homeAddress'],
             #                                linkedcareId=request.POST['linkedcareId']
             #                                )
+            try:
+                person.mobile=request.POST['mobile']
+                person.save()
+                person.nameCode=request.POST['nameCode']
+                person.save()
+                person.email=request.POST['email']
+                person.save()
+                person.QQ=request.POST['QQ']
+                person.save()
+                person.weixin=request.POST['weixin']
+                person.save()
+                person.occupation=request.POST['occupation']
+                person.save()
+                person.identityCard=request.POST['identityCard']
+                person.save()
+                person.homeAddress=request.POST['homeAddress']
+                person.save()
+                person.linkedcareId=request.POST['linkedcareId']
+                person.save()
+                person.sex = request.POST['sex']
+                person.save()
+            except:
+                pass
 
 
         # post = Post.objects.create(type=0, isFirst=1, person=person)
 
-        # 处理上传文件
-        # results = handle_file(request, person, post)
+        # 处理上传图像，当做logo
+        files = request.FILES.getlist('files[]')  # 类型为mutilist
+        if files:
+            # logoPath = privateDir + 'logo.jpg'
+            path = save_upload_file_make_logo(files[0], privateDir)
+            if path:
+                person.icon = path
+                person.save()
 
         # 处理新增tags
         new_tag_list = tag_list.split(' ')

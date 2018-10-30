@@ -17,6 +17,21 @@
 {% endblock %}
 
 {% block content %}
+ <style type="text/css">
+        #result{
+            width: 300px;
+            height:140px;
+            border:1px solid #eee;
+        }
+        #result img{
+            width: 300px;
+        }
+        input{
+            alignment: center;
+            width: 200px;
+            margin-top: 10px;
+        }
+ </style>
 
 
 <div class="container">
@@ -27,7 +42,7 @@
 
 
     <table class="col-lg-12">
-    <form role="form" type="file" id="fileupload" name="img" class="form-inline" action="" method="POST" enctype="multipart/form-data">
+    <form role="form"  id="fileupload" name="files[]" class="form-inline" action="/new/" method="POST" enctype="multipart/form-data">
         <!-- 新添加的-->
         {% csrf_token %}
         <tr>
@@ -66,9 +81,12 @@
                 <input type="birth" name="startDate">
                 </div>
             </td>
-            <td>
+            <th rowspan="4">
+                <div id = "result"></div>
+                <input id="pic" type="file" name = 'file[]' accept = "image/*" onchange = "selectFile()"/>
 
-            </td>
+
+            </th>
         </tr>
         <tr>
             <td>
@@ -144,25 +162,26 @@
 </div>
 
         <hr>
-
-        <div class="row fileupload-buttonbar" >
-            <div class="col-lg-7">
-                <!-- The fileinput-button span is used to style the file input field as button -->
-                <span class="btn btn-success fileinput-button">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    <span>添加头像</span>
-                    <input type="file" name="files[]"  >
-                </span>
+{##}
+{#        <div class="row fileupload-buttonbar" >#}
+{#            <div class="col-lg-7">#}
+{#                <!-- The fileinput-button span is used to style the file input field as button -->#}
+{#                <span class="btn btn-success fileinput-button">#}
+{#                    <i class="glyphicon glyphicon-plus"></i>#}
+{#                    <span>添加头像</span>#}
+{#                    <input type="file" name="files[]"  >#}
+{#                </span>#}
+{##}
+{#            </div>#}
+{#        </div>#}
                 <button type="submit" class="btn btn-primary start">
                     <i class="glyphicon glyphicon-upload"></i>
                     <span>确认提交</span>
                 </button>
-            </div>
-        </div>
-
     </form>
 
     <br>
+    <hr>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">注意事项</h3>
@@ -194,5 +213,35 @@
             {#});#}
 
         </script>
+
+　<!-- <button onclick = "handIn()">提交</button> -->
+                <script type="text/javascript">
+                    //var files = document.getElementById('pic').files;
+                    var form = new FormData();//通过HTML表单创建FormData对象
+                    var url = '127.0.0.1:8080/'
+                    function selectFile(){
+                        var files = document.getElementById('pic').files;
+                        console.log(files[0]);
+                        if(files.length == 0){
+                            return;
+                        }
+                        var file = files[0];
+                        //把上传的图片显示出来
+                        var reader = new FileReader();
+                        // 将文件以Data URL形式进行读入页面
+                        console.log(reader);
+                        reader.readAsBinaryString(file);
+                        reader.onload = function(f){
+                            var result = document.getElementById("result");
+                            var src = "data:" + file.type + ";base64," + window.btoa(this.result);
+                            result.innerHTML = '<img src ="'+src+'"/>';
+                        }
+                        console.log('file',file);
+                        ///////////////////
+                        form.append('file',file);
+                        console.log(form.get('file'));
+                    }
+
+                </script>
 
 {% endblock %}

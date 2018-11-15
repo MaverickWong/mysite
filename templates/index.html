@@ -5,16 +5,17 @@
 
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
-  <li class="breadcrumb-item active">{{ topics.name }}</li>
+  <li class="breadcrumb-item active">{{ persons.name }}</li>
 {% endblock %}
 
 {% block content %}
 
-<div class="col-lg-9 col-sm-12  ">
+<div class="col-lg-8 col-sm-12  ">
+    <br>
     <div class="md-8 ">
         <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>
     </div>
-{#    <div class="try-online"><a class="btn-try btn btn-success btn-lg disabled"></a></div>#}
+
     <div class="panel panel-default">
       <div class="panel-body">
             <table class="table table-hover">
@@ -22,7 +23,7 @@
                   <tr>
                     <th>患者姓名</th>
                       <th>病历号</th>
-                    <th>复诊次数</th>
+                    <th>照相次数</th>
                     <th class="hidden-xs">性别</th>
                       {% if user.username == 'zdl' %}
                       <td class="hidden-xs"> 医生</td>
@@ -33,17 +34,21 @@
                 </thead>
               <!--- 列表 --->
                 <tbody>
-                  {% for person in persons.all %}
+                  {% for person in persons %}
                     <tr>
                       <td>
                         <a href="{% url 'person_detail' person.pk %}"><strong>{{ person.name }}</strong></a>
-                        <small class="text-muted d-block">{{ person.idnum }}</small></td>
-                      <td>{{ person.idnum }}</td>
+                        <small class="text-muted d-block">{{ person.idnum  |default:_('')}}</small></td>
+                      <td>{{ person.idnum |default:_('') }}</td>
                       <td> <span class="badge">{{ person.posts.count }} </span></td>
-                        <td class="hidden-xs">{{ person.sex }}</td>
+                        <td class="hidden-xs">
+                            {% if person.sex == 1 %}男{% endif %}
+                            {% if person.sex == 2 %}女{% endif %}
+
+                        </td>
                         {% if user.username == 'zdl' %}
                             {% if not person.doctor %} <td class="hidden-xs"> 无 </td>{% endif %}
-                            {% if person.doctor %}  <td class="hidden-xs"> {{ person.doctor }}</td> {% endif %}
+                            {% if person.doctor %}  <td class="hidden-xs"> {{ person.doctor |default:_('') }}</td> {% endif %}
                         {% endif %}
 
                         <td class="hidden-xs">{{ person.pk }}</td>
@@ -54,26 +59,69 @@
             </table>
       </div>
     </div>
+
+    {% if persons.has_other_pages %}
+      <nav aria-label="persons pagination" class="mb-4">
+        <ul class="pagination">
+          {% if persons.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ persons.previous_page_number }}">上一页</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">上一页</span>
+            </li>
+          {% endif %}
+          <li class="page-item active">
+            <span class="page-link">
+              {{ persons.number }}
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+
+
+          {% if persons.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ persons.next_page_number }}">下一页</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">下一页</span>
+            </li>
+          {% endif %}
+
+        </ul>
+      </nav>
+    {% endif %}
+
 </div>
+
 
 <!--- 标签 --->
 
-<div class="col-lg-3 col-sm-12 col-md-4">
-{#    {% if article_tags_list %}#}
+<div class="col-lg-4 col-sm-12 col-md-4">
     <div class="panel panel-default">
-        <div class="panel-heading">标签</div>
-        <div class="panel-body">
+      <div class="panel-body">
+        <a class="label label-danger" href="/ss/" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"> 多标签联合搜索</a>
 
-            {% for t in tags %}
-                <a class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)" href="/tags/{{ t.name }}"
-                   title="{{ t.name }}">
-                    {{ t.name }}
-                    <span class="badge">{{ t.persons.count }}</span>
-                </a>
-            {% endfor %}
-
-        </div>
+        {% include 'tag_list.html' %}
+      </div>
     </div>
+{#    {% if article_tags_list %}#}
+{#    <div class="panel panel-default">#}
+{#        <div class="panel-heading">标签</div>#}
+{#        <div class="panel-body">#}
+{##}
+{#            {% for t in tags %}#}
+{#                <a class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)" href="/tags/{{ t.name }}"#}
+{#                   title="{{ t.name }}">#}
+{#                    {{ t.name }}#}
+{#                    <span class="badge">{{ t.persons.count }}</span>#}
+{#                </a>#}
+{#            {% endfor %}#}
+{##}
+{#        </div>#}
+{#    </div>#}
     <div class="panel panel-default">
       <div class="panel-body">
         <h5> 所有患者数目：{{ total }}</h5>
@@ -84,11 +132,7 @@
         <h5> 请定期同步数据库</h5>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <h5> 所有患者数目：{{ total }}</h5>
-      </div>
-    </div>
+
 {#{% endif %}#}
 </div>
 

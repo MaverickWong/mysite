@@ -99,13 +99,13 @@ def queryPatients(session, officeId=122, userId = 745):
                     "searchCondFields": condFields, "searchResultFields": searchResultFields,
                     "officeId": 0, "id": 0}
 
-    searchPayload = {"searchConfig": searchConfig, "pageSize": 10, "pageIndex": 1, "searchText": ""}
+    searchPayload = {"searchConfig": searchConfig, "pageSize": 200, "pageIndex": 1, "searchText": ""}
 
     # searchResult = s.put(searchURL, params=searchPayload, headers=headers)
     searchResult = s.put(searchURL, headers=headers, data=json.dumps(searchPayload))
 
     # totalcount = eval(r.content)["totalCount"]
-    r2 = json.loads(searchResult.content)
+    r2 = json.loads(searchResult.content.decode('utf-8'))
     print(r2)
 
     return r2

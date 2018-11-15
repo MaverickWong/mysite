@@ -31,8 +31,14 @@ urlpatterns = [
     # url(r'^filer/', include('filer.urls')),
     url(r'^new/$', new_person, name='new_person'),
     url(r'^wrong/', wrong, name='wrong'),
+
     url(r'^search/', search, name='search'),
+    url(r'^search_suggest/', search_suggest, name='searchs'),
+
     url(r'^tags/(?P<tag>\w+)', tag_search),
+    url(r'^super_search/', super_search),
+    url(r'^ss/', s_search),
+
     # url(r'^test/', test, name='test'),
     url(r'^del/person/(?P<pk>\d+)', delperson),
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
@@ -40,7 +46,7 @@ urlpatterns = [
 
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
     url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
-
+    url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
     #post
     url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
     url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),

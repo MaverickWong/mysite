@@ -123,7 +123,7 @@
             // matched against the file type:
             loadImageFileTypes: /^image\/(gif|jpeg|png|svg\+xml)$/,
             // The maximum file size of images to load:
-            loadImageMaxFileSize: 10000000, // 10MB
+            loadImageMaxFileSize: 100000000, // 原来是10000000 =10MB，加了个0
             // The maximum width of resized images:
             imageMaxWidth: 1920,
             // The maximum height of resized images:

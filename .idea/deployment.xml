@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="192.168.1.12" deleteMissingItems="true" createEmptyFolders="true">
+  <component name="PublishConfigData" serverName="dell" deleteMissingItems="true" createEmptyFolders="true">
     <serverData>
       <paths name="192.168.1.12">
         <serverdata>

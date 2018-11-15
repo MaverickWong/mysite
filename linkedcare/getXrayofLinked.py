@@ -63,12 +63,17 @@ def getXrayOfperson(s, person):
         # json  {id: 1222594, officeId: 124, startTime: "2018-11-10T15:30:00", endTime: "2018-11-10T16:00:00",…}
 
         # person = Person.objects.get(linkedcareId=linkedcareId)
-        privDir = picDir + '/' + person.name + '_' + str(person.idnum) + '/'
+        # privDir = picDir + '/' + person.name + '_' + str(person.idnum) + '/'
         if person.privateDir:
             if person.privateDir[0] == '/':
                 dir = base + person.privateDir
+                if not dir[-1] =='/': # 补漏洞。。
+                    dir = dir+'/'
             else:
                 dir = base + '/' + person.privateDir
+                if not dir[-1] == '/':
+                    dir = dir + '/'
+
         else:
             dir = picDir + '/' + person.name + '_' + str(person.idnum) + '/'
             person.privateDir = dir.replace(base, '')  # 图片相对地址 /static/picture/xxx/xxx
@@ -150,6 +155,6 @@ for p in persons:
         n = Post.objects.filter(type__gt=20, person=p).count()
         if n > 0:
             continue
-        time.sleep(random.randint(1, 5))
+        # time.sleep(random.randint(1, 5))
         getXrayOfperson(s, p)
     print('\n第 %s个， total %s' %(str(i), str(total) ))

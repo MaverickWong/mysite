@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import ProtectedError
 from boards.models import *
-
+from mysite.settings import BASE_DIR
 from datetime import  datetime
 import os
 import json
@@ -22,32 +22,36 @@ sep = '_'
 def test(request):
     return HttpResponse("good")
 
-def search(request):
-    docname = request.user.username
-    s = request.GET['s']
-    if s.isnumeric(): # 搜索内容是数字
-        if docname == 'zdl':
-            persons = Person.objects.filter(idnum__contains=s)
-        else:
-            persons = Person.objects.filter(idnum__contains=s, doctor=docname)
-    else: # 搜索内容不是数字
-        if docname == 'zdl':
-            persons = Person.objects.filter(name__contains=s)
-        else:
-            persons = Person.objects.filter(name__contains=s, doctor=docname)
+def get_tag_groups():
+    tgroups = []
+    for i in range(10):
+        tgroup = Tag.objects.filter(type=i)
+        tgroups.append(tgroup)
+    return tgroups
 
-    return render(request, 'search.html', {'persons': persons})
+def s_search(request):
 
-def tag_search(request, tag):
-    docname = request.user.username
-    ut = str(tag)
-    t = Tag.objects.get(name=ut)
-    if docname == 'zdl':
-        ps = t.persons.all()
-    else:
-        ps= t.persons.filter(doctor=docname)
-    return render(request, 'search.html', {'persons': ps})
+    tgroups = get_tag_groups()
+    tags = Tag.objects.all()
 
+    return render(request, 's_search.html',{'tags':tags, 'tgroups':tgroups})
+
+@login_required()
+def person_detail(request, pk):
+    p = Person.objects.get(pk=pk)
+    name = p.name
+
+    picurl = ''
+    if p.icon:
+        picurl = p.icon
+        print(picurl)
+
+    posts = p.posts
+
+    contex = {'patient': p,  'posts': posts}
+
+    # return render(request, 'detail.html', contex)
+    return render(request, 'detail2.html', contex)
 
 
 def delperson(request, pk):
@@ -115,7 +119,11 @@ def handle_file(request, person, post):
             person.privateDir = dir
             person.save()
 
+        if dir[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+            dir = dir[1:]
         # icondir = dir  + 'small' + '/'
+        if not dir[-1] == '/': # 检查末尾是否有 '/'，如果没有，添加
+            dir = dir+'/'
         icondir = dir
         mediumdir = dir
         if not os.path.exists(dir):
@@ -149,18 +157,20 @@ def handle_file(request, person, post):
             msize = (1200, 1200)
             if im:
                 try:
-                    im.thumbnail(ssize)
-                    im.save(iconpath, "JPEG")
                     im.thumbnail(msize)
                     im.save(mediumpath, "JPEG")
+                    im.thumbnail(ssize)
+                    im.save(iconpath, "JPEG")
+
                 except IOError:
                     print("cannot create thumbnail")
 
         pathU = '/' + path
         iconpathU = '/' +iconpath
+        mediumpathU = '/' + mediumpath
 
         # 保存到image
-        image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person, size_m=mediumpath)
+        image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person, size_m=mediumpathU)
 
         # 添加头像
         # if post.type ==0 and i ==1:
@@ -264,12 +274,12 @@ def new_person(request):
         new_tag_list = tag_list.split(' ')
         if new_tag_list:
             for t in new_tag_list:
-                tags = Tag.objects.filter(name__contains=t)
+                tags = Tag.objects.filter(name=t)
                 if tags.count() == 1: # 查到一个
                     tags[0].persons.add(person)
                     tags[0].save()
                 elif tags.count() ==0: # 未查到
-                    tag2 = Tag.objects.create(name=t)
+                    tag2 = Tag.objects.create(name=t,type=101)
                     tag2.persons.add(person)
                     tag2.save()
 
@@ -277,8 +287,12 @@ def new_person(request):
         return redirect('person_detail', person.pk)
 
     if request.method == 'GET':
+        tgroups = []
+        for i in range(10):
+            tgroup = Tag.objects.filter(type=i)
+            tgroups.append(tgroup)
         tags = Tag.objects.all()
-        return render(request, 'upload/newPerson.html', {"tags":tags})
+        return render(request, 'upload/newPerson.html', {'tgroups':tgroups, "tags":tags})
 
 
 def addpost(request, pk):
@@ -286,14 +300,19 @@ def addpost(request, pk):
 
     if request.method == 'GET':
         # TODO 应该获取posts总数，然后发到网页内部
+        # tgroups = []
+        # for i in range(10):
+        #     tgroup = Tag.objects.filter(type=i)
+        #     tgroups.append(tgroup)
         tags = Tag.objects.all()
-        print(tags)
+        # print(tags)
         return render(request, 'upload/addpost.html', {'patient': p, "tags":tags})
 
     if request.method == 'POST':
         # p = Person.objects.get(pk=pk)
         postnum = request.POST.get('postType')
         tag_list = request.POST['newTags']
+        comment = request.POST['comment']
 
         # 如果没有，直接新建。如果有，则添加
         # 	isLast = request.POST.get('isLast')
@@ -302,12 +321,12 @@ def addpost(request, pk):
         if postnum.isnumeric():  # 有上传posttype， 往posttype增加image
             i = Post.objects.filter(type=postnum, person=p).count()
             if i ==0:
-                post = Post.objects.create(type=postnum, person=p)
+                post = Post.objects.create(type=postnum, person=p, comment=comment, name=comment)
             elif i ==1:
-                post = Post.objects.get(type=postnum, person=p)
+                post = Post.objects.get(type=postnum, person=p, comment=comment, name=comment)
         else:  # 未上传posttype， 新建post
             n= Post.objects.filter(person=p).count()
-            post = Post.objects.create(type=n + 1, person=p)
+            post = Post.objects.create(type=n + 1, person=p, comment=comment, name=comment)
         # Image保存生成path
         results = handle_file(request, p, post)
 
@@ -318,21 +337,24 @@ def addpost(request, pk):
         # 处理新增tags
         new_tag_list = tag_list.split(' ')
         if new_tag_list:
-            for t in new_tag_list:
-                tags = Tag.objects.filter(name__contains=t)
-                if tags.count() == 1:  # 查到一个
-                    tags[0].persons.add(p)
-                    tags[0].save()
-                elif tags.count() == 0:  # 未查到
-                    tag2 = Tag.objects.create(name=t)
-                    tag2.persons.add(p)
-                    tag2.save()
+            add_tag_from_string_for_person(new_tag_list,p)
 
         result2 = json.dumps(results)
         return HttpResponse(result2,  content_type='application/json')
 
     # return HttpResponse('{"status":"success"}', content_type='application/json')
 
+def add_tag_from_string_for_person(new_tag_list,p):
+    for t in new_tag_list:
+        if not t == '':
+            tags = Tag.objects.filter(name=t)
+            if tags.count() == 1:  # 查到一个
+                tags[0].persons.add(p)
+                tags[0].save()
+            elif tags.count() == 0:  # 未查到
+                tag2 = Tag.objects.create(name=t, type=101)
+                tag2.persons.add(p)
+                tag2.save()
 
 # # 患者详细信息展示
 # @login_required()
@@ -375,3 +397,23 @@ def baseinfo(request,pk):
 
 def wrong(request):
     return render(request, 'upload/wrong.html',{})
+
+def add_tag_for_person(request,pk):
+    if request.method == 'POST':
+        p = get_object_or_404(Person,pk=pk)
+        # postnum = request.POST.get('postType')
+        tag_list = request.POST['s']
+        # comment = request.POST['comment']
+
+        # 处理新增tags
+        new_tag_list = tag_list.split(' ')
+        if new_tag_list:
+            add_tag_from_string_for_person(new_tag_list, p)
+        return  redirect('person_detail',pk)
+
+    else:
+        p = get_object_or_404(Person,pk=pk)
+        tgroups = get_tag_groups()
+        tags = Tag.objects.all()
+
+        return render(request, 'add_tag.html', {'patient':p, 'tags':tags, 'tgroups':tgroups })

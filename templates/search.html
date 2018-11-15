@@ -17,7 +17,7 @@
         <th>复诊数</th>
         <th>性别</th>
         <th>PK</th>
-        <th>最后更新时间</th>
+        <th class="hidden-xs">最后更新时间</th>
       </tr>
     </thead>
     <tbody>
@@ -25,12 +25,15 @@
         <tr>
           <td>
             <a href="{% url 'person_detail' person.pk %}"><strong>{{ person.name }}</strong></a>
-            <small class="text-muted d-block">{{ person.idnum }}</small></td>
-          <td>{{ person.idnum }}</td>
+            <small class="text-muted d-block">{{ person.idnum}}</small></td>
+          <td>{{ person.idnum|default:_('') }}</td>
           <td> <span class="badge">{{ person.posts.count }} </span></td>
-            <td>{{ person.sex }}</td>
+            <td>
+                {% if person.sex == 1 %}男{% endif %}
+                {% if person.sex == 2 %}女{% endif %}
+            </td>
             <td>{{ person.pk }}</td>
-          <td>{{ person.last_updated }}</td>
+          <td class="hidden-xs">{{ person.last_updated }}</td>
         </tr>
       {% endfor %}
     </tbody>

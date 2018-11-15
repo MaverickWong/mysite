@@ -1,4 +1,5 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -8,40 +9,55 @@
         {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
 {#        <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
 {#        <script src="{% static 'bootstrap.min.js' %}"></script>#}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <script src="{% static 'js/bootstrap-suggest.js' %}"></script>
 
-        {% block link %}
-        {% endblock %}
+    {% block link %}
+    {% endblock %}
 
-      {% block stylesheet %}
+    {% block stylesheet %}
     {% endblock %}
   </head>
 
 
   <body>
-  {% block body %}
+
+{% block body %}
 
 
- <nav class="nav navbar-inverse col-lg-12 col-sm-12" >
-        <div class="container-fluid">
-          <div class="navbar-header">
-              <a class="navbar navbar-brand" href="{% url 'home' %}" style="margin-bottom: 0px;">
+ <nav class="nav navbar-inverse " >
+        <div class="container-fluid ">
+          <div class="navbar-header col-xs-6" style="margin-bottom: -20px">
+              <a class="navbar-brand" href="{% url 'home' %}" >
                   病例管理系统 v1.0
 {#                  <img src="{% static 'logo.png' %}" alt="logo" >#}
                 </a>
           </div>
 
 
+
+
             <!---  搜索框 --->
-          <form action="/search/" method="get" class=" navbar-form navbar-left form-inline" role="search">
-              <div class="form-group">
-                <input type="text"  name="s" class="form-control col-xs-6" placeholder="姓名或病历号..">
+          <form action="/search/" method="get" class="navbar-left navbar-form col-xs-6" role="search">
+              <div class="input-group">
+              <input name="s" type="text" class="form-control form-inline" id="test" placeholder="姓名、病历号、标签.." autocomplete="off" >
+{#                <button type="submit" class=" btn btn-default   ">搜索</button>#}
+                <div class="input-group-btn">
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
+                    </ul>
+                </div>
               </div>
-              <button type="submit" class=" btn btn-default">搜索</button>
+{#              <div class="form-group  ">#}
+{#                <input type="search"  name="s" class="form-control" placeholder="姓名、病历号、标签..">#}
+{#              </div>#}
+              <button type="submit" class=" btn btn-default  ">搜索</button>
+
+
           </form>
+
 
         <ul class="nav navbar-nav hidden-xs">
                     <li class="active"><a href={% url 'home' %}>病例</a></li>
@@ -84,5 +100,19 @@
         {% endblock %}
     </div>
 {% endblock %}
+
+  <script type="text/javascript">
+            {#$(document).ready(function(){#}
+                $("input#test").bsSuggest({
+                    url: "/search_suggest/?s=",
+                    allowNoKeyword: false, //无输入时不执行过滤请求
+                    multiWord: true, //以分隔符号分割的多关键字支持
+                    separator: ",", //多关键字支持时的分隔符
+                    getDataMethod: "url", //总是从 URL 获取数据
+                    showHeader: true
+                });
+            {#});#}
+    </script>
+
   </body>
 </html>

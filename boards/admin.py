@@ -11,7 +11,7 @@ import sys;
 # sys.setdefaultencoding("utf8")
 
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'idnum', 'birth', 'sex', 'comment', 'doctor', 'tags')
+    list_display = ('name', 'idnum', 'birth', 'sex', 'comment', 'doctor', 'privateDir')
     search_fields = ('name', 'idnum')
     list_filter = ('last_updated',)
     date_hierarchy = 'last_updated'
@@ -29,10 +29,18 @@ class PostAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'comment','type', )
-    filter_horizontal = ('images','persons')
+    # filter_horizontal = ('images','persons')
+    fields = ('name', 'type', 'comment',)
+    search_fields = ('name', 'type')
+    ordering = ('type',)
+
+
+class ImageAdmin(admin.ModelAdmin):
+    search_fields = ('name','path')
+    list_display = ('name', 'type','comment','path','person','post')
 
 # admin.site.register(Board)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Post, PostAdmin)
-admin.site.register(Image)
+admin.site.register(Image, ImageAdmin)
 admin.site.register(Tag, TagAdmin)

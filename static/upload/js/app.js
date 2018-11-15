@@ -27,7 +27,8 @@
                 delete $httpProvider.defaults.headers.common['X-Requested-With'];
                 fileUploadProvider.defaults.redirect = window.location.href.replace(
                     /\/[^\/]*$/,
-                    '/cors/result.html?%s'
+                    '.'
+                    // '/cors/result.html?%s'
                 );
                 // if (isOnGitHub) {
                     // Demo settings:

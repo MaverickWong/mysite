@@ -15,7 +15,8 @@ import re
 from PIL  import Image as Image2
 from datetime import datetime
 
-# 取出所有Image后，检查image的path，及thumbnail，size_m，如果none，则制作缩略图
+# 取出所有Image后，检查image的path，及thumbnail，size_m，
+# 如果没有，则制作缩略图
 #这个版本是按降序处理
 
 # /home/zdl/mysite2/static/picture/a正畸患者照片
@@ -60,7 +61,6 @@ for img in imgs:
             medium_path = post_path+'/'+ 'medium'+ '_'+ imgName
 
             # 制作缩略图函数
-
             if not img.thumbnail:
                 im = Image2.open(img_path)
                 size = (400, 400)
@@ -68,18 +68,37 @@ for img in imgs:
                 # im = Image.open(infile)
                     im.thumbnail(size)
                     im.save(small_path, "JPEG")
-                    img.thumbnail = small_path.replace(base, '')
+                    small_path2 = small_path.replace(base, '')
+                    if small_path2[0] == '/':
+                        img.thumbnail = small_path2
+                    else:
+                        img.thumbnail = '/'+ small_path2
                     img.save()
                     imgAddIcon.append(img.pk)
+
             if not img.size_m:
                 im = Image2.open(img_path)
                 sizem = (1200, 1200)
                 if im:
                     im.thumbnail(sizem)
                     im.save(medium_path, "JPEG")
-                    img.size_m = medium_path.replace(base, '')
+                    medium_path2 = medium_path.replace(base, '')
+                    if medium_path2[0] == '/':
+                        img.size_m = medium_path2
+                    else:
+                        img.size_m = '/'+ medium_path2
                     img.save()
                     print('成功制作缩略图：' + img.path + '\n')
+
+            # 检查开头是否有 '/'，如果没有，则添加
+            if not img.thumbnail[0] == '/':
+                img.thumbnail = '/' + img.thumbnail
+                img.save()
+            if not img.size_m[0] == '/':
+                img.size_m = '/' + img.size_m
+            if not img.path[0] == '/':
+                img.path = '/' + img.path
+                img.save()
 
     except:
         error.append(img.pk)
@@ -104,7 +123,7 @@ with open(fname3, 'w+') as f:
     # f.write('name' + ' ' + 'id' + ' ' + 'path' + '\n')
     f.write('总计：' + str(len(error)) + '\n')
     for d in error:
-        f.write(d + '\n')
+        f.write(str(d) + '\n')
 
     f.write('\n\n\n成功添加******************************************\n')
     # f.write('name' + ' ' + 'id' + ' ' + 'path' + '\n')

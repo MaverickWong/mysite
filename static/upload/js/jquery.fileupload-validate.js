@@ -60,11 +60,11 @@
             // against either file type or file name:
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             // The maximum allowed file size in bytes:
-            maxFileSize: 10000000, // 10 MB
+            maxFileSize: 100000000, // 100 MB 扩大十倍
             // The minimum allowed file size in bytes:
             minFileSize: undefined, // No minimal file size
             // The limit of files to be uploaded:
-            maxNumberOfFiles: 10,
+            maxNumberOfFiles: 50, //原来是10
             
 
             // Function returning the current number of files,
@@ -73,10 +73,10 @@
 
             // Error and info messages:
             messages: {
-                maxNumberOfFiles: 'Maximum number of files exceeded',
-                acceptFileTypes: 'File type not allowed',
-                maxFileSize: 'File is too large',
-                minFileSize: 'File is too small'
+                maxNumberOfFiles: '文件太多了',    //'Maximum number of files exceeded',
+                acceptFileTypes: '只支持jpg，png，gif格式的图像', //File type not allowed
+                maxFileSize: '文件太大，超过100兆',
+                minFileSize: '文件太小了'
             }
         },
 

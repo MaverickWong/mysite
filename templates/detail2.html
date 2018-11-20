@@ -53,8 +53,8 @@
 
 
 <ul class="nav nav-tabs" style="margin-top: -15px">
-    <li class="active"><a  href="/baseinfo/{{patient.pk}}" target="iframe_a">基本信息</a></li>
-    <li><a href={% url 'posts'  patient.pk  %} target="iframe_a">图像</a></li>
+    <li class="active"><a href={% url 'posts'  patient.pk  %} target="iframe_a">图像</a></li>
+    <li ><a  href="/baseinfo/{{patient.pk}}" target="iframe_a">基本信息</a></li>
     <li><a href={% url 'record:recordHome' patient.pk%} target="iframe_a">病历</a></li>
     <li><a  target="iframe_a">收费</a></li>
     <li><a  target="iframe_a">其他</a></li>
@@ -75,7 +75,7 @@
 {#</div>#}
 
     <!---内部框架--->
- <iframe src='/baseinfo/{{patient.pk}}'  width="100%" height="800" name="iframe_a" id="iframepage" frameborder="0"  marginheight="0" marginwidth="0"  >
+ <iframe src='{% url 'posts'  patient.pk  %}'  width="100%" height="800" name="iframe_a" id="iframepage" frameborder="0"  marginheight="0" marginwidth="0"  >
 
  </iframe>
 

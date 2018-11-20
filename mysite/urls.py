@@ -25,6 +25,8 @@ from record import urls as recordurls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home, name='home'),
+    url(r'^ip$', get_host_ip, name='hostip'),
+
     # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
     # url(r'^creat_new/$', creat_new_person, name='new_person'),
     # url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),

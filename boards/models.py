@@ -6,6 +6,13 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+from django.db.models import ImageField
+
+
+# class UserInfo(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     # head_img = models.ImageField()
+#     path =  models.CharField(max_length=255, null=True,blank=True) # 个人目录，所有照片存在里面
 
 # 患者信息
 class Person(models.Model):

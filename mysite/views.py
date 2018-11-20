@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from boards.models import *
@@ -8,6 +8,18 @@ from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 
+import socket
+
+
+def get_host_ip(request):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return HttpResponse(ip)
 
 def hello(request):
     return render(request, 'upload-vue2.html')
@@ -18,6 +30,22 @@ def hello(request):
 # 	return HttpResponse( t.render(c))
 #     #return render(request, 'home.html',{'board':'what ', 'a':'aaa'})
 
+# 组装paginator, 返回persons
+def get_paginator(queryset, page):
+    paginator = Paginator(queryset, 5)
+    try:
+        p = paginator.page(page)
+    except PageNotAnInteger:
+        # fallback to the first page
+        p = paginator.page(1)
+    except EmptyPage:
+        # probably the user tried to add a page number
+        # in the url, so we fallback to the last page
+        p = paginator.page(paginator.num_pages)
+
+    return p
+
+# 搜索框输入字符串，先判断是否tag，及人名
 def search_person_with_str(s, docname): # 搜索字符串和医生名字
     if s.isnumeric(): # 搜索内容是数字
         if docname == 'zdl':
@@ -28,7 +56,6 @@ def search_person_with_str(s, docname): # 搜索字符串和医生名字
         persons = Person.objects.none()
 
     else:
-
         list = s.split(' ') # 按空格分割关键词
         if docname == 'zdl':
             pt = persons = Person.objects.all()
@@ -55,7 +82,6 @@ def search_person_with_str(s, docname): # 搜索字符串和医生名字
                 persons = Person.objects.none()
             #     persons = persons
 
-
         else:
             persons = Person.objects.all()
             for i in list:
@@ -65,6 +91,8 @@ def search_person_with_str(s, docname): # 搜索字符串和医生名字
     return persons
 
 
+
+# 搜索框搜索
 def search(request):
     docname = request.user.username
     s = request.GET['s']
@@ -73,39 +101,38 @@ def search(request):
     else:
         persons = search_person_with_str(s, docname)
 
-    return render(request, 'search.html', {'persons': persons})
+    if persons.count() == 1:
+        return redirect('person_detail', persons.first().pk)
+    else:
+        ps = persons.order_by('pk')
+        total = ps.count()
+        page = request.GET.get('page', 1)
 
+        persons = get_paginator(ps, page)
+        return render(request, 'search_result.html', {'persons': persons, 's':s, 'total':total})
+
+
+# 单个 tag 搜索
 def tag_search(request, tag):
     docname = request.user.username
     ut = str(tag)
-    t = Tag.objects.get(name=ut)
+    # t = Tag.objects.get(name=ut)
+    t = get_object_or_404(Tag, name=ut)
     if docname == 'zdl':
         ps = t.persons.all()
     else:
         ps= t.persons.filter(doctor=docname)
-    return render(request, 'search.html', {'persons': ps})
 
-def search_suggest(request):
-    docname = request.user.username
-    s = request.GET['s']
-    if s =='':
-        persons =Person.objects.none()
-    else:
-        persons = search_person_with_str(s, docname)
+    ps = ps.order_by('pk')
+    total = ps.count()
+    page = request.GET.get('page', 1)
 
-    data = []
-    for p in persons:
-        data.append({'姓名':p.name, '病历号':p.idnum, '图像数':p.posts.count()})
-    # data = {'name':"<a href='/'>沃</a>", 'pk':1}
-    res = {"code": 200,
-           "redirect": "",
-           "value":data
-          }
-    return  JsonResponse(res)
-    # return HttpResponse(json.dumps(res), content_type="application/json")
+    persons = get_paginator(ps, page)
+
+    return render(request, 'search_result.html', {'persons': persons, 'total':total})
 
 
-
+# 多tag 相交搜索
 def super_search(request):
     docname = request.user.username
     s = request.GET['s']
@@ -122,10 +149,33 @@ def super_search(request):
                 qts = tags[0].persons.all()
                 persons = persons.intersection(qts)
 
-    return render(request, 'search.html', {'persons': persons})
+    total = persons.count()
+
+    return render(request, 'search_result.html', {'persons': persons, 'total':total})
 
 
-    # return render(request, 'super_search.html')
+
+
+# 搜索框推荐
+def search_suggest(request):
+    docname = request.user.username
+    s = request.GET['s']
+    if s == '':
+        persons = Person.objects.none()
+    else:
+        persons = search_person_with_str(s, docname)
+
+    data = []
+    for p in persons:
+        data.append({'姓名': p.name, '病历号': p.idnum, '图像数': p.posts.count()})
+    # data = {'name':"<a href='/'>沃</a>", 'pk':1}
+    res = {"code": 200,
+           "redirect": "",
+           "value": data
+           }
+    return JsonResponse(res)
+        # return HttpResponse(json.dumps(res), content_type="application/json")
+
 
 # 患者详细信息展示
 #
@@ -252,3 +302,5 @@ def syncDB(request):
             f.write('\n')
 
     return redirect('home')
+
+

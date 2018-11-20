@@ -30,11 +30,12 @@
 
  <nav class="nav navbar-inverse " >
         <div class="container-fluid ">
-          <div class="navbar-header col-xs-6" style="margin-bottom: -20px">
+          <div class="navbar-header col-xs-6" >
+{#              style="margin-bottom: -20px"#}
               <a class="navbar-brand" href="{% url 'home' %}" >
-                  病例管理系统 v1.0
-{#                  <img src="{% static 'logo.png' %}" alt="logo" >#}
+                  <img src="{% static 'logo.png' %}" alt="Brand" style="max-width: 200px; margin-left: -40px;  margin-top:-13px;  height: 200%">
                 </a>
+              <a class="navbar-brand" href="{% url 'home' %}" ></a>
           </div>
 
 
@@ -69,12 +70,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'syncdb' %}">同步易看牙数据</a></li>
-                            <li><a href="#">EJB</a></li>
-                            <li><a href="#">Jasper Report</a></li>
+                            <li><a href="{% url 'hostip' %}">本机ip</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">分离的链接</a></li>
+                            <li><a href="#">链接</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">另一个分离的链接</a></li>
+                            <li><a href="#">链接</a></li>
                         </ul>
                     </li>
                 </ul>

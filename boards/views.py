@@ -124,6 +124,10 @@ def handle_file(request, person, post):
         # icondir = dir  + 'small' + '/'
         if not dir[-1] == '/': # 检查末尾是否有 '/'，如果没有，添加
             dir = dir+'/'
+
+        # TODO 相对目录有时容易出问题
+        dir = os.path.join(BASE_DIR, dir)
+
         icondir = dir
         mediumdir = dir
         if not os.path.exists(dir):
@@ -193,7 +197,7 @@ def handle_file(request, person, post):
 
     return results
 
-
+@login_required()
 def new_person(request):
     # board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
@@ -212,7 +216,12 @@ def new_person(request):
             sex = 0
 
         # dir = 'static/picture/' + name + '_' + idnum + '/'
-        privateDir = 'static/picture/' + name + sep + str(idnum) + '/'
+        #根据每个医生user名生成文件夹
+        docDir = 'static/picture/' +docname+'/'
+        if not os.path.exists(docDir):
+            os.mkdir(docDir)
+
+        privateDir = docDir + name + sep + str(idnum) + '/'
         if not os.path.exists(privateDir):
             os.mkdir(privateDir)
 

@@ -208,10 +208,11 @@ def home(request):
             persons = Person.objects.filter(doctor=docname).order_by('pk')
             total = Person.objects.filter(doctor=docname).count()
 
-        tags = Tag.objects.all()
-        page = request.GET.get('page', 1)
+        # tags = Tag.objects.all()
 
-        paginator = Paginator(persons, 14)
+        # 分页
+        page = request.GET.get('page', 1)
+        paginator = Paginator(persons, 10)
         try:
             topics = paginator.page(page)
         except PageNotAnInteger:

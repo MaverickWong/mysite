@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+列表
+<hr>
+<a href="\task\add " data-toggle="modal" data-target="#myModal" title="添加">添加<i class="glyphicon glyphicon-plus"></i></a>
+
+{% if tasks %}
+    <table>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name  }} </td>
+            <td>{{ task.comment  }}</td>
+            <td>{{ task.get_group_display  }} </td>
+
+            <td>{% if task.get_status_display   == '要做' %}
+                    <label class="label label-warning">{{ task.get_status_display  }}</label>
+                {% elif task.get_status_display   == '已发送'  %}
+                    <label class="label label-info">{{ task.get_status_display  }}</label>
+                {% elif task.get_status_display   == '已收到'  %}
+                    <label class="label label-success">{{ task.get_status_display  }}</label>
+                {% elif task.get_status_display   == '已戴走'  %}
+                    <label class="label label-success">{{ task.get_status_display  }}</label>
+                {% endif %}
+            </td>
+            <td>{{ task.endtime  }}</td>
+            <td>{{ task.startTime  }}</td>
+            <td>{% for t in task.tags.all %}
+                    <label class="label label-success">{{ t  }}</label>
+                {% endfor %}
+
+            </td>
+
+            <td>
+{#                <a href="\task\add " data-toggle="modal" data-target="#myModal" title="添加">添加<i class="glyphicon glyphicon-plus"></i></a>#}
+                <a href="\task\edit\{{ task.pk }}" data-toggle="modal"  data-target="#myModal2" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
+                <a href="\task\del\{{ task.pk }}" onclick="return delete_data()" title="删除"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endif %}
+
+<script language="JavaScript">
+                    function delete_data() {
+                        if(confirm('您确定要删除吗？')){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                </script>
+
+<!-- 按钮触发模态框 -->
+{#<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">#}
+{#   开始演示模态框#}
+{#</button>#}
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               模态框（Modal）标题
+            </h4>
+         </div>
+         <div class="modal-body">
+            在这里添加一些文本
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default"
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary">
+               提交更改
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+    <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal2" tabindex="-2" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               模态框（Modal）标题
+            </h4>
+         </div>
+         <div class="modal-body">
+            在这里添加一些文本
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default"
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary">
+               提交更改
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+</body>
+</html>

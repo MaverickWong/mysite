@@ -63,8 +63,8 @@ urlpatterns = [
     url(r'^record/', include(('record.urls', 'record'), namespace='record')),
 
     url(r'^netdisk/', include('netdisk.urls')),
+    url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
 
-
-    url(r'up/$', hello),
+    # url(r'up/$', hello),
     # url(r'^p/', person_detail),
 ]

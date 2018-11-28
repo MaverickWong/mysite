@@ -16,6 +16,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="Copy of project-level server '192.168.1.12' (1)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/mysite" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="dell">
         <serverdata>
           <mappings>

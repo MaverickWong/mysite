@@ -169,9 +169,23 @@ def handle_file(request, person, post):
                 except IOError:
                     print("cannot create thumbnail")
 
-        pathU = '/' + path
-        iconpathU = '/' +iconpath
-        mediumpathU = '/' + mediumpath
+        # 制作url，及保存到数据库
+        path = path.replace(BASE_DIR, '')
+        iconpath = iconpath.replace(BASE_DIR, '')
+        mediumpath = mediumpath.replace(BASE_DIR, '')
+
+        if not path[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+            pathU = '/' + path
+        else:
+            pathU = path
+        if not iconpath[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
+            iconpathU = '/' +iconpath
+        else:
+            iconpathU = iconpath
+        if not mediumpath[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+            mediumpathU = '/' + mediumpath
+        else:
+            mediumpathU = mediumpath
 
         # 保存到image
         image = Image.objects.create(path=pathU, thumbnail=iconpathU, post=post, person=person, size_m=mediumpathU)
@@ -180,12 +194,15 @@ def handle_file(request, person, post):
         # if post.type ==0 and i ==1:
         #     person.icon = iconpathU
         #     person.save()
+        # if dir[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+        #     dir = dir[1:]
 
+        path = BASE_DIR +path
         # 返回上传信息
-        if os.path.exists(path): # 再次确认文件是否保存
-            t1 = "文件名称:  " + fname
+        if os.path.exists(path):  # 再次确认文件是否保存
+            t1 = "上传成功:  " + fname
         else:
-            t1 ="服务器保存失败"
+            t1 = "服务器保存失败"
         info = {
             "name": t1,
             "size": os.path.getsize(path),
@@ -194,6 +211,7 @@ def handle_file(request, person, post):
             "deleteUrl": '',
             "deleteType": "DELETE", }
         results["files"].append(info)
+
 
     return results
 

@@ -15,9 +15,7 @@ import re
 from PIL  import Image as Image2
 from datetime import datetime
 
-# 取出所有Image后，检查image的path，及thumbnail，size_m，
-# 如果没有，则制作缩略图
-#这个版本是按降序处理
+# 取出所有Image后，检查image的path，所有开头添加'/'
 
 # /home/zdl/mysite2/static/picture/a正畸患者照片
 base = "/home/zdl/mysite2"
@@ -44,9 +42,8 @@ for img in imgs:
     try:
         # 图像名
 
-
-            # 制作缩略图函数
-        if not img.thumbnail[0] == '/': #  检查开头是否有 '/'，如果没有，则添加
+        #  检查开头是否有 '/'，如果没有，则添加
+        if not img.thumbnail[0] == '/':
             img.thumbnail = '/' + img.thumbnail
             img.save()
         if not img.size_m[0] == '/':

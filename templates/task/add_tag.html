@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="modal-header">
+        <button type="button" class="close"
+           data-dismiss="modal" aria-hidden="true">
+              &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+           添加任务
+        </h4>
+     </div>
+     <div class="modal-body">
+
+         <form action="/task/add/" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="保存" />
+        </form>
+
+
+     </div>
+
+
+{#<form action="/task/add/" method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ form }}#}
+{#    <input type="submit" value="Submit" />#}
+{#</form>#}
+
+
+</body>
+</html>

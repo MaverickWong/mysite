@@ -5,22 +5,54 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, FileResponse
 from django.db.models import ProtectedError
-from boards.models import *
+from boards.models import Person, Tag, Post, Image
 from mysite.settings import BASE_DIR
-from datetime import  datetime
+from datetime import datetime
 import os
 import json
-from PIL  import Image as Image2
+from PIL import Image as Image2
+
+import mimetypes, zipfile
 
 # Create your views here.
 # TODO 高级用户名是zdl
 
 sep = '_'
 
+
+# 打包目录为zip文件（未压缩）
+def down_zip(request, pk):
+    p = Person.objects.get(pk=pk)
+    source_dir = BASE_DIR + '/'+ p.privateDir
+    output_filename = '/tmp/all.zip'
+
+    zipf = zipfile.ZipFile(output_filename, 'w')
+    pre_len = len(os.path.dirname(source_dir))
+    for parent, dirnames, filenames in os.walk(source_dir):
+        for filename in filenames:
+            pathfile = os.path.join(parent, filename) # 要打包的文件
+            arcname = pathfile[pre_len:].strip(os.path.sep)  # 在zip中的相对路径
+            zipf.write(pathfile, arcname)
+    zipf.close()
+
+    content_type, encoding = mimetypes.guess_type(str(output_filename))
+    content_type = content_type or 'application/octet-stream'
+
+    try:
+        f = open(output_filename, 'rb')
+        response = FileResponse(f, content_type=content_type)
+        return response
+        # f.close()
+
+    except IOError:
+        return HttpResponse(" 无法打开该文件，请检查文件名 ")
+
+
 def test(request):
     return HttpResponse("good")
+
 
 def get_tag_groups():
     tgroups = []
@@ -29,12 +61,13 @@ def get_tag_groups():
         tgroups.append(tgroup)
     return tgroups
 
-def s_search(request):
 
+def s_search(request):
     tgroups = get_tag_groups()
     tags = Tag.objects.all()
 
-    return render(request, 's_search.html',{'tags':tags, 'tgroups':tgroups})
+    return render(request, 's_search.html', {'tags': tags, 'tgroups': tgroups})
+
 
 @login_required()
 def person_detail(request, pk):
@@ -48,10 +81,10 @@ def person_detail(request, pk):
 
     posts = p.posts
 
-    contex = {'patient': p,  'posts': posts}
+    contex = {'patient': p, 'posts': posts}
 
     # return render(request, 'detail.html', contex)
-    return render(request, 'detail2.html', contex)
+    return render(request, 'boards/detail2.html', contex)
 
 
 def delperson(request, pk):
@@ -59,8 +92,9 @@ def delperson(request, pk):
     p.delete()
     return redirect('home')
 
+
 # TODO
-def delpost(request,ppk,postpk):
+def delpost(request, ppk, postpk):
     # try:
     po = Post.objects.get(pk=postpk)
     po.delete()
@@ -70,6 +104,7 @@ def delpost(request,ppk,postpk):
     # pk = int(ppk)
     # return HttpResponseRedirect( reverse('person_detail', args=(ppk)) )
     return redirect('posts', ppk)
+
 
 def save_upload_file_make_logo(file, dir):
     # 保存文件
@@ -92,11 +127,13 @@ def save_upload_file_make_logo(file, dir):
                 print("cannot create thumbnail")
                 return False
 
+
 # 处理上传文件
 def handle_file(request, person, post):
+    docname = request.user.username
     files = request.FILES.getlist('files[]')  # 类型为mutilist
     # n = request.POST.get('name')
-    sep = '_' #  文件名中的分隔符
+    sep = '_'  # 文件名中的分隔符
 
     # 返回结果
     results = {}
@@ -109,8 +146,8 @@ def handle_file(request, person, post):
         times = dt.strftime("%f")
         datestr = dt.strftime("%Y%m%d")
         # static / picture / 张飞_233 /
-        dir = 'static/picture/' + person.name + sep + str(person.idnum) + '/'
-        post.dir = dir # 保存post的文件夹
+        dir = 'static/picture/' + docname +'/' +person.name + sep + str(person.idnum) + '/'
+        post.dir = dir  # 保存post的文件夹
         post.save()
         # 保存到person作为私人文件夹
         if person.privateDir:
@@ -119,11 +156,11 @@ def handle_file(request, person, post):
             person.privateDir = dir
             person.save()
 
-        if dir[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+        if dir[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
             dir = dir[1:]
         # icondir = dir  + 'small' + '/'
-        if not dir[-1] == '/': # 检查末尾是否有 '/'，如果没有，添加
-            dir = dir+'/'
+        if not dir[-1] == '/':  # 检查末尾是否有 '/'，如果没有，添加
+            dir = dir + '/'
 
         # TODO 相对目录有时容易出问题
         dir = os.path.join(BASE_DIR, dir)
@@ -141,22 +178,22 @@ def handle_file(request, person, post):
         # # suf = n2.split('.')[-1]
         suf = 'jpg'
         # 文件名   张飞_20180101_S0_041411.jpg
-        fname= person.name + sep+ datestr  + sep + 'S'+ str(post.type)+ sep + str(i) + times + '.' + suf
+        fname = person.name + sep + datestr + sep + 'S' + str(post.type) + sep + str(i) + times + '.' + suf
         # 相对全路径 static / picture / 张飞_233 / 张飞_20180101_041411.jpg
         path = dir + fname
-        iconpath = icondir + 'small'+ fname
-        mediumpath = mediumdir + 'medium'+ fname
+        iconpath = icondir + 'small' + fname
+        mediumpath = mediumdir + 'medium' + fname
 
         # 保存文件
         ff = open(path, 'wb+')
         for chunk in f.chunks():
             ff.write(chunk)
         ff.close()
-        i = i+1
+        i = i + 1
 
         # 制作缩略图函数
         if os.path.exists(path):
-            im= Image2.open(path)
+            im = Image2.open(path)
             ssize = (400, 400)
             msize = (1200, 1200)
             if im:
@@ -174,15 +211,15 @@ def handle_file(request, person, post):
         iconpath = iconpath.replace(BASE_DIR, '')
         mediumpath = mediumpath.replace(BASE_DIR, '')
 
-        if not path[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+        if not path[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
             pathU = '/' + path
         else:
             pathU = path
         if not iconpath[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
-            iconpathU = '/' +iconpath
+            iconpathU = '/' + iconpath
         else:
             iconpathU = iconpath
-        if not mediumpath[0] == '/': #  检查开头是否有 '/'，如果有，则去除
+        if not mediumpath[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
             mediumpathU = '/' + mediumpath
         else:
             mediumpathU = mediumpath
@@ -197,7 +234,7 @@ def handle_file(request, person, post):
         # if dir[0] == '/': #  检查开头是否有 '/'，如果有，则去除
         #     dir = dir[1:]
 
-        path = BASE_DIR +path
+        path = BASE_DIR + path
         # 返回上传信息
         if os.path.exists(path):  # 再次确认文件是否保存
             t1 = "上传成功:  " + fname
@@ -212,8 +249,8 @@ def handle_file(request, person, post):
             "deleteType": "DELETE", }
         results["files"].append(info)
 
-
     return results
+
 
 @login_required()
 def new_person(request):
@@ -234,8 +271,8 @@ def new_person(request):
             sex = 0
 
         # dir = 'static/picture/' + name + '_' + idnum + '/'
-        #根据每个医生user名生成文件夹
-        docDir = 'static/picture/' +docname+'/'
+        # 根据每个医生user名生成文件夹
+        docDir = 'static/picture/' + docname + '/'
         if not os.path.exists(docDir):
             os.mkdir(docDir)
 
@@ -262,29 +299,28 @@ def new_person(request):
             #                                linkedcareId=request.POST['linkedcareId']
             #                                )
             try:
-                person.mobile=request.POST['mobile']
+                person.mobile = request.POST['mobile']
                 person.save()
-                person.nameCode=request.POST['nameCode']
+                person.nameCode = request.POST['nameCode']
                 person.save()
-                person.email=request.POST['email']
+                person.email = request.POST['email']
                 person.save()
-                person.QQ=request.POST['QQ']
+                person.QQ = request.POST['QQ']
                 person.save()
-                person.weixin=request.POST['weixin']
+                person.weixin = request.POST['weixin']
                 person.save()
-                person.occupation=request.POST['occupation']
+                person.occupation = request.POST['occupation']
                 person.save()
-                person.identityCard=request.POST['identityCard']
+                person.identityCard = request.POST['identityCard']
                 person.save()
-                person.homeAddress=request.POST['homeAddress']
+                person.homeAddress = request.POST['homeAddress']
                 person.save()
-                person.linkedcareId=request.POST['linkedcareId']
+                person.linkedcareId = request.POST['linkedcareId']
                 person.save()
                 person.sex = request.POST['sex']
                 person.save()
             except:
                 pass
-
 
         # post = Post.objects.create(type=0, isFirst=1, person=person)
 
@@ -302,11 +338,11 @@ def new_person(request):
         if new_tag_list:
             for t in new_tag_list:
                 tags = Tag.objects.filter(name=t)
-                if tags.count() == 1: # 查到一个
+                if tags.count() == 1:  # 查到一个
                     tags[0].persons.add(person)
                     tags[0].save()
-                elif tags.count() ==0: # 未查到
-                    tag2 = Tag.objects.create(name=t,type=101)
+                elif tags.count() == 0:  # 未查到
+                    tag2 = Tag.objects.create(name=t, type=101)
                     tag2.persons.add(person)
                     tag2.save()
 
@@ -319,7 +355,7 @@ def new_person(request):
             tgroup = Tag.objects.filter(type=i)
             tgroups.append(tgroup)
         tags = Tag.objects.all()
-        return render(request, 'upload/newPerson.html', {'tgroups':tgroups, "tags":tags})
+        return render(request, 'upload/newPerson.html', {'tgroups': tgroups, "tags": tags})
 
 
 def addpost(request, pk):
@@ -333,7 +369,7 @@ def addpost(request, pk):
         #     tgroups.append(tgroup)
         tags = Tag.objects.all()
         # print(tags)
-        return render(request, 'upload/addpost.html', {'patient': p, "tags":tags})
+        return render(request, 'upload/addpost.html', {'patient': p, "tags": tags})
 
     if request.method == 'POST':
         # p = Person.objects.get(pk=pk)
@@ -347,31 +383,32 @@ def addpost(request, pk):
         # 		newpost = Post.objects.create(type=postnum, isLast=True)
         if postnum.isnumeric():  # 有上传posttype， 往posttype增加image
             i = Post.objects.filter(type=postnum, person=p).count()
-            if i ==0:
+            if i == 0:
                 post = Post.objects.create(type=postnum, person=p, comment=comment, name=comment)
-            elif i ==1:
+            elif i == 1:
                 post = Post.objects.get(type=postnum, person=p, comment=comment, name=comment)
         else:  # 未上传posttype， 新建post
-            n= Post.objects.filter(person=p).count()
+            n = Post.objects.filter(person=p).count()
             post = Post.objects.create(type=n + 1, person=p, comment=comment, name=comment)
         # Image保存生成path
         results = handle_file(request, p, post)
 
-    # 	# post数目相等时，不创建新post，只更新最后post
-    # 	if postnum == p.posts.count():
-    # 		post = p.posts.last()
-    # 		#更新post的图片 handleFile(request, person)
+        # 	# post数目相等时，不创建新post，只更新最后post
+        # 	if postnum == p.posts.count():
+        # 		post = p.posts.last()
+        # 		#更新post的图片 handleFile(request, person)
         # 处理新增tags
         new_tag_list = tag_list.split(' ')
         if new_tag_list:
-            add_tag_from_string_for_person(new_tag_list,p)
+            add_tag_from_string_for_person(new_tag_list, p)
 
         result2 = json.dumps(results)
-        return HttpResponse(result2,  content_type='application/json')
+        return HttpResponse(result2, content_type='application/json')
 
     # return HttpResponse('{"status":"success"}', content_type='application/json')
 
-def add_tag_from_string_for_person(new_tag_list,p):
+
+def add_tag_from_string_for_person(new_tag_list, p):
     for t in new_tag_list:
         if not t == '':
             tags = Tag.objects.filter(name=t)
@@ -382,6 +419,7 @@ def add_tag_from_string_for_person(new_tag_list,p):
                 tag2 = Tag.objects.create(name=t, type=101)
                 tag2.persons.add(p)
                 tag2.save()
+
 
 # # 患者详细信息展示
 # @login_required()
@@ -404,30 +442,33 @@ def add_tag_from_string_for_person(new_tag_list,p):
 
 # 所有图片post
 def posts(request, pk):
-	p = Person.objects.get(pk=pk)
-	name = p.name
-
-	picurl = ''
-	if p.icon:
-		picurl = p.icon
-		print(picurl)
-
-	posts = p.posts
-
-	contex = {'patient': p,  'posts': posts}
-
-	return render(request, 'detail3.html', contex)
-
-def baseinfo(request,pk):
     p = Person.objects.get(pk=pk)
-    return render(request,'baseInfo.html', {'person':p})
+    name = p.name
+
+    picurl = ''
+    if p.icon:
+        picurl = p.icon
+        print(picurl)
+
+    posts = p.posts
+
+    contex = {'patient': p, 'posts': posts}
+
+    return render(request, 'boards/detail3.html', contex)
+
+
+def baseinfo(request, pk):
+    p = Person.objects.get(pk=pk)
+    return render(request, 'boards/baseInfo.html', {'person': p})
+
 
 def wrong(request):
-    return render(request, 'upload/wrong.html',{})
+    return render(request, 'upload/wrong.html', {})
 
-def add_tag_for_person(request,pk):
+
+def add_tag_for_person(request, pk):
     if request.method == 'POST':
-        p = get_object_or_404(Person,pk=pk)
+        p = get_object_or_404(Person, pk=pk)
         # postnum = request.POST.get('postType')
         tag_list = request.POST['s']
         # comment = request.POST['comment']
@@ -436,11 +477,11 @@ def add_tag_for_person(request,pk):
         new_tag_list = tag_list.split(' ')
         if new_tag_list:
             add_tag_from_string_for_person(new_tag_list, p)
-        return  redirect('person_detail',pk)
+        return redirect('person_detail', pk)
 
     else:
-        p = get_object_or_404(Person,pk=pk)
+        p = get_object_or_404(Person, pk=pk)
         tgroups = get_tag_groups()
         tags = Tag.objects.all()
 
-        return render(request, 'add_tag.html', {'patient':p, 'tags':tags, 'tgroups':tgroups })
+        return render(request, 'add_tag.html', {'patient': p, 'tags': tags, 'tgroups': tgroups})

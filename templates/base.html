@@ -6,12 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>{% block title %}病例管理系统{% endblock %}</title>
 
-        {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
 {#        <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
-{#        <script src="{% static 'bootstrap.min.js' %}"></script>#}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
+      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+{#    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>#}
+    <script src="{% static  'js/jquery-3.3.1.min.js'%} "></script>
+
+{#    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <script src="{% static 'js/bootstrap-suggest.js' %}"></script>
 
@@ -28,23 +32,20 @@
 {% block body %}
 
 
- <nav class="nav  navbar-inverse" >
+ <nav class="nav" >
         <div class="container-fluid ">
-          <div class="navbar-header col-xs-6" >
+          <div class="navbar-header col-xs-4" >
 {#              style="margin-bottom: -20px"#}
               <a class="navbar-brand" href="{% url 'home' %}" >
-                  <img src="{% static 'logo2.png' %}" alt="Brand" style="max-width: 200px; margin-left: -40px;  margin-top:-13px;  height: 200%">
-                </a>
-              <a class="navbar-brand" href="{% url 'home' %}" ></a>
+                  <img class="brand" src="{% static 'logo2.png' %}" alt="Brand" >
+              </a>
+              <a class="navbar-brand hidden-xs" href="{% url 'home' %}" >病例管理系统</a>
           </div>
-
-
-
 
             <!---  搜索框 --->
           <form action="/search/" method="get" class="navbar-left navbar-form col-xs-6" role="search">
               <div class="input-group">
-              <input name="s" type="text" class="form-control form-inline" id="test" placeholder="姓名、病历号、标签.." autocomplete="off" >
+              <input name="s" type="text" class="form-control form-inline" id="search" placeholder="姓名、病历号、标签.." autocomplete="off" >
 {#                <button type="submit" class=" btn btn-default   ">搜索</button>#}
                 <div class="input-group-btn">
                     <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
@@ -61,29 +62,42 @@
 
 
         <ul class="nav navbar-nav hidden-xs">
-                    <li class="active"><a href={% url 'home' %}>病例</a></li>
-                    <li><a href="/netdisk/">网盘</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            其他
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{% url 'syncdb' %}">同步易看牙数据</a></li>
-                            <li><a href="{% url 'hostip' %}">本机ip</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">链接</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">链接</a></li>
-                        </ul>
-                    </li>
+            <li class="active"><a href={% url 'home' %}>病例</a></li>
+            <li><a href="/netdisk/">网盘</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    其他
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{% url 'syncdb' %}">同步易看牙数据</a></li>
+                    <li><a href="{% url 'hostip' %}">本机ip</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">链接</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">链接</a></li>
                 </ul>
+            </li>
+        </ul>
           <!---  登陆验证 --->
           {% if user.is_authenticated %}
-              <div class="navbar-right hidden-xs" id="mainMenu">
-                  <a href="/logout" class="label label-warning"> {{ user.username }} </a>
-                  <a href="/logout" class="label label-warning"> 注销 </a>
-              </div>
+              <ul class="nav navbar-nav navbar-right hidden-xs">
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        用户
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout" > {{ user.username }}选项</a></li>
+                        <li><a href="/logout" > 注销 </a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">链接</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">链接</a></li>
+                    </ul>
+                  </li>
+              </ul>
+
           {% else %}
               <form class="form-inline ml-auto">
                   <a href="{% url 'login' %}" class="btn btn-outline-secondary">登陆</a>
@@ -102,16 +116,23 @@
 {% endblock %}
 
   <script type="text/javascript">
-            {#$(document).ready(function(){#}
-                $("input#test").bsSuggest({
+                $("input#search").bsSuggest({
                     url: "/search_suggest/?s=",
                     allowNoKeyword: false, //无输入时不执行过滤请求
                     multiWord: true, //以分隔符号分割的多关键字支持
                     separator: ",", //多关键字支持时的分隔符
                     getDataMethod: "url", //总是从 URL 获取数据
-                    showHeader: true
+                    showHeader: true,
+                    effectiveFields: ['name', 'idnum', 'pnum'],
+                    // 有效显示于列表中的字段，非有效字段都会过滤，默认全部有效。
+                    effectiveFieldsAlias: {'name':'姓名', 'idnum':'病历号' , 'pnum':'图像数'},
+                    // 有效字段的别名对象，用于 header 的显示
+                }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
+                    {#console.log('onSetSelectValue: ', e.target.value, selectedData, selectedRawData);#}
+                    {#console.log(selectedRawData['pk'])#}
+                    // 点击菜单后打开具体页面
+                    window.location.href='/detail/' + selectedRawData['pk'] + '/'
                 });
-            {#});#}
     </script>
 
   </body>

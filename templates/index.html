@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block link %}
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+{#    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>#}
 {% endblock %}
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
@@ -95,9 +95,11 @@
                         {% if p %}
                             <ul >
                                 {% for img in p.images.all %}
-                                    <li class="pic">
+                                    {% if forloop.counter < 5 %}
+                                        <li class="pic">
                                          <img  src="{{ img.thumbnail }}" >
-                                    </li>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
                         {% else %}

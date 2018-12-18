@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'record',
     'netdisk',
     'tasklist',
+    # 'filemanager',
     # 'linkedcare',
 ]
 

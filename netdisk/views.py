@@ -79,7 +79,8 @@ def showPath(request):
                 f = open(path, 'rb')
                 response = FileResponse(f, content_type=content_type)
                 return response
-                f.close()
+                # f.close()
+
             except IOError:
                 return HttpResponse(" 无法打开该文件，请检查文件名 ")
 
@@ -99,6 +100,7 @@ def showPath(request):
             ff.close()
             i = i + 1
         return HttpResponseRedirect(request.path)
+
 
 def makedir(request):
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}患者详情{% endblock %}
 
@@ -8,7 +9,9 @@
 {#{% endblock %}#}
 
 {% block link %}
-    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
+{#    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>#}
+        <script src="{% static 'js/vue2.2.2.js' %}"></script>
+
 {#    <style>#}
 {#        .dropbox {#}
 {#            border: .25rem dashed #007bff;#}
@@ -39,18 +42,22 @@
         <table>
          {% for name in  dirlist %}
                 <tr>
-                    <td><i class="glyphicon glyphicon-folder-open"> </i> </td>
+{#                    <td><i class="glyphicon glyphicon-folder-open"> </i> </td>#}
+                    <td><img src="{% static 'img/folder.svg' %}" style="max-width: 20px; margin-right: 5px"> </td>
+                    <td>  </td>
                     <td><a href="./{{ name }}"><span>{{ name }}</span> </a></td>
                 </tr>
             {% endfor %}
         </table>
 
-        <hr>
+{#        <hr>#}
 
          <table>
             {% for name in  filelist %}
                 <tr>
-                    <td><i class="glyphicon glyphicon-file"></i> </td>
+{#                    <td><i class="glyphicon glyphicon-file"></i> </td>#}
+                    <td><img src="{% static 'img/file.svg' %}" style="max-width: 15px; margin-right: 5px"> </td>
+                    <td style="margin-right: 10px">  </td>
                     <td><a href="./{{ name }}"><span>{{ name }}</span> </a></td>
                 </tr>
 

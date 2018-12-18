@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from boards.models import *
+from boards.models import Person, Tag, Post
 from linkedcare.syncDB import queryPatients, logIn
 import json
 from datetime import datetime
@@ -9,6 +9,16 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 
 import socket
+
+from mysite.settings import STATICFILES_DIRS
+
+# from filemanager import FileManager
+#
+# def filemanager(request,path):
+#
+#     fm = FileManager(STATICFILES_DIRS[0]+'/')
+#     return fm.render(request, path)
+#
 
 
 def get_host_ip(request):
@@ -109,7 +119,7 @@ def search(request):
         page = request.GET.get('page', 1)
 
         persons = get_paginator(ps, page)
-        return render(request, 'search_result.html', {'persons': persons, 's':s, 'total':total})
+        return render(request, 'search_result.html', {'persons': persons, 's': s, 'total':total})
 
 
 # 单个 tag 搜索
@@ -154,8 +164,6 @@ def super_search(request):
     return render(request, 'search_result.html', {'persons': persons, 'total':total})
 
 
-
-
 # 搜索框推荐
 def search_suggest(request):
     docname = request.user.username
@@ -167,14 +175,14 @@ def search_suggest(request):
 
     data = []
     for p in persons:
-        data.append({'姓名': p.name, '病历号': p.idnum, '图像数': p.posts.count()})
+        data.append({'name': p.name, 'idnum': p.idnum, 'pnum': p.posts.count(), 'pk':p.pk})
     # data = {'name':"<a href='/'>沃</a>", 'pk':1}
     res = {"code": 200,
            "redirect": "",
            "value": data
            }
     return JsonResponse(res)
-        # return HttpResponse(json.dumps(res), content_type="application/json")
+    # return HttpResponse(json.dumps(res), content_type="application/json")
 
 
 # 患者详细信息展示

@@ -27,8 +27,8 @@ def logIn(officeId=122, userId = 745):
     # officeId = 122
     # test()
     userId = 745
-    account = "zhangdongliang"
-    passwd = "zhangdongliang666"
+    account = "zhangdongliangzl"
+    passwd = "simaierzl123"
     # 登陆参数
     logURL = "https://simaier.linkedcare.cn/LogOn"
     agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
@@ -40,6 +40,11 @@ def logIn(officeId=122, userId = 745):
     # 登录并获得session
     s = requests.session()
     r = s.post(logURL, params=payload)
+
+    if r.status_code == 200:
+        print('登录成功')
+    else:
+        print('登录失败')
 
     return s
 
@@ -65,7 +70,7 @@ def getTokenFromSession(s):
 #     return headers
 
 
-def queryPatients(session, officeId=122, userId = 745):
+def queryPatients(session, officeId=122, userId = 2042):
     # 默认劲松
     agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
     s = session
@@ -191,9 +196,8 @@ def get_fill_DB():
             f.write('\n')
 
 
-
-
-
+if __name__ == '__main__':
+    pass
 
 # s = logIn()
 # getXrayRecordOfPatient(s)

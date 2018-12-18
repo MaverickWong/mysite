@@ -33,8 +33,8 @@ def login(request):
                 auth_login(request, user)
                 return redirect('home')
             else:
-                return render(request, 'login.html')
+                return render(request, 'account/login2.html')
     else:
-        return render(request, 'login.html')
+        return render(request, 'account/login2.html')
 
 # return  render(request,'signup.html', {'form':form})

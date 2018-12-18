@@ -21,6 +21,10 @@ from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
 from record import urls as recordurls
 
+# filemanager
+# from filemanager import path_end
+# from mysite.views import filemanager
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -34,19 +38,21 @@ urlpatterns = [
     url(r'^new/$', new_person, name='new_person'),
     url(r'^wrong/', wrong, name='wrong'),
 
+    # 搜索
     url(r'^search/', search, name='search'),
     url(r'^search_suggest/', search_suggest, name='searchs'),
 
-    url(r'^tags/(?P<tag>\w+)', tag_search),
+    url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
     url(r'^super_search/', super_search),
     url(r'^ss/', s_search),
 
     # url(r'^test/', test, name='test'),
     url(r'^del/person/(?P<pk>\d+)', delperson),
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
-    url(r'^syncDB/', syncDB, name='syncdb'), # 从易看牙同步数据
 
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
+    url(r'^down/(?P<pk>\d+)/$', down_zip),
+
     url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
     url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
     #post
@@ -65,6 +71,10 @@ urlpatterns = [
     url(r'^netdisk/', include('netdisk.urls')),
     url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
 
+    url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
+
     # url(r'up/$', hello),
     # url(r'^p/', person_detail),
+    # url(r'^abc/' + path_end, filemanager, name='filemanager'),
+
 ]

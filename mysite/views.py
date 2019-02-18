@@ -20,6 +20,8 @@ from mysite.settings import STATICFILES_DIRS
 #     return fm.render(request, path)
 #
 
+def bad(request):
+    return  render(request,'404.html')
 
 def get_host_ip(request):
     try:
@@ -245,9 +247,7 @@ def home(request):
         return redirect('login')
 
 
-
-
-# 从易看牙同步患者基本信息
+#  从易看牙同步患者基本信息
 def syncDB(request):
     dt = datetime.now()
     time2 = dt.strftime("%m%d-%H%M%S")
@@ -263,6 +263,8 @@ def syncDB(request):
         s = logIn(officeId=id)
         data = queryPatients(s) # 从易看牙获得数据
 
+        totalPages = data['pageCount']
+
         # 保存到文件
         try:
             fname = BASE_DIR+ '/linkedcare/get_patients' + id +'_'+time2 +'.txt'
@@ -271,7 +273,7 @@ def syncDB(request):
         except:
             pass
 
-        # 导入数据
+        # 导入到数据库
         for item in data['items']:
             n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
             if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者

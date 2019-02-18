@@ -16,7 +16,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_filter = ('last_updated',)
     date_hierarchy = 'last_updated'
     ordering = ('-last_updated',)
-    fields = ('name', 'idnum', 'nameCode', 'isEnd','startDate','mobile','occupation','birth', 'sex', 'comment', 'doctor')
+    fields = ('name', 'idnum', 'privateDir', 'nameCode', 'isEnd','startDate','mobile','occupation','birth', 'sex', 'comment', 'doctor')
 
     # def get_tags(self, obj):
     #     return obj.tags

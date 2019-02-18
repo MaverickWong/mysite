@@ -1,36 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>新复诊</title>
-
-    <meta name="description" content="File Upload">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap styles -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    {#<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
-
-
-    <!-- Generic page styles -->
-    {#<link rel="stylesheet" href="../static/upload/css/style.css">#}
-    <!-- blueimp Gallery styles -->
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>新复诊</title>#}
+{##}
+{#    <meta name="description" content="File Upload">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <!-- Bootstrap styles -->#}
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
+{##}
+{##}
+{#    <!-- Generic page styles -->#}
+{#    <!-- blueimp Gallery styles -->#}
     <link rel="stylesheet" href="/static/upload/css/blueimp-gallery.min.css">
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
     <link rel="stylesheet" href="/static/upload/css/jquery.fileupload.css">
     <link rel="stylesheet" href="/static/upload/css/jquery.fileupload-ui.css">
-    <!-- CSS adjustments for browsers with JavaScript disabled -->
-    {#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-noscript.css"></noscript>#}
-    {#<noscript><link rel="stylesheet" href="../static/upload/css/jquery.fileupload-ui-noscript.css"></noscript>#}
-    {#{% endblock %}#}
-
-</head>
-<body>
+{##}
+{##}
+{#</head>#}
+{#<body>#}
 {#<div class="container">#}
 
     <h2>资料上传</h2>
-
+<!-- post xray 是其他地址，注意该-->
     <!-- The file upload form used as target for the file upload widget -->
-    <form type="file" id="fileupload" name="img" action="" method="POST" enctype="multipart/form-data">
+    <form type="file" id="fileupload" name="img" action="/posts/{{ patient.pk }}/addpost" method="POST" enctype="multipart/form-data">
         <!-- 新添加的-->
         {% csrf_token %}
 
@@ -253,11 +248,11 @@
 <script src="/static/upload/js/main.js"></script>
 <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
 <!--[if (gte IE 8)&(lt IE 10)]>
-<script src="js/cors/jquery.xdr-transport.js"></script>
+{#<script src="js/cors/jquery.xdr-transport.js"></script>#}
 <![endif]-->
-
-</body>
-</html>
+{##}
+{#</body>#}
+{#</html>#}
 
 
 

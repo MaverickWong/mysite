@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block title %}Page not found{% endblock %}
 
@@ -6,4 +8,6 @@
 <h1>Page not found</h1>
 
 <p>Sorry, but the requested page could not be found.</p>
+    <img   src="{% static 'img/bad.jpg' %}">
+</img>
 {% endblock %}

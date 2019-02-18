@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<table class="table ">
+    <tr>
+        <td class="col-md-2  col-lg-1">姓名： {{ person.name|default:_('')  }}</td>
+        <td class="col-md-1  col-lg-1">病历号： {{ person.idnum |default:_('') }}</td>
+        <td class="col-md-1  col-lg-1">患者类型： {{ person.patientType|default:_('')  }}</td>
+    </tr>
+    <tr>
+        <td>生日: {{ person.birth|default:_('')  }}</td>
+        <td>年龄: _</td>
+        <td>性别: {{ person.sex|default:_('')  }}</td>
+    </tr>
+    <tr>
+        <td>手机:  {{ person.mobile|default:_('')  }}</td>
+
+        <td>QQ: {{ person.qq |default:_('') }}</td>
+        <td>微信: {{ person.weixin |default:_('') }}</td>
+    </tr>
+    <tr>
+        <td>住址: {{ person.homeAddress|default:_('')  }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>备注:  {{ person.comment|default:_('')  }}</td>
+        <td></td>
+    </tr>
+</table>
+</body>
+</html>

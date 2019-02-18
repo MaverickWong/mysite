@@ -70,7 +70,7 @@ def getTokenFromSession(s):
 #     return headers
 
 
-def queryPatients(session, officeId=122, userId = 2042):
+def queryPatients(session, pageindex=1, officeId=122, userId = 2042):
     # 默认劲松
     agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
     s = session
@@ -104,7 +104,7 @@ def queryPatients(session, officeId=122, userId = 2042):
                     "searchCondFields": condFields, "searchResultFields": searchResultFields,
                     "officeId": 0, "id": 0}
 
-    searchPayload = {"searchConfig": searchConfig, "pageSize": 200, "pageIndex": 1, "searchText": ""}
+    searchPayload = {"searchConfig": searchConfig, "pageSize": 200, "pageIndex": pageindex, "searchText": ""}
 
     # searchResult = s.put(searchURL, params=searchPayload, headers=headers)
     searchResult = s.put(searchURL, headers=headers, data=json.dumps(searchPayload))
@@ -130,7 +130,7 @@ def addID():
     repeated = []
     succeded = []
     office =['124', '122']
-    n  = 0
+    n = 0
     for id in office:
         data = queryPatients(id) # 从易看牙获得数据
 
@@ -152,7 +152,7 @@ def addID():
             f.write(i)
             f.write('\n')
 
-
+# 主要函数，
 def get_fill_DB():
     repeated = []
     succeded = []

@@ -1,40 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}患者详情{% endblock %}
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-<body>
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
+  <li class="breadcrumb-item active">患者信息</li>
+{% endblock %}
 
-<div  class="container">
+{% block content %}
+
+{##}
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">#}
+{##}
+{#        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
+{#    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>#}
+{#    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#<div  class="container">#}
 
 {% if msg %}
 
-<div class="alert alert-success" role="alert">{{ msg }}
-</div>
+{#<div class="alert alert-success" role="alert">{{ msg }}#}
+{#</div>#}
 {% endif %}
 
+<div class="col-md-7">
+    <hr>
+    <a class="btn btn-default" href="\task\add " data-toggle="modal" data-target="#myModal" title="添加新任务">添加<i class="glyphicon glyphicon-plus"></i></a>
+</div>
 
-<a href="\task\add " data-toggle="modal" data-target="#myModal" title="添加">添加<i class="glyphicon glyphicon-plus"></i></a>
-
+<!-- 卡片-->
+<div>
 {% if tasks %}
         {% for task in tasks %}
-        <div class="panel panel-body">
+        <div class="panel panel-body col-md-7">
             <div class="row">
-                <div class="col-md-6 col-xs-6">{{ task.name  }}  <small>{{ task.comment  }}</small></div>
-                <div class="col-md-6 col-xs-6">
-    {#                <a href="\task\add " data-toggle="modal" data-target="#myModal" title="添加">添加<i class="glyphicon glyphicon-plus"></i></a>#}
-                    <a href="\task\edit\{{ task.pk }}" data-toggle="modal"  data-target="#myModal2" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
-                    <a href="\task\del\{{ task.pk }}" onclick="return delete_data()" title="删除"><i class="glyphicon glyphicon-trash text-danger"></i></a>
-
+                <div style="background-color: #9fcdff">
+                    <div class="col-md-11 col-xs-6">{{ task.name  }}  <small>{{ task.comment  }}</small></div>
+                    <div class="col-md-1 col-xs-6">
+                        <a href="\task\edit\{{ task.pk }}" data-toggle="modal"  data-target="#myModal2" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
+                        <a href="\task\del\{{ task.pk }}" onclick="return delete_data()" title="删除"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                    </div>
                 </div>
 
-                <div>{% if task.get_status_display   == '要做' %}
+
+                <div>
+                    {% if task.get_status_display   == '要做' %}
                         <label class="label label-warning">{{ task.get_status_display  }}</label>
                     {% elif task.get_status_display   == '已发送'  %}
                         <label class="label label-info">{{ task.get_status_display  }}</label>
@@ -44,7 +62,9 @@
                         <label class="label label-success">{{ task.get_status_display  }}</label>
                     {% endif %}
                 </div>
-                <div>{{ task.get_group_display  }} </div>
+                <div>
+                    <label class="label label-default">{{ task.get_group_display  }}</label>
+                </div>
 
                 <span>{{ task.endtime  }}</span>
                 <span>{{ task.startTime  }}</span>
@@ -60,9 +80,11 @@
         {% endfor %}
 
 {% endif %}
-
-
 </div>
+
+
+
+{#</div>#}
 
 
 <script language="JavaScript">
@@ -73,6 +95,30 @@
             return false;
         }
     }
+    //设定提示
+    toastr.options = {
+                closeButton: false,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+                debug: false,                                                    // 是否使用deBug模式
+                progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+                positionClass: "toast-top-right",              // 设置提示款显示的位置
+                onclick: null,                                                     // 点击消息框自定义事件 
+                showDuration: "300",                                      // 显示动画的时间
+                hideDuration: "1000",                                     //  消失的动画时间
+                timeOut: "2000",                                             //  自动关闭超时时间 
+                extendedTimeOut: "1000",                             //  加长展示时间
+                showEasing: "swing",                                     //  显示时的动画缓冲方式
+                hideEasing: "linear",                                       //   消失时的动画缓冲方式
+                showMethod: "fadeIn",                                   //   显示时的动画方式
+                hideMethod: "fadeOut"                                   //   消失时的动画方式
+            };
+    $(document).ready(
+         toastr.info('{{ msg }}')
+
+        //等待两秒后隐藏通知
+        {#setTimeout(function () {#}
+             {#$('.alert').slideUp();#}
+        {#{, 3000)#}
+    )
 </script>
 
 <!-- 按钮触发模态框 -->
@@ -138,5 +184,6 @@
     </div><!-- /.modal -->
 </div>
 
-</body>
-</html>
+{#</body>#}
+{#</html>#}
+{% endblock content %}

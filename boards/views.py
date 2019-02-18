@@ -13,8 +13,11 @@ from datetime import datetime
 import os
 import json
 from PIL import Image as Image2
+import readFoldersWithNameIdDate
 
 import mimetypes, zipfile
+from django.utils.encoding import smart_str
+from django.utils.encoding import escape_uri_path
 
 # Create your views here.
 # TODO 高级用户名是zdl
@@ -22,8 +25,32 @@ import mimetypes, zipfile
 sep = '_'
 
 
-# 打包目录为zip文件（未压缩）
+def importFolders(request):
+    """
+    导入图像文件夹
+    """
+    fname = readFoldersWithNameIdDate.start()
+    # with open(fname, 'r') as f:
+    #     content = f.readlines()
+    # return HttpResponse(content)
+
+    content_type, encoding = mimetypes.guess_type(str(fname))
+    content_type = content_type or 'application/octet-stream'
+    try:
+        f = open(fname, 'rb')
+        response = FileResponse(f, content_type=content_type)
+        response['Content-Disposition'] = 'attachment;filename="111.txt"'
+        return response
+
+    except IOError:
+        return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")
+
+
 def down_zip(request, pk):
+    """
+    打包目录所有文件到zip文件
+    :return:
+    """
     p = Person.objects.get(pk=pk)
     source_dir = BASE_DIR + '/'+ p.privateDir
     output_filename = '/tmp/all.zip'
@@ -43,6 +70,10 @@ def down_zip(request, pk):
     try:
         f = open(output_filename, 'rb')
         response = FileResponse(f, content_type=content_type)
+        # response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
+        response['Content-Disposition'] = 'attachment;filename="' + smart_str(p.name) + '.zip"'
+        # response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
+
         return response
         # f.close()
 
@@ -81,11 +112,16 @@ def person_detail(request, pk):
 
     posts = p.posts
 
-    contex = {'patient': p, 'posts': posts}
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0}
+
+    if request.GET.get('tab'):
+        t = request.GET.get('tab')
+        contex = {'patient': p, 'posts': posts, 'first_tab': t}
 
     # return render(request, 'detail.html', contex)
     return render(request, 'boards/detail2.html', contex)
 
+@login_required()
 
 def delperson(request, pk):
     p = Person.objects.get(pk=pk)
@@ -94,6 +130,7 @@ def delperson(request, pk):
 
 
 # TODO
+@login_required()
 def delpost(request, ppk, postpk):
     # try:
     po = Post.objects.get(pk=postpk)
@@ -168,11 +205,11 @@ def handle_file(request, person, post):
         icondir = dir
         mediumdir = dir
         if not os.path.exists(dir):
-            os.mkdir(dir)
+            os.makedirs(dir)
         if not os.path.exists(icondir):
-            os.mkdir(icondir)
+            os.makedirs(icondir)
         if not os.path.exists(mediumdir):
-            os.mkdir(icondir)
+            os.makedirs(icondir)
         # 文件名及路径
         # n2 = f.name
         # # suf = n2.split('.')[-1]
@@ -274,11 +311,11 @@ def new_person(request):
         # 根据每个医生user名生成文件夹
         docDir = 'static/picture/' + docname + '/'
         if not os.path.exists(docDir):
-            os.mkdir(docDir)
+            os.makedirs(docDir)
 
         privateDir = docDir + name + sep + str(idnum) + '/'
         if not os.path.exists(privateDir):
-            os.mkdir(privateDir)
+            os.makedirs(privateDir)
 
         if Person.objects.filter(name=name, idnum=idnum, doctor=docname).exists():
             return redirect('wrong')
@@ -358,7 +395,18 @@ def new_person(request):
         return render(request, 'upload/newPerson.html', {'tgroups': tgroups, "tags": tags})
 
 
+# 上传x线功能
+def addpost_xray(request, pk):
+    return HttpResponse("暂未开放上传x线功能")
+
+
 def addpost(request, pk):
+    """
+    添加普通图片post
+    :param request:
+    :param pk:
+    :return:
+    """
     p = Person.objects.get(pk=pk)
 
     if request.method == 'GET':
@@ -377,26 +425,19 @@ def addpost(request, pk):
         tag_list = request.POST['newTags']
         comment = request.POST['comment']
 
-        # 如果没有，直接新建。如果有，则添加
-        # 	isLast = request.POST.get('isLast')
-        # 	if isLast:
-        # 		newpost = Post.objects.create(type=postnum, isLast=True)
-        if postnum.isnumeric():  # 有上传posttype， 往posttype增加image
+        # 如果没有，直接新建
+        if postnum.isnumeric():  # 有上传posttype， 往post type增加image
             i = Post.objects.filter(type=postnum, person=p).count()
             if i == 0:
                 post = Post.objects.create(type=postnum, person=p, comment=comment, name=comment)
             elif i == 1:
                 post = Post.objects.get(type=postnum, person=p, comment=comment, name=comment)
-        else:  # 未上传posttype， 新建post
+        else:  # 未上传posttype， 新建post，type+1
             n = Post.objects.filter(person=p).count()
             post = Post.objects.create(type=n + 1, person=p, comment=comment, name=comment)
         # Image保存生成path
         results = handle_file(request, p, post)
 
-        # 	# post数目相等时，不创建新post，只更新最后post
-        # 	if postnum == p.posts.count():
-        # 		post = p.posts.last()
-        # 		#更新post的图片 handleFile(request, person)
         # 处理新增tags
         new_tag_list = tag_list.split(' ')
         if new_tag_list:
@@ -421,7 +462,8 @@ def add_tag_from_string_for_person(new_tag_list, p):
                 tag2.save()
 
 
-# # 患者详细信息展示
+# 患者详细信息展示
+
 # @login_required()
 # def person_detail(request, pk):
 #     p = Person.objects.get(pk=pk)
@@ -440,8 +482,14 @@ def add_tag_from_string_for_person(new_tag_list, p):
 #     return render(request, 'detail2.html', contex)
 #
 
-# 所有图片post
+@login_required()
 def posts(request, pk):
+    """
+    获取所有患者的所有 普通post
+    :param request:
+    :param pk:
+    :return:
+    """
     p = Person.objects.get(pk=pk)
     name = p.name
 
@@ -450,14 +498,41 @@ def posts(request, pk):
         picurl = p.icon
         print(picurl)
 
-    posts = p.posts
-
+    posts = p.posts.filter(type__lte=99)
     contex = {'patient': p, 'posts': posts}
 
     return render(request, 'boards/detail3.html', contex)
 
 
+def posts_xray(request, pk):
+    """
+    # 所有x线post（原易看牙导入图像）
+    :param request:
+    :param pk:
+    :return:
+    """
+    p = Person.objects.get(pk=pk)
+    name = p.name
+
+    picurl = ''
+    if p.icon:
+        picurl = p.icon
+        print(picurl)
+
+    posts = p.posts.filter(type__gte=100)
+    contex = {'patient': p, 'posts': posts}
+
+    return render(request, 'boards/detail3.html', contex)
+
+
+
 def baseinfo(request, pk):
+    """
+    患者的基本信息
+    :param request:
+    :param pk:
+    :return:
+    """
     p = Person.objects.get(pk=pk)
     return render(request, 'boards/baseInfo.html', {'person': p})
 

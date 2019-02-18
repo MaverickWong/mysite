@@ -8,7 +8,7 @@ from tasklist.models import *
 def home(request):
     tasks = Task.objects.all()
     # return  HttpResponse('good')
-    msg = '欢迎'
+    msg = '欢迎，测试版'
     return render(request, 'task/index.html', {'tasks': tasks, 'msg':msg})
 
 class AddForm(forms.Form):

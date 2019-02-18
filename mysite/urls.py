@@ -29,6 +29,9 @@ from record import urls as recordurls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home, name='home'),
+    # url(r'^$', bad, name='home'),
+    url(r'^home2', home), #另一个主页入口，测试用
+
     url(r'^ip$', get_host_ip, name='hostip'),
 
     # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
@@ -55,9 +58,13 @@ urlpatterns = [
 
     url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
     url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
-    #post
+
+    # post 获取所有post列表
     url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
     url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
+    #  获取所有x线的post列表
+    url(r'^posts_xray/(?P<pk>\d+)/$', posts_xray, name='posts_xray'),
+    url(r'^posts_xray/(?P<pk>\d+)/addpost$', addpost_xray, name='addpost_xray'),
 
     # account
     url(r'^signup/$', accounts_views.signup, name='signup'),
@@ -71,7 +78,12 @@ urlpatterns = [
     url(r'^netdisk/', include('netdisk.urls')),
     url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
 
+    # 收费
+    url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
+
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
+
+    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
 
     # url(r'up/$', hello),
     # url(r'^p/', person_detail),

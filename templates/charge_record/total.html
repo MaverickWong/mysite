@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+<body>
+{#<div class="container">#}
+     <div class="mb-4">
+{#            <a class="btn btn-primary" href={% url 'charge_record:newChargeRecord' pk %} > 创建新收费</a>#}
+         <a class="btn btn-primary" onclick="gotoNewCharge()"> 创建新收费</a>
+
+     </div>
+<!--- 通知--->
+    <div class="mb-4">
+        {% if succeed == 1 %}
+            <script> toastr.success('保存成功!')</script>
+
+{#            <div class="alert alert-success alert-dismissable">#}
+{#                <button type="button" class="close" data-dismiss="alert"#}
+{#                        aria-hidden="true">#}
+{#                    &times;#}
+{#                </button>#}
+{#                保存成功。#}
+{#            </div>#}
+
+        {% elif succeed == 0 %}
+            <script> toastr.error('保存失败！请进行一些更改!');</script>
+
+{#            <div class="alert alert-danger alert-dismissable">#}
+{#                <button type="button" class="close" data-dismiss="alert"#}
+{#                        aria-hidden="true">#}
+{#                    &times;#}
+{#                </button>#}
+{#                保存失败！请进行一些更改。#}
+{#            </div>#}
+        {% endif %}
+    </div>
+
+    <div>
+
+    </div>
+    {% if records %}
+
+        <table class="table table-hover">
+        <tr>
+
+            <th>时间</th>
+            <th>医生</th>
+            <th>应收</th>
+            <th>实收</th>
+            <th>备注</th>
+            <th>*</th>
+        </tr>
+
+
+        {% for record in records.all  %}
+            <tr>
+                <td>{{record.createdAt }}</td>
+                <td>张栋梁</td>
+                <td>{{ record.planPrice }}</td>
+                <td style="color: #a90707">{{ record.inPrice }}</td>
+                <td>{{ record.comment }}</td>
+                <td>*</td>
+            </tr>
+        {% endfor %}
+
+        </table>
+
+
+    {% else %}
+    该患者暂无收费，请创建新收费。
+    {% endif %}
+{#</div>#}
+<script>
+    function gotoNewCharge() {
+        $.get("{% url 'charge_record:newChargeRecord' pk %}", function (r) {
+            $("#detail3").html(r);
+        });
+    }
+
+    $(document).ready(
+        //等待两秒后隐藏通知
+        setTimeout(function () {
+             $('.alert').slideUp();
+        }, 2000)
+    )
+</script>
+
+</body>
+</html>

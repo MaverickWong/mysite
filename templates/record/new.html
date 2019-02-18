@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <form action="/record/new/{{ pk }}/" method="POST">
+{#    <form action="/record/new/{{ pk }}/?r=/detail/{{ pk }}" method="POST">#}
         {% csrf_token %}
       <div class="form-group">
         <label for="complain" class="control-label">主诉</label>
@@ -27,9 +27,28 @@
         <textarea id="note" name="note" cols="40" rows="2" class="form-control"></textarea>
       </div>
       <div class="form-group">
-        <button name="submit" type="submit" class="btn btn-primary">保存</button>
+        <button id="btn2" name="submit" type="submit" class="btn btn-primary">保存</button>
       </div>
-    </form>
+{#    </form>#}
 
+
+<script>
+    $('#btn2').click(function () {
+
+        $.post('/record/new/{{ pk }}/',
+            {complain: $('[name="complain"]').val(),
+                exam: $('[name="exam"]').val(),
+                treat: $('[name="treat"]').val(),
+                note: $('[name="note"]').val(),
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            function(data) {
+                $("#detail3").html(data);
+            }
+            );
+
+    })
+
+</script>
 </body>
 </html>

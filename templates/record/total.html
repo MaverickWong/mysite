@@ -1,17 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-</head>
-<body>
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">#}
+{##}
+{#</head>#}
+{#<body>#}
 {#<div class="container">#}
      <div class="mb-4">
-            <a class="btn btn-primary" href={% url 'record:newRecord' pk %} > 创建新病历</a>
-     </div>
+{#            <a class="btn btn-primary" href={% url 'record:newRecord' pk %} > 创建新病历</a>#}
+             <a class="btn btn-primary" onclick="gotoNewRecord()" > 创建新病历</a>
+         <a href="{% url 'record:newRecord' pk %}" data-toggle="modal"  data-target="#myModal" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
 
+</div>
+
+<!--- 通知--->
+    <div class="mb-4">
+        {% if succeed == 1 %}
+            <script> toastr.success('保存成功!')</script>
+        {% elif succeed == 0 %}
+{#            <div class="alert alert-danger alert-dismissable">#}
+{#                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">#}
+{#                    &times;#}
+{#                </button>#}
+{#                保存失败！请进行一些更改。#}
+{#            </div>#}
+                <script> toastr.error('保存失败！请进行一些更改!');</script>
+
+        {% endif %}
+    </div>
+
+<div class="span4">
     {% if records %}
         {% for record in records.all  %}
 
@@ -22,22 +42,68 @@
                 </div>
 
                   <div class="panel-body row">
-                      <div class="col-sm-6 col-md-3">
-                            检查： {{ record.exam }}<br>
-                            治疗： {{ record.treatmentPlan }}<br>
-                            医嘱： {{ record.note }}<br>
+                      <div class="col-sm-6 col-md-10">
+                        主诉： {{ record.complain }}<br>
+                        检查： {{ record.exam }}<br>
+                        治疗： {{ record.treatmentPlan }}<br>
+                        医嘱： {{ record.note }}<br>
 
-                        </div>
+                      </div>
                   </div>
             </div>
 
         {% endfor %}
 
-        {% else %}
-        该患者暂无病例，请创建新病例。
+    {% else %}
+        <p>该患者暂无病例，请创建新病例。</p>
     {% endif %}
-{#</div>#}
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               模态框（Modal）标题
+            </h4>
+         </div>
+         <div class="modal-body">
+            在这里添加一些文本
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default"
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary">
+               提交更改
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 
 
-</body>
-</html>
+
+<script>
+    function gotoNewRecord() {
+        $.get("{% url 'record:newRecord' pk %}", function (r) {
+            $("#detail3").html(r);
+        });
+    }
+
+    {#$(document).ready(#}
+    {#    //等待两秒后隐藏通知#}
+    {#    setTimeout(function () {#}
+    {#         $('.alert').slideUp();#}
+    {#    }, 2000)#}
+    {#)#}
+</script>
+
+{#</body>#}
+{#</html>#}

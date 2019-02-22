@@ -27,7 +27,11 @@
 {#<body>#}
 <div class="container col-lg-12">
     <div class="mb-4">
-        <a onclick="gotoNewPic()" class="btn btn-primary">添加新图像</a>
+        {% if isXray == True %}
+            <a onclick="gotoNewXray()" class="btn btn-primary">添加X线片</a>
+        {% else %}
+            <a onclick="gotoNewPic()" class="btn btn-primary">添加图像</a>
+        {% endif %}
     </div>
     <hr style="padding: 2px">
 <div>
@@ -93,6 +97,11 @@
 
   function gotoNewPic() {
         $.get('{% url 'addpost' patient.pk %}', function (r) {
+            $("#detail3").html(r);
+        });
+    }
+    function gotoNewXray() {
+        $.get('{% url 'addpost_xray' patient.pk %}', function (r) {
             $("#detail3").html(r);
         });
     }

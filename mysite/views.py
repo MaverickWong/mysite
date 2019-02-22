@@ -36,6 +36,9 @@ def get_host_ip(request):
 def hello(request):
     return render(request, 'upload-vue2.html')
 
+# 所有post统计
+def allposts(request):
+    return render(request, 'log_counPostNum0219-152149.html')
 # def home(request):
 # 	t = get_template('index.html')
 # 	c = {'board': 'i am ok ', 'a':'aaaaa'}
@@ -205,6 +208,11 @@ def search_suggest(request):
 #         return render(request, 'index.html', {'persons': persons, 'total':total, 'tags':tags})
 #     else:
 #         return redirect('login')
+
+@login_required()
+def show_home(request):
+    return render(request, 'show-index.html')
+
 
 @login_required()
 def home(request):

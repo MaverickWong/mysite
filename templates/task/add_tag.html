@@ -1,8 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+        <script src="{% static '/js/moment.js' %}"></script>
+
+    <script src="{% static '/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/bootstrap-datetimepicker.min.css' %}">
 </head>
 <body>
 
@@ -20,6 +26,15 @@
          <form id="fileupload" action="/task/add/" method="post">
             {% csrf_token %}
             {{ form }}
+
+            <div class="form-group">
+                <div class='input-group date' >
+                    <input name="date"  type='text' class="form-control" id='datetimepicker1'/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
 
             <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">
                 <hr>
@@ -39,15 +54,22 @@
 
      </div>
 
-<script> //添加标签名到文本框
-        function addText(t) {
-           var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;
-           document.forms["fileupload"]["newTagsText"].value = x;
-        };
-        function clear() {
-            var obj = document.getElementById("newTagsText");
-            obj.setAttribute("value", "");
-        };
+<script>
+    //日期时间选择器
+     $('#datetimepicker1').datetimepicker({
+         showTodayButton:true,
+         format:'YYYY-MM-DD',
+     });
+
+    //添加标签名到文本框
+    function addText(t) {
+       var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;
+       document.forms["fileupload"]["newTagsText"].value = x;
+    };
+    function clear() {
+        var obj = document.getElementById("newTagsText");
+        obj.setAttribute("value", "");
+    };
 
 
 </script>

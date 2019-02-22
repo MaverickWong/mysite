@@ -397,7 +397,48 @@ def new_person(request):
 
 # 上传x线功能
 def addpost_xray(request, pk):
-    return HttpResponse("暂未开放上传x线功能")
+    """
+        添加x线图片post
+        :param request:
+        :param pk:
+        :return:
+        """
+    p = Person.objects.get(pk=pk)
+
+    if request.method == 'GET':
+        # TODO 应该获取posts总数，然后发到网页内部
+        tags = Tag.objects.all()
+        # print(tags)
+        return render(request, 'upload/addpost_xray.html', {'patient': p})
+
+    if request.method == 'POST':
+        # p = Person.objects.get(pk=pk)
+        postnum = request.POST.get('postType')
+        tag_list = request.POST['newTags']
+        comment = request.POST['comment']
+
+        # 如果没有，直接新建
+        if postnum.isnumeric():  # 有上传posttype， 往post type增加image
+            i = Post.objects.filter(type=postnum, person=p, type__gte=100).count()
+            if i == 0:
+                post = Post.objects.create(type=postnum, person=p, comment=comment, name=comment)
+            elif i == 1:
+                post = Post.objects.get(type=postnum, person=p, comment=comment, name=comment)
+        else:  # 未上传posttype， 新建post，type+1
+            n = Post.objects.filter(person=p, type__gte=100).count()
+            post = Post.objects.create(type=100 + n + 1, person=p, comment=comment, name=comment)
+        # Image保存生成path
+        results = handle_file(request, p, post)
+
+        # 处理新增tags
+        new_tag_list = tag_list.split(' ')
+        if new_tag_list:
+            add_tag_from_string_for_person(new_tag_list, p)
+
+        result2 = json.dumps(results)
+        return HttpResponse(result2, content_type='application/json')
+
+    # return HttpResponse("暂未开放上传x线功能")
 
 
 def addpost(request, pk):
@@ -520,7 +561,7 @@ def posts_xray(request, pk):
         print(picurl)
 
     posts = p.posts.filter(type__gte=100)
-    contex = {'patient': p, 'posts': posts}
+    contex = {'patient': p, 'posts': posts, 'isXray': True}
 
     return render(request, 'boards/detail3.html', contex)
 

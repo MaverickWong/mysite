@@ -52,6 +52,8 @@
 
 
                 <div>
+                    <label class="label label-default">{{ task.get_group_display  }}</label>
+
                     {% if task.get_status_display   == '要做' %}
                         <label class="label label-warning">{{ task.get_status_display  }}</label>
                     {% elif task.get_status_display   == '已发送'  %}
@@ -63,15 +65,15 @@
                     {% endif %}
                 </div>
                 <div>
-                    <label class="label label-default">{{ task.get_group_display  }}</label>
                 </div>
 
-                <span>{{ task.endtime  }}</span>
-                <span>{{ task.startTime  }}</span>
+                开始时间：<span>{{ task.startTime  }}</span>
+                结束时间：<span>{{ task.endTime  }}</span>
+
+
                 <div>{% for t in task.tags.all %}
                         <label class="label label-success">{{ t.name }}</label>
                     {% endfor %}
-
                 </div>
 
 

@@ -6,7 +6,7 @@ from tasklist.models import *
 # Create your views here.
 
 def home(request):
-    tasks = Task.objects.all()
+    tasks = Task.objects.all().reverse()
     # return  HttpResponse('good')
     msg = '欢迎，测试版'
     return render(request, 'task/index.html', {'tasks': tasks, 'msg':msg})
@@ -39,9 +39,9 @@ class AddForm(forms.Form):
     # person = forms.ForeignKey(Person, related_name='tasks', null=True, blank=True, on_delete=models.SET_NULL)
     # doc = forms.CharField(max_length=20, null=True, blank=True)
 
-    # startTime = forms.DateField(label='开始时间',  widget=forms.TextInput(attrs={'class': 'form-control'}))
-    endTime = forms.DateField(label='结束时间',  required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    # timeLength = forms.CharField(max_length=10, null=True, blank=True)
+    # startTime = forms.DateTimeFieldField(label='开始时间',  widget=forms.TextInput(attrs={'class': 'form-control'}))
+    endTime = forms.DateField(label='结束时间',  required=False, widget=forms.TextInput(attrs={'id':'datetimepicker1', 'class': 'form-control'}))
+    # timeLength = forms.CharField(max_length=10, null=True, blank=True)  'id':'datetimepicker1',
 
 def add(request):
     if request.method == 'POST':
@@ -57,6 +57,7 @@ def add(request):
             status = register_form.cleaned_data['status']
             endTime = register_form.cleaned_data['endTime']
 
+
             task = Task.objects.create(name=name)
             task.comment = comment
             task.group = group
@@ -64,6 +65,10 @@ def add(request):
             task.status = status
             task.endTime = endTime
             task.save()
+
+            # task.endTime = request.POST['date']
+            # task.save()
+
 
             # 标签
             tag_list = request.POST['newTags']
@@ -155,6 +160,7 @@ def edit(request, pk):
                 'comment': task.comment,
                 'group': task.group,
                 'status': task.status,
+                'endTime': task.endTime
             }
         )
 

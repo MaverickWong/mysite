@@ -28,8 +28,8 @@ from record import urls as recordurls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', home, name='home'),
-    # url(r'^$', bad, name='home'),
+    # url(r'^$', home, name='home'),
+    url(r'^$', show_home, name='home'),
     url(r'^home2', home), #另一个主页入口，测试用
 
     url(r'^ip$', get_host_ip, name='hostip'),
@@ -62,6 +62,8 @@ urlpatterns = [
     # post 获取所有post列表
     url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
     url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
+    url(r'^allposts$', allposts),
+
     #  获取所有x线的post列表
     url(r'^posts_xray/(?P<pk>\d+)/$', posts_xray, name='posts_xray'),
     url(r'^posts_xray/(?P<pk>\d+)/addpost$', addpost_xray, name='addpost_xray'),

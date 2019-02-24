@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block body %}
+
+  <div class="container col-lg-8 col-lg-offset-4">
+    <h1 class="logo my-4">
+      <a href="{% url 'home' %}">病例管理系统</a>
+    </h1>
+    <div class="row justify-content-center">
+      <div class="col-lg-4 col-md-6 col-sm-8">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title"> </h3>
+            <form method="post" autocomplete="on" >
+              {% csrf_token %}
+{#              {% include 'includes/form.html' %}#}
+                <div class=" col-lg-12">
+                    <div class="form-group ">
+                        <lable class=" control-label">用户名：</lable>
+                        <input type ="text" name="username" placeholder="Name" class="form-control" required="required">
+                    </div>
+                    <div class="form-group">
+                        <lable class="control-label">密码  ：</lable>
+                        <input type ="password" name="passwd"  class="form-control " required="required">
+                    </div>
+                </div>
+              <button type="submit" class="btn btn-primary btn-block">登录</button>
+            </form>
+          </div>
+          <div class="card-footer text-muted text-center">
+            没有账号? <a href="{% url 'signup' %}">注册</a>
+          </div>
+        </div>
+        <div class="text-center py-2">
+          <small>
+            <a href="#" class="text-muted">忘记密码?</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

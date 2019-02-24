@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 
 import socket
+from linkedcare.getXrayofLinked import  getXrayOfperson
 
 from mysite.settings import STATICFILES_DIRS
 
@@ -300,7 +301,7 @@ def syncDB(request):
                                           occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
                                           identityCard=item['identityCard'], homeAddress=item['homeAddress'],
                                           patientType=item['patientType'], lastVisit=item['lastVisit'],
-                                          lastDoctorId=item['lastDoctorId']
+                                          lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
                                           )
                 succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
 
@@ -323,3 +324,18 @@ def syncDB(request):
     return redirect('home')
 
 
+#  从易看牙同步患者基本信息
+def sync_xray_of_linkedcare_for_person(request, pk):
+    s = logIn()
+    p= Person.objects.get(pk=pk)
+    if p.linkedcareId:
+        # type100以上 表示linkdedcare导入
+        n = Post.objects.filter(type__gt=20, person=p).count()
+        # if n > 0:
+        #     return HttpResponse("可能重复导入")
+        # time.sleep(random.randint(1, 5))
+        getXrayOfperson(s, p)
+    else:
+        return HttpResponse("此患者无linkedcareId，请返回")
+    # print('此患者无linkedcareId\n')
+    return HttpResponse("good，请返回")

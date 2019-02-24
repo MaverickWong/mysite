@@ -16,18 +16,20 @@ import sys
 import random
 from boards.models import *
 from linkedcare.syncDB import logIn, getTokenFromSession
+from mysite.settings import  BASE_DIR
 
 agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
 
-s= logIn()
+# s= logIn()
 
 
 suf = 'jpg'
 sep = '_'
 
 # base = "/Users/wcy/Documents/mysite2"
-base = "/home/zdl/mysite2"
+# base = "/home/zdl/mysite2"
+base = BASE_DIR
 # inputDir = '/static/待导入图像'
 picDir = base + '/static/picture'
 # /Volumes/张栋梁病例照片/正畸患者照片/唇侧正畸/A/
@@ -40,20 +42,26 @@ UrlGetApptList = "https://api.linkedcare.cn:9001/api/v1/appointment-record/patie
 
 UrlGetImage = "https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId="
 # https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId=1222210
-s = logIn()
+# s = logIn()
 
 # 从cookie中获取token
-token = getTokenFromSession(s)
+token = None
+# token = getTokenFromSession(s)
 # 组装header
-headers = {'authority': 'api.linkedcare.cn:9001',
-           "authorization": "bearer " + token, "access_token": token,
-           # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
-           "origin": "https://simaier.linkedcare.cn",
-           'Connection': 'keep-alive', 'user-agent': agent,
-           'referer': 'https://simaier.linkedcare.cn/',
-           'content-type': 'application/json;charset=UTF-8'
-           }
+headers =None
+# headers = {'authority': 'api.linkedcare.cn:9001',
+#            "authorization": "bearer " + token, "access_token": token,
+#            # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+#            "origin": "https://simaier.linkedcare.cn",
+#            'Connection': 'keep-alive', 'user-agent': agent,
+#            'referer': 'https://simaier.linkedcare.cn/',
+#            'content-type': 'application/json;charset=UTF-8'
+#            }
+
+
 def getXrayOfperson(s, person):
+    token = getTokenFromSession(s)
+    headers = get_header_use_token(token)
     if not person.linkedcareId:
         print('此患者无linkedcareId\n')
     else:
@@ -97,8 +105,10 @@ def getXrayOfperson(s, person):
                 if imgList:
                     # type100以上 表示linkdedcare导入
                     n = Post.objects.filter(name__contains=time, person=person).count()
-                    if n>0:
-                        continue
+                    # if n>0:
+                    #     continue
+                    # todo 添加重复检查，如果已经下载x线，则取消
+
                     post = Post.objects.create(name=time, comment=time, type=100 + i2, person=person)
                     i2=i2+1
                     for imgItem in imgList:
@@ -135,26 +145,42 @@ def getXrayOfperson(s, person):
 
                             newImg = Image.objects.create(name=fname, post=post, person=person, path=path, size_m=mediumpath,
                                                           thumbnail=iconpath)
-                            print('创建img%s  患者：%s' %(str(newImg.pk), p.name))
+                            print('创建img%s  患者：%s' %(str(newImg.pk), person.name))
 
                         except Exception as e:
                             print(e + person.name)
 
+def get_header_use_token(token):
+    header = {'authority': 'api.linkedcare.cn:9001',
+               "authorization": "bearer " + token, "access_token": token,
+               # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+               "origin": "https://simaier.linkedcare.cn",
+               'Connection': 'keep-alive', 'user-agent': agent,
+               'referer': 'https://simaier.linkedcare.cn/',
+               'content-type': 'application/json;charset=UTF-8'
+               }
+    return header
+
+def mainfunc():
+    s = logIn()
+    token = getTokenFromSession(s)
+    headers = get_header_use_token(token)
+
+    persons  = Person.objects.all()
+    total = persons.count()
+    i = 0
+
+    for p in persons:
+        i = i+1
+        if p.linkedcareId:
+            # type100以上 表示linkdedcare导入
+            n = Post.objects.filter(type__gt=20, person=p).count()
+            if n > 0:
+                continue
+            # time.sleep(random.randint(1, 5))
+            getXrayOfperson(s, p)
+        print('\n第 %s个， total %s' %(str(i), str(total) ))
 
 
-s = logIn()
-
-persons  = Person.objects.all()
-total = persons.count()
-i = 0
-
-for p in persons:
-    i = i+1
-    if p.linkedcareId:
-        # type100以上 表示linkdedcare导入
-        n = Post.objects.filter(type__gt=20, person=p).count()
-        if n > 0:
-            continue
-        # time.sleep(random.randint(1, 5))
-        getXrayOfperson(s, p)
-    print('\n第 %s个， total %s' %(str(i), str(total) ))
+if __name__ == '__main__':
+    pass

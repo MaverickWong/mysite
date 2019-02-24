@@ -10,14 +10,14 @@
 
 {#    <form action="/record/new/{{ pk }}/?r=/detail/{{ pk }}" method="POST">#}
         {% csrf_token %}
-      <div class="form-group">
-        <label for="complain" class="control-label">主诉</label>
-        <input id="complain" name="complain" type="text" class="form-control">
-      </div>
-      <div class="form-group">
-        <label for="exam" class="control-label">检查</label>
-        <textarea id="exam" name="exam" cols="40" rows="3" class="form-control"></textarea>
-      </div>
+{#      <div class="form-group">#}
+{#        <label for="complain" class="control-label">主诉</label>#}
+{#        <input id="complain" name="complain" type="text" class="form-control">#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <label for="exam" class="control-label">检查</label>#}
+{#        <textarea id="exam" name="exam" cols="40" rows="3" class="form-control"></textarea>#}
+{#      </div>#}
       <div class="form-group">
         <label for="treat" class="control-label">处置</label>
         <textarea id="treat" name="treat" cols="40" rows="4" class="form-control"></textarea>
@@ -36,8 +36,9 @@
     $('#btn2').click(function () {
 
         $.post('/record/new/{{ pk }}/',
-            {complain: $('[name="complain"]').val(),
-                exam: $('[name="exam"]').val(),
+            {
+                //complain: $('[name="complain"]').val(),
+                //exam: $('[name="exam"]').val(),
                 treat: $('[name="treat"]').val(),
                 note: $('[name="note"]').val(),
                 csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()

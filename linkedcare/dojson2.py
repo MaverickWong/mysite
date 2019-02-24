@@ -30,12 +30,13 @@ for item in data['items']:
 
         if item['birth']:
             birth = item['birth'][0:10]
-        p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'], mobile=item['mobile'],
+        p = Person.objects.create(idnum=item['privateId'], linkedcareId=item['id'], name=item['name'], nameCode=item['nameCode'], mobile=item['mobile'],
                                   otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
                                   doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'], email=item['email'],
                                   occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'], identityCard=item['identityCard'],homeAddress=item['homeAddress'],
                                   patientType=item['patientType'], lastVisit=item['lastVisit'], lastDoctorId=item['lastDoctorId']
                                   )
+        # p.linkedcareId = item['id']
         succeded.append(item['privateId'] + item['name'])
 
 with open('result.txt', 'w') as f:

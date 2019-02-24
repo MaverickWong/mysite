@@ -172,7 +172,7 @@ def get_fill_DB():
                     birth = item['birth'][0:10]
                 else:
                     birth = None
-                p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'], mobile=item['mobile'],
+                p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'], linkedcareId=item['id'], mobile=item['mobile'],
                                           otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
                                           doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'], email=item['email'],
                                           occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'], identityCard=item['identityCard'],homeAddress=item['homeAddress'],

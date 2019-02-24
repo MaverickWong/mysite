@@ -84,6 +84,7 @@ urlpatterns = [
     url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
 
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
+    url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
 
     url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
 

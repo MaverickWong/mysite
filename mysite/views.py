@@ -2,14 +2,15 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from boards.models import Person, Tag, Post
-from linkedcare.syncDB import queryPatients, logIn
 import json
 from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 
 import socket
-from linkedcare.getXrayofLinked import  getXrayOfperson
+
+from linkedcare.syncDB import get_patients_fill_DB, logIn, get_baseinfo_of_patient, add_id_for_person
+from linkedcare.getXrayofLinked import getXrayOfperson
 
 from mysite.settings import STATICFILES_DIRS
 
@@ -258,84 +259,79 @@ def home(request):
 
 #  从易看牙同步患者基本信息
 def syncDB(request):
-    dt = datetime.now()
-    time2 = dt.strftime("%m%d-%H%M%S")
 
-    # officeId 劲松122 华贸124
-
-    # print(data['pageCount'])
-    repeated = []
-    succeded = []
-    office =['124', '122']
-    # s = logIn()
-    for id in office:
-        s = logIn(officeId=id)
-        data = queryPatients(s) # 从易看牙获得数据
-
-        totalPages = data['pageCount']
-
-        # 保存到文件
-        try:
-            fname = BASE_DIR+ '/linkedcare/get_patients' + id +'_'+time2 +'.txt'
-            with open(fname, 'w') as f:
-                json.dump(data, f)
-        except:
-            pass
-
-        # 导入到数据库
-        for item in data['items']:
-            n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
-            if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
-                repeated.append(item['privateId'] + item['name'])
-
-            elif n == 0:
-                if item['birth']:
-                    birth = item['birth'][0:10]
-                else:
-                    birth = None
-                p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'],
-                                          mobile=item['mobile'],
-                                          otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
-                                          doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'],
-                                          email=item['email'],
-                                          occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
-                                          identityCard=item['identityCard'], homeAddress=item['homeAddress'],
-                                          patientType=item['patientType'], lastVisit=item['lastVisit'],
-                                          lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
-                                          )
-                succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
-
-
-    fname2 = BASE_DIR +  '/log/log-syncDB' + time2 + '.txt'
-
-    with open(fname2, 'w') as f:
-        # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
-        f.write('succeded *******************************\n')
-        for i in succeded:
-            f.write(i)
-            f.write('\n')
-
-        f.write('\n\n\n')
-        f.write('repeated *******************************\n')
-        for i in repeated:
-            f.write(i)
-            f.write('\n')
-
+    get_patients_fill_DB(20)
     return redirect('home')
+
+
+    # dt = datetime.now()
+    # time2 = dt.strftime("%m%d-%H%M%S")
+    # # officeId 劲松122 华贸124
+    # repeated = []
+    # succeded = []
+    # office = ['124', '122']
+    # # s = logIn()
+    # for id in office:
+    #     s = logIn(officeId=id)
+    #     data = queryPatients(s) # 从易看牙获得数据bing保存到文件
+    #
+    #     totalPages = data['pageCount']
+    #
+    #     # 导入到数据库
+    #     for item in data['items']:
+    #         n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
+    #         if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
+    #             repeated.append(item['privateId'] + item['name'])
+    #
+    #         elif n == 0:
+    #             if item['birth']:
+    #                 birth = item['birth'][0:10]
+    #             else:
+    #                 birth = None
+    #             p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'],
+    #                                       mobile=item['mobile'],
+    #                                       otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
+    #                                       doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'],
+    #                                       email=item['email'],
+    #                                       occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
+    #                                       identityCard=item['identityCard'], homeAddress=item['homeAddress'],
+    #                                       patientType=item['patientType'], lastVisit=item['lastVisit'],
+    #                                       lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
+    #                                       )
+    #             succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
+    #
+    # # 记录导入log
+    # fname2 = BASE_DIR +  '/log/log-syncDB' + time2 + '.txt'
+    # with open(fname2, 'w') as f:
+    #     # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
+    #     f.write('succeded *******************************\n')
+    #     for i in succeded:
+    #         f.write(i)
+    #         f.write('\n')
+    #
+    #     f.write('\n\n\n')
+    #     f.write('repeated *******************************\n')
+    #     for i in repeated:
+    #         f.write(i)
+    #         f.write('\n')
+
+
+
+from linkedcare.syncDB import get_baseinfo_of_patient
 
 
 #  从易看牙同步患者基本信息
 def sync_xray_of_linkedcare_for_person(request, pk):
     s = logIn()
     p= Person.objects.get(pk=pk)
-    if p.linkedcareId:
-        # type100以上 表示linkdedcare导入
-        n = Post.objects.filter(type__gt=20, person=p).count()
-        # if n > 0:
-        #     return HttpResponse("可能重复导入")
-        # time.sleep(random.randint(1, 5))
-        getXrayOfperson(s, p)
-    else:
-        return HttpResponse("此患者无linkedcareId，请返回")
-    # print('此患者无linkedcareId\n')
-    return HttpResponse("good，请返回")
+
+    get_baseinfo_of_patient(s,p)
+    getXrayOfperson(s, p)
+    return redirect('person_detail', pk)
+    # return HttpResponse("good，请返回")
+    # else:
+    #     return HttpResponse('此患者无linkedcareId，请联系管理员添加')
+
+
+
+

@@ -63,9 +63,9 @@ def getXrayOfperson(s, person):
     token = getTokenFromSession(s)
     headers = get_header_use_token(token)
     if not person.linkedcareId:
-        print('此患者无linkedcareId\n')
+        print('get_xray: 此患者无linkedcareId\n')
     else:
-        print('正在导入此患者 %s\n' %(person.name))
+        print('get_xray: 正在导入此患者 %s\n' %(person.name))
         # 获取预约列表
         re = s.get(UrlGetApptList + str(person.linkedcareId), headers=headers)
         # json  {id: 1222594, officeId: 124, startTime: "2018-11-10T15:30:00", endTime: "2018-11-10T16:00:00",…}
@@ -104,13 +104,16 @@ def getXrayOfperson(s, person):
                 imgList = json.loads(reImgList.content.decode('utf-8'))
                 if imgList:
                     # type100以上 表示linkdedcare导入
+                    #  重复检查，如果已经下载此x线，则取消
                     n = Post.objects.filter(name__contains=time, person=person).count()
-                    # if n>0:
-                    #     continue
-                    # todo 添加重复检查，如果已经下载x线，则取消
+                    if n>0:
+                        continue
+                    #检查现在xray的post 数目
+                    n2 = Post.objects.filter(person=person, type__gte=100).count()
 
-                    post = Post.objects.create(name=time, comment=time, type=100 + i2, person=person)
-                    i2=i2+1
+                    post = Post.objects.create(name=time, comment=time, type=100 + i2 +n2, person=person)
+                    i2 = i2+1
+
                     for imgItem in imgList:
                         # 准备文件名及路径
                         dt = datetime.now()

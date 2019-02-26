@@ -11,7 +11,9 @@ import json
 import sys
 from boards.models import *
 
-# 开始
+'''
+从文件中导入患者
+'''
 with open('a2.txt', 'r') as f:
     data = json.load(f)
     # print(data)

@@ -31,7 +31,7 @@
     <div class="mb-4">
         {% if isXray == True %}
             <a onclick="gotoNewXray()" class="btn btn-primary">添加X线片</a>
-            <a href="{% url 'sync_xray' patient.pk %}" class="btn btn-warning">同步易看牙x线(不稳定！)</a>
+            <a  href="{% url 'sync_xray' patient.pk %}" class="btn btn-warning">同步易看牙影像</a>
 
         {% else %}
             <a onclick="gotoNewPic()" class="btn btn-primary">添加图像</a>

@@ -215,6 +215,11 @@ def search_suggest(request):
 def show_home(request):
     return render(request, 'show-index.html')
 
+#
+# @login_required()
+# def home_adminlte(request):
+#     return  render(request,'starter.html')
+
 
 @login_required()
 def home(request):

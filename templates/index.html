@@ -71,7 +71,7 @@
 {% block content %}
 
     <script>
-    toastr.info('道路千万条，安全第一条。','流浪地球')
+    {#toastr.info('道路千万条，安全第一条。','流浪地球')#}
     </script>
 <!--  主体列表  -->
 <div class="col-lg-8 col-sm-12  row">
@@ -244,14 +244,12 @@
 </div>
 
 <script>
-$(document).ready(function (){
     $(".infocard").click(function () {
         let pk = $(this).attr("pk")
 
         window.location.href=pk
     })
-    }
-)
+
 </script>
     
     

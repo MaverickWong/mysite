@@ -31,6 +31,7 @@ urlpatterns = [
     # url(r'^$', home, name='home'),
     url(r'^$', show_home, name='home'),
     url(r'^home2', home), #另一个主页入口，测试用
+    # url(r'^home3', home_adminlte),  # 另一个主页入口，测试用
 
     url(r'^ip$', get_host_ip, name='hostip'),
 

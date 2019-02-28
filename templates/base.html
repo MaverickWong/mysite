@@ -1,146 +1,495 @@
-{% load static %}
+{% load staticfiles %}
 <!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>{% block title %}病例管理系统{% endblock %}</title>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> {% block title %}病例管理系统{% endblock %} </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-{#        <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
-{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
-      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css'%}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css'%}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css'%}">
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect. -->
+{#  <link rel="stylesheet" href="{% static 'dist/css/skins/skin-blue.min.css'%}">#}
+    <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css'%}">
 
-{#    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>#}
-    <script src="{% static  'js/jquery-3.3.1.min.js'%} "></script>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
 
-{#    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
-      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- Google Font -->
+{#  <link rel="stylesheet"#}
+{#        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">#}
 
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <!-- REQUIRED JS SCRIPTS -->
+    <!-- jQuery 3 -->
+    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+
+
     <script src="{% static 'js/bootstrap-suggest.js' %}"></script>
-      <link rel="stylesheet" href="{% static 'css/toastr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/toastr.min.css' %}">
     <script src="{% static 'js/toastr.min.js' %}"></script>
 
+    {% block link %} {% endblock %}
+    {% block stylesheet %}  {% endblock %}
+{#    <style>#}
+{#        li:hover {#}
+{#    color: #fff;#}
+{#    background: #1e282c;#}
+{#    border-left-color: #3c8dbc;}#}
+{#    </style>#}
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-    {% block link %}
-    {% endblock %}
+  <!-- 标题栏 Main Header -->
+  <header class="main-header">
 
-    {% block stylesheet %}
-    {% endblock %}
-  </head>
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="logo hidden-xs">
+      <img class="brand navbar-brand" src="{% static 'logo2.png' %}" alt="Brand" >
 
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>Z</b>dl</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg">病历系统</span>
+    </a>
 
-  <body>
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+        <!---搜索框--->
+        <form action="/search/" method="get" class=" navbar-form col-lg-3">
+            <div class="input-group">
+              <input type="text" name="s" class="form-control" id="search" placeholder="姓名、病历号、标签.." autocomplete="off">
+              <span class="input-group-btn">
+                  <button type="submit"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                  </button>
+                </span>
+                <!--- 搜索框下拉菜单必须 -->
+                <div class="input-group-btn">
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
+                  </ul>
+                </div>
+            </div>
+        </form>
 
-{% block body %}
-
-
- <nav class="nav" >
-        <div class="container-fluid ">
-          <div class="navbar-header col-xs-4" >
-{#              style="margin-bottom: -20px"#}
-              <a class="navbar-brand" href="{% url 'home' %}" >
-                  <img class="brand" src="{% static 'logo2.png' %}" alt="Brand" >
-              </a>
-              <a class="navbar-brand hidden-xs" href="{% url 'home' %}" >病例管理系统</a>
-          </div>
-
-            <!---  搜索框 --->
-          <form id="searchForm" action="/search/" method="get" class="navbar-left navbar-form " role="search">
-              <div class="input-group">
-                  <input name="s" type="text" class="form-control form-inline" id="search" placeholder="姓名、病历号、标签.." autocomplete="off" >
-
-                  <span class="input-group-addon">
-                    <span onclick="submitSearch();" class="glyphicon glyphicon-search"></span>
-                  </span>
-                  <div class="input-group-btn">
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
-                      </ul>
-                  </div>
-              </div>
-{#              <button type="submit" class=" btn btn-default  ">搜索</button>#}
-          </form>
-            <script>
-                function submitSearch() {
-                    $('#searchForm').submit();
-                }
-            </script>
-
-
-        <ul class="nav navbar-nav hidden-xs">
-            <li class="active"><a href={% url 'home' %}>病例</a></li>
-            <li><a href="/task/">代办事项</a></li>
-            <li><a href="/netdisk/">网盘</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    其他
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="{% url 'syncdb' %}">同步易看牙数据</a></li>
-                    <li><a href="{% url 'hostip' %}">本机ip</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{% url 'importFolder' %}">导入文件夹图像</a></li>
-                    <li class="divider"></li>
-                    <li><a href="/allposts">PostNum</a></li>
-                </ul>
-            </li>
-        </ul>
-          <!---  登陆验证 --->
-          {% if user.is_authenticated %}
-              <ul class="nav navbar-nav navbar-right hidden-xs">
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        用户
-                        <b class="caret"></b>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success">4</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 4 messages</li>
+              <li>
+                <!-- inner menu: contains the messages -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <!-- User Image -->
+                        <img src="{% static 'logo2.png' %}" class="img-circle" alt="User Image">
+                      </div>
+                      <!-- Message title and timestamp -->
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <!-- The message -->
+                      <p>Why not buy a new awesome theme?</p>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/logout" > {{ user.username }}选项</a></li>
-                        <li><a href="/logout" > 注销 </a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">--</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">--</a></li>
-                    </ul>
                   </li>
-              </ul>
+                  <!-- end message -->
+                </ul>
+                <!-- /.menu -->
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- /.messages-menu -->
 
-          {% else %}
-              <form class="form-inline ml-auto">
-                  <a href="{% url 'login' %}" class="btn btn-outline-secondary">登陆</a>
-                  <a href="{% url 'signup' %}" class="btn btn-primary ml-2">注册</a>
-              </form>
-          {% endif %}
+          <!-- Notifications Menu -->
+          <li class="dropdown notifications-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">10</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 10 notifications</li>
+              <li>
+                <!-- Inner Menu: contains the notifications -->
+                <ul class="menu">
+                  <li><!-- start notification -->
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                    </a>
+                  </li>
+                  <!-- end notification -->
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View all</a></li>
+            </ul>
+          </li>
+          <!-- Tasks Menu -->
+          <li class="dropdown tasks-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-flag-o"></i>
+              <span class="label label-danger">9</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 9 tasks</li>
+              <li>
+                <!-- Inner menu: contains the tasks -->
+                <ul class="menu">
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <!-- Task title and progress text -->
+                      <h3>
+                        Design some buttons
+                        <small class="pull-right">20%</small>
+                      </h3>
+                      <!-- The progress bar -->
+                      <div class="progress xs">
+                        <!-- Change the css width attribute to simulate progress -->
+                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
+                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">20% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                </ul>
+              </li>
+              <li class="footer">
+                <a href="#">View all tasks</a>
+              </li>
+            </ul>
+          </li>
+          <!-- User Account Menu -->
+          <li class="dropdown user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <!-- The user image in the navbar-->
+              <img src="{% static 'logo2.png' %}" class="user-image" alt="User Image">
+              <!-- hidden-xs hides the username on small devices so only the image appears. -->
+              <span class="hidden-xs">{{ user }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- The user image in the menu -->
+              <li class="user-header">
+                <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
+
+                <p>
+                  {{ user }} - 正畸医生
+                  <small>Member since Nov. 2012</small>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="#" class="btn btn-default btn-flat">账号</a>
+                </div>
+                <div class="pull-right">
+                  <a href="/logout" class="btn btn-default btn-flat">退出</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+        </ul>
       </div>
     </nav>
+  </header>
+  <!-- 左边栏 Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
 
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
 
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% static 'logo2.png' %}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ user }}</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+        </div>
+      </div>
 
-    <div class="container  col-lg-12 col-sm-12">
+      <!-- search form (Optional) -->
+{#      <form action="#" method="get" class="sidebar-form">#}
+{#        <div class="input-group">#}
+{#          <input type="text" name="q" class="form-control" placeholder="Search...">#}
+{#          <span class="input-group-btn">#}
+{#              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>#}
+{#              </button>#}
+{#            </span>#}
+{#        </div>#}
+{#      </form>#}
+      <!-- /.search form -->
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">业务</li>
+        <!-- Optionally, you can add icons to the links -->
+        <li class="active"><a href="/home2/">
+            <i class="fa fa-picture-o"></i> <span>病例</span></a></li>
+        <li><a href="#" onclick="toastr.info('尚未开通！')">
+            <i class="fa fa-dashboard"></i> <span>预约</span></a></li>
+        <li><a href="#"><i class="fa fa-question"></i> <span>查询</span></a></li>
+        <li><a href="#"><i class="fa fa-database"></i> <span>库存</span></a></li>
+        <li><a href="/task/"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-link"></i> <span>其他</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="{% url 'syncdb' %}" class="fa fa-circle-o text-red"> 同步易看牙</a></li>
+            <li><a href="/allposts" class="fa fa-circle-o">病例统计</a></li>
+            <li><a href="{% url 'hostip' %}" class="fa fa-circle-o">局域网IP</a></li>
+            <li><a href="{% url 'importFolder' %}" class="fa fa-circle-o">导入文件夹图像</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- 主体标题 Content Header (Page header) -->
+    <!--
+    <section class="content-header">
+      <h1>
+        Page Header
+        <small>Optional description</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+    ----->
+
+    <!-- 主体内容全放到这里！Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        | Your Page Content Here |
+        -------------------------->
+    {% block body %}
         {% block content %}
+            Main content
         {% endblock %}
+    {% endblock %}
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right hidden-xs">
+
     </div>
-{% endblock %}
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2019 <a href="#">ZDLteam</a>.</strong> All rights reserved.
+  </footer>
 
-  <script type="text/javascript">
-                $("input#search").bsSuggest({
-                    url: "/search_suggest/?s=",
-                    allowNoKeyword: false, //无输入时不执行过滤请求
-                    multiWord: true, //以分隔符号分割的多关键字支持
-                    separator: ",", //多关键字支持时的分隔符
-                    getDataMethod: "url", //总是从 URL 获取数据
-                    showHeader: true,
-                    effectiveFields: ['name', 'idnum', 'pnum'],
-                    // 有效显示于列表中的字段，非有效字段都会过滤，默认全部有效。
-                    effectiveFieldsAlias: {'name':'姓名', 'idnum':'病历号' , 'pnum':'图像数'},
-                    // 有效字段的别名对象，用于 header 的显示
-                }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
-                    {#console.log('onSetSelectValue: ', e.target.value, selectedData, selectedRawData);#}
-                    {#console.log(selectedRawData['pk'])#}
-                    // 点击菜单后打开具体页面
-                    window.location.href='/detail/' + selectedRawData['pk'] + '/'
-                });
-    </script>
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Create the tabs -->
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+      <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+      <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!-- Home tab content -->
+      <div class="tab-pane active" id="control-sidebar-home-tab">
+        <h3 class="control-sidebar-heading">最近活动</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:;">
+              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
 
-  </body>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+
+                <p>Will be 23 on April 24th</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+        <h3 class="control-sidebar-heading">任务进度</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:;">
+              <h4 class="control-sidebar-subheading">
+                Custom Template Design
+                <span class="pull-right-container">
+                    <span class="label label-danger pull-right">70%</span>
+                  </span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+      </div>
+      <!-- /.tab-pane -->
+      <!-- Stats tab content -->
+      <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+      <!-- /.tab-pane -->
+      <!-- Settings tab content -->
+      <div class="tab-pane" id="control-sidebar-settings-tab">
+        <form method="post">
+          <h3 class="control-sidebar-heading">General Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Report panel usage
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Some information about this general settings option
+            </p>
+          </div>
+          <!-- /.form-group -->
+        </form>
+      </div>
+      <!-- /.tab-pane -->
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+
+<script type="text/javascript">
+    //激活标签
+        $("ul.sidebar-menu li").click(function(){
+              $("li.active").attr("class", "");
+              $(this).attr("class", "active");
+        });
+
+    $("input#search").bsSuggest({
+        url: "/search_suggest/?s=",
+        allowNoKeyword: false, //无输入时不执行过滤请求
+        multiWord: true, //以分隔符号分割的多关键字支持
+        separator: ",", //多关键字支持时的分隔符
+        getDataMethod: "url", //总是从 URL 获取数据
+        showHeader: true,
+        effectiveFields: ['name', 'idnum', 'pnum'],
+        // 有效显示于列表中的字段，非有效字段都会过滤，默认全部有效。
+        effectiveFieldsAlias: {'name':'姓名', 'idnum':'病历号' , 'pnum':'图像数'},
+        // 有效字段的别名对象，用于 header 的显示
+    }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
+        {#console.log('onSetSelectValue: ', e.target.value, selectedData, selectedRawData);#}
+        {#console.log(selectedRawData['pk'])#}
+        // 点击菜单后打开具体页面
+        window.location.href='/detail/' + selectedRawData['pk'] + '/'
+    });
+
+
+</script>
+
+
+
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. -->
+<!-- Slimscroll -->
+<script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+<!-- FastClick -->
+<script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+
+{% block script %}{% endblock %}
+
+</body>
 </html>

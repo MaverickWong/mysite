@@ -1,21 +1,5 @@
 {% load static %}
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Title</title>#}
-{#     <meta charset="utf-8">#}
-{#    #}
 
-        {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
-{#        <script src="{% static 'bootstrap.min.js' %}"></script>#}
-{#        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
-{#        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>#}
-{#        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
-
-{#  #}
-{#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
-{#    <script src="{% static  'js/jquery-3.3.1.min.js'%} "></script>#}
     <script src="{% static 'js/timeline-modernizr.custom.js' %}"></script>
     <!---时间线http://www.jq22.com/jquery-info164-->
     <link href="{% static 'css/timeline-component.css' %}" rel="stylesheet">
@@ -24,10 +8,7 @@
     <!--- 播放器来自   http://www.htmleaf.com/jQuery/Image-Effects/201806195182.html           --->
 
 
-{##}
-{#</head>#}
-{#<body>#}
-<div class="container col-lg-12">
+
     <div class="mb-4">
         {% if isXray == True %}
             <a onclick="gotoNewXray()" class="btn btn-primary">添加X线片</a>
@@ -37,25 +18,71 @@
             <a onclick="gotoNewPic()" class="btn btn-primary">添加图像</a>
         {% endif %}
     </div>
-    <hr style="padding: 2px">
+    <br>
 
-    <div>
-      {% if posts %}
-          <ul class="cbp_tmtimeline">
-            {% for post in posts.all  %}
-                <li>
-                    <time class="cbp_tmtime" datetime="{{ post.upLoadTime|date:'Y-m-d' }}">
-                        <span>{{ post.upLoadTime|time }}</span>
-                        {% if post.name %}
-                            <span >{{ post.name|default:_('') }}</span>
-                        {% else %}
-                            <span>{{ post.upLoadTime|date:'Y-m-d'}}</span>
-                        {% endif %}
-                    </time>
-                    <div class="cbp_tmicon cbp_tmicon-phone"></div>
-                    <div class="cbp_tmlabel">
-                        <h2>{{ post.name|default:_('') }}</h2>
-                        <p>{{ post.comment|default:_('') }}</p>
+{#    <div>#}
+{#      {% if posts %}#}
+{#          <ul class="cbp_tmtimeline">#}
+{#            {% for post in posts.all  %}#}
+{#                <li>#}
+{#                    <time class="cbp_tmtime" datetime="{{ post.upLoadTime|date:'Y-m-d' }}">#}
+{#                        <span>{{ post.upLoadTime|time }}</span>#}
+{#                        {% if post.name %}#}
+{#                            <span >{{ post.name|default:_('') }}</span>#}
+{#                        {% else %}#}
+{#                            <span>{{ post.upLoadTime|date:'Y-m-d'}}</span>#}
+{#                        {% endif %}#}
+{#                    </time>#}
+{#                    <div class="cbp_tmicon cbp_tmicon-phone"></div>#}
+{#                    <div class="cbp_tmlabel">#}
+{#                        <h2>{{ post.name|default:_('') }}</h2>#}
+{#                        <p>{{ post.comment|default:_('') }}</p>#}
+{#                          <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row" data-iframe="true">#}
+{#                              {% for img in post.images.all %}#}
+{##}
+{#                                  <li class="col-xs-12 col-sm-4 col-md-2"  data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600" data-src="{{ img.size_m }}"#}
+{#                                      data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">#}
+{#                                        <a class="thumbnail" href="">#}
+{#                                            <img class="img-responsive" src="{{ img.thumbnail }}">#}
+{#                                        </a>#}
+{#                                  </li>#}
+{##}
+{#                              {% endfor %}#}
+{#                          </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#            {% endfor %}#}
+{#          </ul>#}
+{#      {% endif %}#}
+{#    </div>#}
+
+<div>
+  {% if posts %}
+    <ul class="timeline">
+        {% for post in posts.all  %}
+
+            <!-- timeline time label -->
+            <li class="time-label">
+                <span class="bg-red">
+                    {% if post.name %}
+                        {{ post.name|default:_('') }}
+                    {% else %}
+                        {{ post.upLoadTime|date:'Y-m-d' }}
+                    {% endif %}
+                </span>
+            </li>
+            <!-- /.timeline-label -->
+
+            <!-- timeline item -->
+            <li>
+                <!-- timeline icon -->
+                <i class="fa fa-camera bg-blue"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+
+                    <h3 class="timeline-header"><a href="#"></a> {{ post.comment|default:_('') }}</h3>
+
+                    <div class="timeline-body">
                           <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row" data-iframe="true">
                               {% for img in post.images.all %}
 
@@ -69,54 +96,20 @@
                               {% endfor %}
                           </ul>
                     </div>
-                </li>
-            {% endfor %}
-          </ul>
-      {% endif %}
 
-    </div>
-
-
-
-{#  {% if posts %}#}
-{#        {% for post in posts.all  %}#}
-{##}
-{#            <div class="panel panel-primary ">#}
-{#               <div class="panel-heading">#}
-{#                    <div class="col-md-3 col-xs-6">#}
-{#                        {% if post.name %}#}
-{#                            <span >{{ post.name }}</span>#}
-{#                            <small >{{ post.comment }}</small>#}
-{#                        {% else %}#}
-{#                            <span>{{ post.upLoadTime }}</span>#}
-{#                        {% endif %}#}
+{#                    <div class="timeline-footer">#}
+{#                        <a class="btn btn-primary btn-xs">...</a>#}
 {#                    </div>#}
-{#                   <a href="/del/person{{ patient.pk }}/post{{ post.pk }}" class="  col-xs-offset-4 col-lg-offset-8 label label-warning">删除</a>#}
-{##}
-{#                        <div class="col-lg-1 col-xs-3 col-lg-offset-8  ">#}
-{#                        </div>#}
-{#               </div>#}
-{##}
-{#              <div class="panel-body row">#}
-{#                  <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row" data-iframe="true">#}
-{#                      {% for img in post.images.all %}#}
-{##}
-{#                          <li class="col-xs-12 col-sm-4 col-md-2"  data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600" data-src="{{ img.size_m }}"#}
-{#                              data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">#}
-{#                                <a class="thumbnail" href="">#}
-{#                                    <img class="img-responsive" src="{{ img.thumbnail }}">#}
-{#                                </a>#}
-{#                          </li>#}
-{##}
-{#                      {% endfor %}#}
-{#                  </ul>#}
-{#              </div>#}
-{#            </div>#}
-{##}
-{#        {% endfor %}#}
-{#  {% endif %}#}
+                </div>
+            </li>
+            <!-- END timeline item -->
+      {% endfor %}
+{% endif %}
 
-{#<script src="{% static 'js/jquery-1.11.0.min.js' %}" type="text/javascript"></script>#}
+</ul>
+</div>
+
+
 <script src="{% static 'js/lightgallery-all.min.js' %}"></script>
 <script type="text/javascript">
     {% for post in posts.all %}
@@ -145,43 +138,6 @@
     }
 </script>
 
-{#<script type="text/javascript">#}
-{#        $(document).ready(function(){#}
-{#            $('.images').viewer();#}
-{#        });#}
-{#        </script>#}
-
-
-
-{#            {% if posts %}#}
-{#                {% for post in posts.all  %}#}
-{##}
-{#                    <div class="panel panel-primary ">#}
-{##}
-{#                        <div class="panel-heading">#}
-{#                            <div class="col-lg-3">#}
-{#                                <span >阶段- {{ post.type }}--{{ post.name }}</span>#}
-{#                                <small class=" d-block">{{ post.comment }}</small>#}
-{#                            </div>#}
-{#                            <div class="col-lg-1 col-lg-offset-8">#}
-{#                                <a href="/del/person{{ patient.pk }}/post{{ post.pk }}" class="label label-success">删除</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                          <div class="panel-body row">#}
-{#                            {% if post %}#}
-{#                                {% for img in post.images.all %}#}
-{#                                    <div class="col-sm-6 col-md-3">#}
-{#                                        <a href="{{ img.path }}" class="thumbnail">#}
-{#                                            <img src="{{ img.thumbnail }}" alt="复诊缩略图" height="300">#}
-{#                                        </a>#}
-{#                                    </div>#}
-{#                                {% endfor %}#}
-{#                            {% endif %}#}
-{#                          </div>#}
-{#                    </div>#}
-{##}
-{#                {% endfor %}#}
-{#            {% endif %}#}
 
 </div>
 {#</body>#}

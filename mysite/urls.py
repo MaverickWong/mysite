@@ -29,9 +29,9 @@ from record import urls as recordurls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^$', home, name='home'),
-    url(r'^$', show_home, name='home'),
-    url(r'^home2', home), #另一个主页入口，测试用
-    # url(r'^home3', home_adminlte),  # 另一个主页入口，测试用
+    # url(r'^$', bad, name='home'),  # 维护升级用
+    url(r'^$', show_home, name='home'),   # 第1主页入口
+    url(r'^home2', home),  # 第二主页入口
 
     url(r'^ip$', get_host_ip, name='hostip'),
 

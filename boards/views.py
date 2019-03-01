@@ -45,7 +45,7 @@ def importFolders(request):
     except IOError:
         return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")
 
-
+#todo 下载文件夹可能有两个，
 def down_zip(request, pk):
     """
     打包目录所有文件到zip文件
@@ -59,6 +59,9 @@ def down_zip(request, pk):
     pre_len = len(os.path.dirname(source_dir))
     for parent, dirnames, filenames in os.walk(source_dir):
         for filename in filenames:
+            if ('small' in filename) or ( 'medium' in filename):
+                # 去除small， medium 文件
+                continue
             pathfile = os.path.join(parent, filename) # 要打包的文件
             arcname = pathfile[pre_len:].strip(os.path.sep)  # 在zip中的相对路径
             zipf.write(pathfile, arcname)
@@ -539,7 +542,7 @@ def posts(request, pk):
         picurl = p.icon
         print(picurl)
 
-    posts = p.posts.filter(type__lte=99)
+    posts = p.posts.filter(type__lte=99).order_by('type')
     contex = {'patient': p, 'posts': posts}
 
     return render(request, 'boards/detail3.html', contex)

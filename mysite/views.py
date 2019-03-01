@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from boards.models import Person, Tag, Post
+from boards.models import Person, Tag, Post,Image
 import json
 from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -21,9 +21,89 @@ from mysite.settings import STATICFILES_DIRS
 #     fm = FileManager(STATICFILES_DIRS[0]+'/')
 #     return fm.render(request, path)
 #
+@login_required()
+def show_home(request):
+    return render(request, 'show-index.html')
+
+#
+# @login_required()
+# def home_adminlte(request):
+#     return  render(request,'starter.html')
+
+
+@login_required()
+def home(request):
+    docname = request.user.username
+    if request.user.is_authenticated:
+        if docname == 'zdl': #  用户名为zdl时，可以查看所有患者[:16]
+            persons = Person.objects.order_by('pk').reverse()
+            total_person_num = Person.objects.all().count()
+
+        else:  #  只能看该医生的患者
+            persons = Person.objects.filter(doctor=docname).order_by('pk')
+            total_person_num = Person.objects.filter(doctor=docname).count()
+
+        # tags = Tag.objects.all()
+
+        # 分页
+        page = request.GET.get('page', 1)
+        paginator = Paginator(persons, 10)
+        try:
+            topics = paginator.page(page)
+        except PageNotAnInteger:
+            # fallback to the first page
+            topics = paginator.page(1)
+        except EmptyPage:
+            # probably the user tried to add a page number
+            # in the url, so we fallback to the last page
+            topics = paginator.page(paginator.num_pages)
+
+        tgroups = []
+        for i in range(10):
+            tgroup = Tag.objects.filter(type=i)
+            tgroups.append(tgroup)
+        # tgroups.append(Tag.objects.filter(type=101)) # 添加101其他
+        tags = Tag.objects.filter(type=101)
+
+        total_posts_num = Post.objects.all().count()
+        total_img_num = Image.objects.all().count()
+        tag_count = Tag.objects.all().count()
+
+        contx = {'persons': topics, 'total_person_num': total_person_num, 'total_posts_num':total_posts_num,
+                 'total_img_num':total_img_num, 'tgroups':tgroups, 'tags':tags, 'tag_islink':True}
+
+        return render(request, 'index.html', contx)
+    else:
+        return redirect('login')
+
 
 def bad(request):
-    return  render(request,'404.html')
+    ''' 升级维护用 '''
+    return render(request, '404.html')
+
+'''############################################'''
+
+
+def summary_index(request):
+    docname = request.user.username
+    if request.user.is_authenticated:
+        if docname == 'zdl':  # 用户名为zdl时，可以查看所有患者[:16]
+            total_person_num = Person.objects.all().count()
+
+        else:  # 只能看该医生的患者
+            total_person_num = Person.objects.filter(doctor=docname).count()
+
+        # tags = Tag.objects.all()
+        total_posts_num = Post.objects.all().count()
+        total_img_num = Image.objects.all().count()
+        tag_count = Tag.objects.all().count()
+
+        contx = {'total_person_num': total_person_num, 'total_posts_num': total_posts_num,
+                 'total_img_num': total_img_num, 'tag_count':tag_count, 'tag_islink': True}
+        return render(request, 'index.html', contx)
+    else:
+        return redirect('login')
+
 
 def get_host_ip(request):
     try:
@@ -35,8 +115,10 @@ def get_host_ip(request):
 
     return HttpResponse(ip)
 
+
 def hello(request):
     return render(request, 'upload-vue2.html')
+
 
 # 所有post统计
 def allposts(request):
@@ -46,6 +128,7 @@ def allposts(request):
 # 	c = {'board': 'i am ok ', 'a':'aaaaa'}
 # 	return HttpResponse( t.render(c))
 #     #return render(request, 'home.html',{'board':'what ', 'a':'aaa'})
+
 
 # 组装paginator, 返回persons
 def get_paginator(queryset, page):
@@ -61,6 +144,7 @@ def get_paginator(queryset, page):
         p = paginator.page(paginator.num_pages)
 
     return p
+
 
 # 搜索框输入字符串，先判断是否tag，及人名
 def search_person_with_str(s, docname): # 搜索字符串和医生名字
@@ -211,55 +295,6 @@ def search_suggest(request):
 #     else:
 #         return redirect('login')
 
-@login_required()
-def show_home(request):
-    return render(request, 'show-index.html')
-
-#
-# @login_required()
-# def home_adminlte(request):
-#     return  render(request,'starter.html')
-
-
-@login_required()
-def home(request):
-    docname = request.user.username
-    if request.user.is_authenticated:
-        if docname == 'zdl': #  用户名为zdl时，可以查看所有患者[:16]
-            persons = Person.objects.order_by('pk').reverse()
-            total = Person.objects.all().count()
-
-        else:  #  只能看该医生的患者
-            persons = Person.objects.filter(doctor=docname).order_by('pk')
-            total = Person.objects.filter(doctor=docname).count()
-
-        # tags = Tag.objects.all()
-
-        # 分页
-        page = request.GET.get('page', 1)
-        paginator = Paginator(persons, 10)
-        try:
-            topics = paginator.page(page)
-        except PageNotAnInteger:
-            # fallback to the first page
-            topics = paginator.page(1)
-        except EmptyPage:
-            # probably the user tried to add a page number
-            # in the url, so we fallback to the last page
-            topics = paginator.page(paginator.num_pages)
-
-        tgroups = []
-        for i in range(10):
-            tgroup = Tag.objects.filter(type=i)
-            tgroups.append(tgroup)
-        # tgroups.append(Tag.objects.filter(type=101)) # 添加101其他
-        tags = Tag.objects.filter(type=101)
-
-        contx = {'persons': topics, 'total':total, 'tgroups':tgroups, 'tags':tags, 'tag_islink':True}
-
-        return render(request, 'index.html', contx)
-    else:
-        return redirect('login')
 
 
 #  从易看牙同步患者基本信息

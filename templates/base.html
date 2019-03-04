@@ -86,7 +86,7 @@ desired effect
 
     <!-- Logo -->
     <a href="{% url 'home' %}" class="logo hidden-xs">
-      <img class="brand navbar-brand" src="{% static 'logo2.png' %}" alt="Brand" >
+      <img class="brand navbar-brand" src="{% static 'logo.png' %}" alt="Brand" >
 
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>Z</b>dl</span>
@@ -286,16 +286,16 @@ desired effect
         </div>
       </div>
 
-      <!-- search form (Optional) -->
-{#      <form action="#" method="get" class="sidebar-form">#}
-{#        <div class="input-group">#}
-{#          <input type="text" name="q" class="form-control" placeholder="Search...">#}
-{#          <span class="input-group-btn">#}
-{#              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>#}
-{#              </button>#}
-{#            </span>#}
-{#        </div>#}
-{#      </form>#}
+      <!-- search form (Optional)
+      <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <span class="input-group-btn">
+              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+              </button>
+            </span>
+        </div>
+      </form>
       <!-- /.search form -->
 
       <!-- Sidebar Menu -->
@@ -306,7 +306,7 @@ desired effect
             <i class="fa fa-picture-o"></i> <span>病例</span></a></li>
         <li><a href="#" onclick="toastr.info('尚未开通！')">
             <i class="fa fa-dashboard"></i> <span>预约</span></a></li>
-        <li><a href="#"><i class="fa fa-question"></i> <span>查询</span></a></li>
+        <li><a href="#" onclick="gotoSearch()"><i class="fa fa-question"></i> <span>查询</span></a></li>
         <li><a href="#"><i class="fa fa-database"></i> <span>库存</span></a></li>
         <li><a href="/task/"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
         <li class="treeview">
@@ -328,6 +328,13 @@ desired effect
     <!-- /.sidebar -->
   </aside>
 
+<script>
+    function gotoSearch() {
+        $.get('/search_patients/', function (r) {
+            $("section.content").html(r);
+        });
+    }
+</script>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- 主体标题 Content Header (Page header) -->

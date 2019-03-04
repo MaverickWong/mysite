@@ -1,0 +1,43 @@
+
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#tab_1" data-toggle="tab">单标签搜索</a></li>
+      <li><a href="#tab_2" data-toggle="tab">高级搜索</a></li>
+    <!---
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          Dropdown <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+        </ul>
+      </li>
+    --->
+      <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="tab_1">
+            <div class="panel panel-default">
+                  <div class="panel-body">
+{#                    <a class="label label-danger" href="/ss/" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"> 多标签联合搜索</a>#}
+                    {% include 'tag_list.html' %}
+                  </div>
+            </div>
+      </div>
+      <!-- /.tab-pane -->
+      <div class="tab-pane" id="tab_2">
+       <div class="panel panel-default">
+                  <div class="panel-body">
+{#                    <a class="label label-danger" href="/ss/" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"> 多标签联合搜索</a>#}
+                    {% include 'tag_list.html' %}
+                  </div>
+            </div>
+      </div>
+
+    </div>
+    <!-- /.tab-content -->
+  </div>

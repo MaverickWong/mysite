@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
     url(r'^super_search/', super_search),
     url(r'^ss/', s_search),
+    url(r'^search_patients/', search_patients),
 
     # url(r'^test/', test, name='test'),
     url(r'^del/person/(?P<pk>\d+)', delperson),

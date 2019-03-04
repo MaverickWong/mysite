@@ -47,7 +47,7 @@ def home(request):
 
         # 分页
         page = request.GET.get('page', 1)
-        paginator = Paginator(persons, 10)
+        paginator = Paginator(persons, 6)
         try:
             topics = paginator.page(page)
         except PageNotAnInteger:
@@ -211,6 +211,16 @@ def search(request):
 
         persons = get_paginator(ps, page)
         return render(request, 'search_result.html', {'persons': persons, 's': s, 'total':total})
+
+def search_patients(request):
+    tgroups = []
+    for i in range(10):
+        tgroup = Tag.objects.filter(type=i)
+        tgroups.append(tgroup)
+    # tgroups.append(Tag.objects.filter(type=101)) # 添加101其他
+    tags = Tag.objects.filter(type=101)
+    contx = {'tgroups':tgroups, 'tag_islink':True, 'tags':tags}
+    return render(request, 'index_search_patients.html', contx  )
 
 
 # 单个 tag 搜索

@@ -18,11 +18,14 @@ import readFoldersWithNameIdDate
 import mimetypes, zipfile
 from django.utils.encoding import smart_str
 from django.utils.encoding import escape_uri_path
+import django.dispatch
 
 # Create your views here.
 # TODO 高级用户名是zdl
 
 sep = '_'
+# 新信号
+post_upload_done = django.dispatch.Signal(providing_args=['post_pk'])
 
 
 def importFolders(request):
@@ -45,17 +48,29 @@ def importFolders(request):
     except IOError:
         return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")
 
-#todo 下载文件夹可能有两个，
+
 def down_zip(request, pk):
     """
-    打包目录所有文件到zip文件
-    :return:
+    查询person的所有image，根据地址打包所有文件到zip文件
     """
+    # todo 下载文件夹可能有两个
     p = Person.objects.get(pk=pk)
-    source_dir = BASE_DIR + '/'+ p.privateDir
+    # source_dir = BASE_DIR + '/' + p.privateDir
     output_filename = '/tmp/all.zip'
+    zipf = zipfile.ZipFile(output_filename, 'w')  # zip文件
 
-    zipf = zipfile.ZipFile(output_filename, 'w')
+    imgs = p.images.all()
+    for img in imgs:
+        pathfile = BASE_DIR + img.path  # 要打包的文件
+        if os.path.exists(pathfile):
+            # 在zip中的相对路径
+            relative_path = os.path.basename(os.path.dirname(pathfile))
+            arcname = relative_path + os.path.sep + os.path.basename(pathfile)
+            zipf.write(pathfile, arcname)
+    zipf.close()
+
+    '''
+     zipf = zipfile.ZipFile(output_filename, 'w')
     pre_len = len(os.path.dirname(source_dir))
     for parent, dirnames, filenames in os.walk(source_dir):
         for filename in filenames:
@@ -66,6 +81,7 @@ def down_zip(request, pk):
             arcname = pathfile[pre_len:].strip(os.path.sep)  # 在zip中的相对路径
             zipf.write(pathfile, arcname)
     zipf.close()
+    '''
 
     content_type, encoding = mimetypes.guess_type(str(output_filename))
     content_type = content_type or 'application/octet-stream'
@@ -74,12 +90,10 @@ def down_zip(request, pk):
         f = open(output_filename, 'rb')
         response = FileResponse(f, content_type=content_type)
         # response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
-        response['Content-Disposition'] = 'attachment;filename="' + smart_str(p.name) + '.zip"'
+        response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
         # response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
 
         return response
-        # f.close()
-
     except IOError:
         return HttpResponse(" 无法打开该文件，请检查文件名 ")
 
@@ -488,6 +502,8 @@ def addpost(request, pk):
             add_tag_from_string_for_person(new_tag_list, p)
 
         result2 = json.dumps(results)
+
+        
         return HttpResponse(result2, content_type='application/json')
 
     # return HttpResponse('{"status":"success"}', content_type='application/json')

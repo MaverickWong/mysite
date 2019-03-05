@@ -1,0 +1,83 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#</head>#}
+{#<body>#}
+<script scr="/static/js/jquery-3.3.1.min.js"></script>
+<table>
+{% for tgroup in tgroups %}
+{#        <hr style="margin-top: 3px;margin-bottom:3px">#}
+
+    <tr>
+        <td >
+            {% if   forloop.counter0 == 1 %} <h5 style="margin-top: 0px; margin-bottom: 0px">总分类：   </h5>
+            {% elif forloop.counter0 == 2 %} <h5 style="margin-top: 0px; margin-bottom: 0px">水平向分类:</h5>
+            {% elif forloop.counter0 == 3 %} <h5 style="margin-top: 0px; margin-bottom: 0px">垂直向:   </h5>
+            {% elif forloop.counter0 == 4 %} <h5 style="margin-top: 0px; margin-bottom: 0px">是否拔牙:  </h5>
+            {% elif forloop.counter0 == 5 %} <h5 style="margin-top: 0px; margin-bottom: 0px">矫治器分类:</h5>
+            {% elif forloop.counter0 == 6 %} <h5 style="margin-top: 0px; margin-bottom: 0px">活动矫治器:</h5>
+            {% elif forloop.counter0 == 7 %} <h5 style="margin-top: 0px; margin-bottom: 0px">保持器:</h5>
+            {% elif forloop.counter0 == 8 %} <h5 style="margin-top: 0px; margin-bottom: 0px">患者:</h5>
+            {% elif forloop.counter0 == 9 %} <h5 style="margin-top: 0px; margin-bottom: 0px">主诉:</h5>
+{#            {% else %}                      <h5>其他:</h5>#}
+            {% endif %}
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+           {% for t in tgroup %}
+            <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+
+
+            {% endfor %}
+        </td>
+    </tr>
+{% endfor %}
+
+{% if tags %}
+    <tr id="showAllTags">
+        <td><div style="border:solid 1px #c3c3c3; background: #e5eecc">
+            <h5>点击 显示/隐藏其他标签</h5>
+        </div>
+
+        </td>
+    </tr>
+    <tr id="allTags" hidden>
+        <td>
+           {% for t in tags %}
+                {% block tag_button2  %}
+{#                   <a href="/tags/{{ t.name }}" class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"#}
+{#                       title="{{ t.name }}">#}
+{#                        {{ t.name }}#}
+{#                        <span class="badge">{{ t.persons.count }}</span>#}
+{#                   </a>#}
+               {% endblock %}
+            {% endfor %}
+        </td>
+    </tr>
+    </tr>
+{% endif %}
+
+</table>
+
+<script>
+$(document).ready(function(){
+  $("#showAllTags").click(function(){
+    $("#allTags").toggle(1000);
+  });
+});
+</script>
+
+
+{#</body>#}
+{#</html>#}
+{% block tag_buttton %}
+<span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+{% endblock %}
+
+{% block tag_buttton2 %}
+<span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+{% endblock %}

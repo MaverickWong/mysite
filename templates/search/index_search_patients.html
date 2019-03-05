@@ -24,7 +24,7 @@
             <div class="panel panel-default">
                   <div class="panel-body">
 {#                    <a class="label label-danger" href="/ss/" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"> 多标签联合搜索</a>#}
-                    {% include 'tag_list.html' %}
+                    {% include 'tag/tag_list.html' with tag_islink=True %}
                   </div>
             </div>
       </div>
@@ -33,7 +33,7 @@
        <div class="panel panel-default">
                   <div class="panel-body">
 {#                    <a class="label label-danger" href="/ss/" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"> 多标签联合搜索</a>#}
-                    {% include 'tag_list.html' %}
+                    {% include 'search/s_search.html' %}
                   </div>
             </div>
       </div>

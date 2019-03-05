@@ -220,7 +220,7 @@ def search_patients(request):
     # tgroups.append(Tag.objects.filter(type=101)) # 添加101其他
     tags = Tag.objects.filter(type=101)
     contx = {'tgroups':tgroups, 'tag_islink':True, 'tags':tags}
-    return render(request, 'index_search_patients.html', contx  )
+    return render(request, 'search/index_search_patients.html', contx  )
 
 
 # 单个 tag 搜索
@@ -232,7 +232,7 @@ def tag_search(request, tag):
     if docname == 'zdl':
         ps = t.persons.all()
     else:
-        ps= t.persons.filter(doctor=docname)
+        ps = t.persons.filter(doctor=docname)
 
     ps = ps.order_by('pk')
     total = ps.count()
@@ -240,7 +240,7 @@ def tag_search(request, tag):
 
     persons = get_paginator(ps, page)
 
-    return render(request, 'search_result.html', {'persons': persons, 'total':total})
+    return render(request, 'search/search_result.html', {'persons': persons, 'total':total})
 
 
 # 多tag 相交搜索
@@ -262,7 +262,7 @@ def super_search(request):
 
     total = persons.count()
 
-    return render(request, 'search_result.html', {'persons': persons, 'total':total})
+    return render(request, 'search/search_result.html', {'persons': persons, 'total':total})
 
 
 # 搜索框推荐

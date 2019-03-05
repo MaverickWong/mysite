@@ -1,0 +1,76 @@
+{#{% extends 'base.html' %}#}
+{#{% load static %}#}
+{#{% block title %}#}
+{#    添加新病历#}
+{#{% endblock %}#}
+{##}
+{#{% block link %}#}
+{##}
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >#}
+{#    <script src="{% static 'upload/js/jquery.min.js' %}"></script>#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/newPerson.css' %}" />#}
+{##}
+{##}
+{#{% endblock %}#}
+
+
+{#{% block content %}#}
+{# <style type="text/css">#}
+{#        #result{#}
+{#            width: 300px;#}
+{#            height:140px;#}
+{#            border:1px solid #eee;#}
+{#        }#}
+{#        #result img{#}
+{#            width: 300px;#}
+{#        }#}
+{#        input{#}
+{#            alignment: center;#}
+{#            width: 200px;#}
+{#            margin-top: 10px;#}
+{#        }#}
+{# </style>#}
+
+<div class="container">
+    <p></p>
+    <form role="form"  id="fileupload" name="files[]" class="form-inline" action="/super_search/" method="GET" >
+
+        <div class="form-group " >
+            <lable class=" control-label">搜索标签  ：</lable>
+            <input id="newTagsText" type ="text" name="s"  class="form-control" >
+            <button type="submit" class=" btn btn-primary   ">搜索</button>
+
+    {#                <button id="clear" class="btn btn-default" onclick="clear()">清除</button>#}
+
+    {#                <div class="col-lg-12" style="padding-left: 0px; padding-top: 12px; padding-bottom: 12px">#}
+    {#                    {% for t in tags %}#}
+    {#                    <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>#}
+    {#                    {% endfor %}#}
+    {#                </div>#}
+            <div>
+                <hr>
+                {% include 'tag/tag_list.html' with tag_islink=False %}
+
+            </div>
+        </div>
+    </form>
+
+
+</div>
+
+<script>
+    //添加标签名到文本框
+    function addText(t) {
+       var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;
+       document.forms["fileupload"]["newTagsText"].value = x;
+    };
+    function clear() {
+        var obj = document.getElementById("newTagsText");
+        obj.setAttribute("value", "");
+    };
+
+
+</script>
+
+
+{#{% endblock %}#}

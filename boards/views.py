@@ -18,7 +18,9 @@ import readFoldersWithNameIdDate
 import mimetypes, zipfile
 from django.utils.encoding import smart_str
 from django.utils.encoding import escape_uri_path
+
 import django.dispatch
+from django.dispatch import receiver
 
 # Create your views here.
 # TODO 高级用户名是zdl
@@ -503,10 +505,23 @@ def addpost(request, pk):
 
         result2 = json.dumps(results)
 
-        
+        # 发送完成信号，进行后续处理
+        post_upload_done.send(addpost, post_pk=post.pk)
+
         return HttpResponse(result2, content_type='application/json')
 
     # return HttpResponse('{"status":"success"}', content_type='application/json')
+
+
+@receiver(post_upload_done, sender=addpost)
+def post_upload_done_func(sender, **kwargs):
+    '''
+    上传后处理函数，
+    :param sender: 
+    :param kwargs: 
+    :return: 
+    '''
+    print('upload done!')
 
 
 def add_tag_from_string_for_person(new_tag_list, p):
@@ -619,4 +634,4 @@ def add_tag_for_person(request, pk):
         tgroups = get_tag_groups()
         tags = Tag.objects.all()
 
-        return render(request, 'add_tag.html', {'patient': p, 'tags': tags, 'tgroups': tgroups})
+        return render(request, 'tag/add_tag.html', {'patient': p, 'tags': tags, 'tgroups': tgroups})

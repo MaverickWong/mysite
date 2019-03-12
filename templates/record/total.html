@@ -36,9 +36,10 @@
         {% for record in records.all  %}
 
             <div class="panel panel-default ">
-
                 <div class="panel-heading">
-                    <div class="col-lg-2"> <span >复诊 -  {{record.createdAt }}  </span> </div>
+                    复诊 -  {{record.createdAt }}
+                    <a class="label label-info" onclick="delRecord({{ pk }}, {{ record.pk }})"> 删除 </a>
+
                 </div>
 
                   <div class="panel-body row">
@@ -93,6 +94,12 @@
 <script>
     function gotoNewRecord() {
         $.get("{% url 'record:newRecord' pk %}", function (r) {
+            $("#detail3").html(r);
+        });
+    }
+
+    function delRecord(ppk, repk) {
+        $.get("/record/del/"+ ppk +'/'+repk, function (r) {
             $("#detail3").html(r);
         });
     }

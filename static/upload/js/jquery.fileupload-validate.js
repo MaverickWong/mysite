@@ -58,7 +58,7 @@
             
             // The regular expression for allowed file types, matches
             // against either file type or file name:
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png|mp4)$/i, //文件格式限制
             // The maximum allowed file size in bytes:
             maxFileSize: 100000000, // 100 MB 扩大十倍
             // The minimum allowed file size in bytes:

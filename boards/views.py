@@ -573,7 +573,7 @@ def posts(request, pk):
         picurl = p.icon
         print(picurl)
 
-    posts = p.posts.filter(type__lte=99).order_by('type')
+    posts = p.posts.filter(type__lte=99).order_by('-type')
     contex = {'patient': p, 'posts': posts}
 
     return render(request, 'boards/detail3.html', contex)

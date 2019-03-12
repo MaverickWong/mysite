@@ -5,11 +5,13 @@ from tasklist.models import *
 
 # Create your views here.
 
+
 def home(request):
-    tasks = Task.objects.all().reverse()
+    tasks = Task.objects.order_by('-pk')
     # return  HttpResponse('good')
     msg = '欢迎，测试版'
     return render(request, 'task/index.html', {'tasks': tasks, 'msg':msg})
+
 
 class AddForm(forms.Form):
     status_choice = (
@@ -42,6 +44,7 @@ class AddForm(forms.Form):
     # startTime = forms.DateTimeFieldField(label='开始时间',  widget=forms.TextInput(attrs={'class': 'form-control'}))
     endTime = forms.DateField(label='结束时间',  required=False, widget=forms.TextInput(attrs={'id':'datetimepicker1', 'class': 'form-control'}))
     # timeLength = forms.CharField(max_length=10, null=True, blank=True)  'id':'datetimepicker1',
+
 
 def add(request):
     if request.method == 'POST':
@@ -91,17 +94,20 @@ def add(request):
         form = AddForm()
         tags = Task_tags.objects.all()
 
-        return render(request, 'task/add_tag.html', locals())
+        return render(request, 'task/add_task.html', locals())
 
 
 class EditForm(forms.Form):
     status_choice = (
+        (0, '无'),
         (1, '要做'),
         (2, '已发送'),
         (3, '已收到'),
         (4, '已戴走'),
     )
+
     group_choice =(
+        ('default', '无'),
         ('shece', '舌侧'),
         ('lucy', 'Lucy透明矫治器-李志鹏'),
         ('chunce', '唇侧计算机定位'),
@@ -123,7 +129,7 @@ class EditForm(forms.Form):
     # doc = forms.CharField(max_length=20, null=True, blank=True)
 
     # startTime = forms.DateField(label='开始时间',  widget=forms.TextInput(attrs={'class': 'form-control'}))
-    endTime = forms.DateField(label='结束时间',  required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    endTime = forms.DateField(label='结束时间',  required=False, widget=forms.TextInput(attrs={'id':'datetimepicker2', 'class': 'form-control'}))
     # timeLength = forms.CharField(max_length=10, null=True, blank=True)
 
 
@@ -139,7 +145,7 @@ def edit(request, pk):
             group = edit_form.cleaned_data['group']
             # startTime = register_form.cleaned_data['startTime']
             status = edit_form.cleaned_data['status']
-            # endTime = edit_form.cleaned_data['endTime']
+            endTime = edit_form.cleaned_data['endTime']
 
             task = Task.objects.get(pk=pk)
             task.name = name
@@ -147,12 +153,12 @@ def edit(request, pk):
             task.group = group
             # task.startTime=startTime
             task.status = status
-            # task.endTime = endTime
+            task.endTime = endTime
             task.save()
             message = '添加成功'
 
             return redirect('/task/', {'msg': message})
-    else:
+    else:  # get
         task = Task.objects.get(pk=pk)
         form = EditForm(
             initial={

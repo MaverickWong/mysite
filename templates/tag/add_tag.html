@@ -1,8 +1,8 @@
-
-
+{% extends 'base.html' %}
+{% block content %}
 <div class="container">
     <div>
-        <lable class=" control-label">患者标签  ：</lable>
+        <lable class=" control-label">患者现有标签  ：</lable>
         {% for t in patient.tags.all %}
             <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
                title="{{ t.name }}">
@@ -15,7 +15,7 @@
     <form role="form"  id="fileupload" name="files[]" class="form-inline" action="." method="POST" >
         {% csrf_token %}
         <div class="form-group " >
-            <lable class=" control-label">新标签  ：</lable>
+            <lable class=" control-label">待添加标签  ：</lable>
             <input id="newTagsText" type ="text" name="s"  class="form-control" >
             <button type="submit" class=" btn btn-primary   ">添加</button>
 
@@ -54,4 +54,4 @@
 
 </script>
 
-
+{% endblock %}

@@ -39,7 +39,7 @@
                         disableImageResize: /Android(?!.*Chrome)|Opera/
                             .test(window.navigator.userAgent),
                         maxFileSize: 999000,
-                        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+                        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|mp4)$/i
                     });
                 // }
             }

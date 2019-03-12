@@ -21,9 +21,11 @@ from mysite.settings import STATICFILES_DIRS
 #     fm = FileManager(STATICFILES_DIRS[0]+'/')
 #     return fm.render(request, path)
 #
-@login_required()
+
+
+# @login_required()
 def show_home(request):
-    return render(request, 'show-index.html')
+    return render(request, 'show-index2.html')
 
 #
 # @login_required()
@@ -210,7 +212,7 @@ def search(request):
         page = request.GET.get('page', 1)
 
         persons = get_paginator(ps, page)
-        return render(request, 'search_result.html', {'persons': persons, 's': s, 'total':total})
+        return render(request, 'search\search_result.html', {'persons': persons, 's': s, 'total':total})
 
 def search_patients(request):
     tgroups = []

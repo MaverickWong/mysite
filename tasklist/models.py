@@ -4,12 +4,14 @@ from boards.models import Person
 
 class Task(models.Model):
     status_choice = (
+        (0, '状态'),
         (1, '要做'),
         (2, '已发送'),
         (3, '已收到'),
         (4, '已戴走'),
     )
     group_choice = (
+        ('default', '默认'),
         ('shece', '舌侧'),
         ('lucy', 'Lucy透明矫治器-李志鹏'),
         ('chunce', '唇侧计算机定位'),

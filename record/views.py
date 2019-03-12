@@ -50,3 +50,11 @@ def total(request, personPk):
     return render(request, 'record/total.html', {'records': records, 'pk': personPk})
 
 
+def delRecord(request,  personPk, recordPk):
+    record = Record.objects.get(pk=recordPk)
+    record.delete()
+
+    p = Person.objects.get(pk=personPk)
+    records = p.records.order_by('createdAt').reverse()
+
+    return render(request, 'record/total.html', {'records': records, 'pk': personPk})

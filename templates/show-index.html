@@ -17,60 +17,73 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Bootstrap 3.3.7 -->
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
 
-	<link rel="stylesheet" href="{% static '/css/show-index-style.css' %}">
-
-
+    <link rel="stylesheet" href="{% static '/css/show-index-style.css' %}">
 </head>
 
 <body>
 
-	<div class="htmleaf-container">
-		<div class="wrap" >
+<div class="htmleaf-container">
+    <div class="wrap" >
 
-		  <div class="tile" onclick="gotoTagInvis();">
-		      <img src="{% static '/img/1.jpg' %}"/>
-		      <div class="text">
-		      <h1>隐适美</h1>
-		      <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
-		      <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
-		      <div class="dots">
-		          <span></span>
-		          <span></span>
-		          <span></span>
-		      </div>
-		    </div>
+        <div class="tile" onclick="gotoOldHome()">
+		  <img src="{% static '/img/show_index/3.jpg' %}"/>
+		  <div class="text">
+              <h1>唇侧矫治</h1>
+              <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
+              <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
+                <div class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
 		  </div>
+        </div>
 
-
-		<div class="tile" onclick="gotoTagTongue()">
-		  <img src="{% static '/img/2.jpg' %}"/>
+        <div class="tile" onclick="gotoTagTongue()">
+		  <img src="{% static '/img/show_index/2.jpg' %}"/>
 		  <div class="text">
 		  <h1>舌侧矫治</h1>
 		  <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
 		  <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
-		<div class="dots">
-		    <span></span>
-		    <span></span>
-		    <span></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
 		  </div>
+        </div>
+
+		  <div class="tile" onclick="gotoTagInvis();">
+		      <img src="{% static '/img/show_index/4.jpg' %}"/>
+		      <div class="text">
+                  <h1>隐形矫治</h1>
+                  <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
+                  <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
+                  <div class="dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                  </div>
+              </div>
 		  </div>
-		 </div>
-		  
-		  <div class="tile" onclick="gotoOldHome()">
-		  <img src="{% static '/img/3.jpg' %}"/>
-		  <div class="text">
-		  <h1>所有</h1>
-		  <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
-		  <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
-		<div class="dots">
-		    <span></span>
-		    <span></span>
-		    <span></span>
-		  </div>
-		  </div>
-		 </div>
-		</div>
-		</div>
+
+
+        <div class="tile" onclick="gotoTagChild();">
+		      <img src="{% static '/img/show_index/1.jpg' %}"/>
+		      <div class="text">
+                  <h1>青少年矫治</h1>
+                  <h2 class="animate-text">More lorem ipsum bacon ipsum.</h2>
+                  <p class="animate-text">Bacon ipsum dolor amet pork belly tri-tip turducken, pancetta bresaola pork chicken meatloaf. Flank sirloin strip steak prosciutto kevin turducken. </p>
+                  <div class="dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                  </div>
+              </div>
+        </div>
+
+    </div>
+</div>
 
     <script>
         function gotoTagInvis(){
@@ -82,6 +95,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         }
 
+        function gotoTagChild(){
+            window.location.href='/tags/儿童';
+
+        }
         function gotoOldHome(){
             window.location.href='/home2/';
 

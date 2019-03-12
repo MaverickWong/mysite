@@ -601,15 +601,15 @@ def posts_xray(request, pk):
 
 
 
-def baseinfo(request, pk):
-    """
-    患者的基本信息
-    :param request:
-    :param pk:
-    :return:
-    """
-    p = Person.objects.get(pk=pk)
-    return render(request, 'boards/baseInfo.html', {'person': p})
+# def baseinfo(request, pk):
+#     """
+#     患者的基本信息
+#     :param request:
+#     :param pk:
+#     :return:
+#     """
+#     p = Person.objects.get(pk=pk)
+#     return render(request, 'baseinfo/baseInfo.html', {'person': p})
 
 
 def wrong(request):

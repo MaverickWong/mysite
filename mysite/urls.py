@@ -58,7 +58,10 @@ urlpatterns = [
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
     url(r'^down/(?P<pk>\d+)/$', down_zip),
 
-    url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
+    # baseinfo 应用
+    # url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
+    url(r'^baseinfo/', include(('baseinfo.urls', 'baseinfo'), namespace='baseinfo')),
+
     url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
 
     # post 获取所有post列表

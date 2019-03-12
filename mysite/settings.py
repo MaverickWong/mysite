@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'charge_record',
     # 'filemanager',
     # 'linkedcare',
+    'baseinfo',
 ]
 
 MIDDLEWARE = [

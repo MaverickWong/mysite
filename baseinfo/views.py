@@ -28,44 +28,47 @@ class EditForm(forms.Form):
 	name = forms.CharField(label='名称', required=True, max_length=100,
 	                       widget=forms.TextInput(attrs={'class': 'form-control'}))
 	idnum = forms.CharField(label='病历号', required=True, max_length=30)
-	otherPrivateId = forms.CharField(label='易看牙后台序号', max_length=20)
+	linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
 	comment = forms.CharField(label='备注', required=False, max_length=200)
 
 
 def edit(request, pk):
 
+	if request.method == 'POST':
 		edit_form = EditForm(request.POST)
-		if request.method == 'POST':
-			# register_form = AddForm(request.POST)
 
-			message = '请检查填写内容'
-			if edit_form.is_valid():
-				comment = edit_form.cleaned_data['comment']
-				name = edit_form.cleaned_data['name']
-				# startTime = register_form.cleaned_data['startTime']
-				idnum = edit_form.cleaned_data['idnum']
+		message = '请检查填写内容'
+		if edit_form.is_valid():
+			comment = edit_form.cleaned_data['comment']
+			name = edit_form.cleaned_data['name']
+			linkedcareId = edit_form.cleaned_data['linkedcareId']
 
-				p = Person.objects.get(pk=pk)
-				p.name = name
-				p.comment = comment
-				p.idnum = idnum
-				# task.startTime=startTime
+			# startTime = register_form.cleaned_data['startTime']
+			idnum = edit_form.cleaned_data['idnum']
 
-				p.save()
-				message = '添加成功'
-
-				return redirect('/detail/'+str(pk), {'msg': message})
-		else:  # get
 			p = Person.objects.get(pk=pk)
-			form = EditForm(
-				initial={
-					'name': p.name,
-					'comment': p.comment,
-					'idnum': p.idnum,
-					# 'status': task.status,
-					# 'endTime': task.endTime
-				}
-			)
+			p.name = name
+			p.comment = comment
+			p.idnum = idnum
+			p.linkedcareId = linkedcareId
+			# task.startTime=startTime
 
-			return render(request, 'baseinfo/edit.html', locals())
+			p.save()
+			message = '添加成功'
+
+			return redirect('/detail/'+str(pk), {'msg': message})
+	else:  # get
+		p = Person.objects.get(pk=pk)
+		form = EditForm(
+			initial={
+				'name': p.name,
+				'comment': p.comment,
+				'idnum': p.idnum,
+				'linkedcareId': p.linkedcareId,
+				# 'status': task.status,
+				# 'endTime': task.endTime
+			}
+		)
+
+		return render(request, 'baseinfo/edit.html', locals())
 

@@ -4,57 +4,110 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 from boards.models import *
 from record.models import *
+from django import forms
+
 
 # Create your views here.
 
 def newRecord(request, personPk):
-    if request.method == 'GET':
-        return render(request, 'record/new.html', {'pk':personPk})
-    else:
-        complain = request.POST.get('complain')
-        exam = request.POST.get('exam')
-        treat = request.POST.get('treat')
-        note = request.POST.get('note')
+	if request.method == 'GET':
+		return render(request, 'record/new.html', {'pk': personPk})
+	else:
+		complain = request.POST.get('complain')
+		exam = request.POST.get('exam')
+		treat = request.POST.get('treat')
+		note = request.POST.get('note')
 
-        p = Person.objects.get(pk=personPk)
-        try:
-            new_record = Record.objects.create(doctor=request.user,
-                                        exam=exam,
-                                        complain=complain,
-                                        treatmentPlan=treat,
-                                        note=note,
-                                        )
-            new_record.person.add(p)
-            # url = reverse('person_detail', kwargs={'pk':personPk}) + '?tab=3'
-            # return HttpResponse('保存成功')
-            # return redirect(url)
+		p = Person.objects.get(pk=personPk)
+		try:
+			new_record = Record.objects.create(doctor=request.user,
+			                                   exam=exam,
+			                                   complain=complain,
+			                                   treatmentPlan=treat,
+			                                   note=note,
+			                                   )
+			new_record.person.add(p)
+			# url = reverse('person_detail', kwargs={'pk':personPk}) + '?tab=3'
+			# return HttpResponse('保存成功')
+			# return redirect(url)
 
-            # todo 保存后应该只返回状态，让前端出通知，不用后面的再查询浪费
-            p = Person.objects.get(pk=personPk)
-            records = p.records.order_by('createdAt').reverse()
-            return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed':1})
-        except:
-            # return HttpResponse('保存失败')
-            p = Person.objects.get(pk=personPk)
-            records = p.records.order_by('createdAt').reverse()
-            return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
+			# todo 保存后应该只返回状态，让前端出通知，不用后面的再查询浪费
+			p = Person.objects.get(pk=personPk)
+			records = p.records.order_by('createdAt').reverse()
+			return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 1})
+		except:
+			# return HttpResponse('保存失败')
+			p = Person.objects.get(pk=personPk)
+			records = p.records.order_by('createdAt').reverse()
+			return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
+
 
 def total(request, personPk):
-    p = Person.objects.get(pk=personPk)
-    # if p.records.count()>0:
-    #     return render(request, 'record/total.html', {'records': p.records})
-    # else:
-    #     return render(request, 'record/total.html')
-    records = p.records.order_by('createdAt').reverse()
+	p = Person.objects.get(pk=personPk)
+	# if p.records.count()>0:
+	#     return render(request, 'record/total.html', {'records': p.records})
+	# else:
+	#     return render(request, 'record/total.html')
+	records = p.records.order_by('createdAt').reverse()
 
-    return render(request, 'record/total.html', {'records': records, 'pk': personPk})
+	return render(request, 'record/total.html', {'records': records, 'pk': personPk})
 
 
-def delRecord(request,  personPk, recordPk):
-    record = Record.objects.get(pk=recordPk)
-    record.delete()
+def delRecord(request, personPk, recordPk):
+	record = Record.objects.get(pk=recordPk)
+	record.delete()
 
-    p = Person.objects.get(pk=personPk)
-    records = p.records.order_by('createdAt').reverse()
+	p = Person.objects.get(pk=personPk)
+	records = p.records.order_by('createdAt').reverse()
 
-    return render(request, 'record/total.html', {'records': records, 'pk': personPk})
+	return render(request, 'record/total.html', {'records': records, 'pk': personPk})
+
+
+class EditForm(forms.Form):
+	treat = forms.CharField(label='处置', required=True, max_length=100,
+	                       widget=forms.Textarea(attrs={'class': 'form-control', 'rows':5}))
+	# idnum = forms.CharField(label='病历号', required=True, max_length=30)
+	# linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
+	note = forms.CharField(label='医嘱', required=False, max_length=200)
+
+
+def editRecord(request, personPk, recordPk):
+    if request.method == 'POST':
+        edit_form = EditForm(request.POST)
+
+        message = '请检查填写内容'
+        if edit_form.is_valid():
+            note = edit_form.cleaned_data['note']
+            treat = edit_form.cleaned_data['treat']
+            # linkedcareId = edit_form.cleaned_data['linkedcareId']
+            #
+            # # startTime = register_form.cleaned_data['startTime']
+            # idnum = edit_form.cleaned_data['idnum']
+
+            p = Record.objects.get(pk=recordPk)
+            p.treatmentPlan = treat
+            p.note = note
+            # p.doctor = request.user
+            # p.linkedcareId = linkedcareId
+            # task.startTime=startTime
+
+            p.save()
+            message = '添加成功'
+
+            return redirect('/detail/' + str(personPk), {'msg': message})
+    else:  # get
+        p = Record.objects.get(pk=recordPk)
+        form = EditForm(
+            initial={
+                'treat': p.treatmentPlan,
+                'note': p.note,
+                # 'idnum': p.idnum,
+                # 'linkedcareId': p.linkedcareId,
+                # 'status': task.status,
+                # 'endTime': task.endTime
+            }
+        )
+
+        return render(request, 'record/edit.html', {'form':form, 'pk':recordPk, 'ppk':personPk})
+
+

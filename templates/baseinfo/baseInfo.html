@@ -10,21 +10,10 @@
     --->
 </head>
 <body>
-<a href="/baseinfo/edit/{{ person.pk }}/"  class="btn btn-warning" data-toggle="modal" data-target="#myModal2">编辑</a>
-<script>
-    function gotoBaseEdit() {
-        $.get('/baseinfo/edit/{{ person.pk }}/', function (r) {
-            $("#detail3").html(r);
-        });
-    }
 
-     $(function () {
-        $('#myModal2').on('hidden.bs.modal', function (e) {
-          // do something...//alert("做些操作");
-            $(this).removeData("bs.modal");
-        });
-    });
-</script>
+<a href="/baseinfo/edit/{{ person.pk }}/"  class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal2">
+    编辑 <span class="fa fa-edit"></span></a>
+
 <table class="table ">
     <tr>
         <td class="col-md-2  col-lg-1">姓名： {{ person.name|default:_('')  }}</td>
@@ -44,7 +33,7 @@
     </tr>
     <tr>
         <td>住址: {{ person.homeAddress|default:_('')  }}</td>
-        <td></td>
+        <td>易看牙ID：{{ person.linkedcareId|default:_('')  }}</td>
     </tr>
     <tr>
         <td>备注:  {{ person.comment|default:_('')  }}</td>
@@ -52,8 +41,23 @@
     </tr>
 </table>
 
+<script>
+    function gotoBaseEdit() {
+        $.get('/baseinfo/edit/{{ person.pk }}/', function (r) {
+            $("#detail3").html(r);
+        });
+    }
+
+     $(function () {
+        $('#myModal2').on('hidden.bs.modal', function (e) {
+          // do something...//alert("做些操作");
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+
 <!-- 编辑 模态框（Modal） -->
-<div class="modal fade" id="myModal2" tabindex="-2" role="dialog"
+<div class="modal " id="myModal2" tabindex="-2" role="dialog"
    aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">

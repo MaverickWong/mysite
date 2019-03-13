@@ -100,21 +100,28 @@ desired effect
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <span class="sr-only">Toggle navigation</span>
       </a>
-        <!---搜索框--->
-        <form action="/search/" method="get" class=" navbar-form col-lg-3">
-            <div class="input-group">
-              <input type="text" name="s" class="form-control" id="search" placeholder="姓名、病历号、标签.." autocomplete="off">
-              <span class="input-group-btn">
-                  <button type="submit"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                  </button>
-                </span>
-                <!--- 搜索框下拉菜单必须 -->
-                <div class="input-group-btn">
-                  <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
-                  </ul>
+        <div class="navbar-left">
+            <!---搜索框--->
+            <form action="/search/" method="get" class=" navbar-form col-lg-3">
+                <div class="input-group">
+                  <input type="text" name="s" class="form-control" id="search" placeholder="姓名、病历号、标签.." autocomplete="off">
+                  <span class="input-group-btn">
+                      <button type="submit"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button>
+                    </span>
+                    <!--- 搜索框下拉菜单必须 -->
+                    <div class="input-group-btn">
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu" style="padding-top: 0px; max-height: 375px; max-width: 800px; overflow: auto; width: auto; transition: all 0.3s ease 0s;">
+                      </ul>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+
+        </div>
+        <div class="navbar-left hidden-xs">
+            <a href="/new/" class="btn btn-primary btn-sm" >新建患者<span class="fa fa-plus-circle"></span></a>
+        </div>
+
 
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">

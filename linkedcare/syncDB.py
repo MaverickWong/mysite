@@ -8,11 +8,13 @@ import django
 django.setup()
 # django版本大于1.7时需要这两句
 
+import pytz
 from datetime import datetime
 import requests
 import json
 import sys
 from boards.models import *
+from record.models import Record
 from mysite.settings import BASE_DIR
 
 
@@ -456,6 +458,80 @@ def get_baseinfo_of_patient(session, person):
         return update_baseinfo_for_person_with_item(p, item)
 
 
+def update_ortho_record_of_patient(person, items):
+    #  可以根据medicalRecordId，判断是否已经存入
+
+    utc = pytz.utc
+    for item in items:
+        if Record.objects.filter(medicalRecordId=item['medicalRecordId']).count() >0:
+            continue
+        else:
+            try:
+                record = Record.objects.create()
+                record.person = person
+                record.treatmentPlan = item['content']
+                record.medicalRecordId = item['medicalRecordId']
+                record.teethcode = item['toothCode']
+
+                # record.createdAt = item['recordCreatedTime']
+                record.createdAtLinkedcare = item['recordCreatedTime']
+                record.save()
+                print('正畸病例写入成功 患者：%s  病例id %d' %(person.name, item['medicalRecordId']))
+                # return  True
+
+                # 修改创建时间 #'2018-07-29T09:48:37'
+                dt = datetime.strptime(item['recordCreatedTime'], '%Y-%m-%dT%H:%M:%S')
+                ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+                record.createdAt = ctime
+                record.save()
+
+            except:
+                print('正畸病例写入失败 患者：%s  病例id %d' %(person.name, item['medicalRecordId']))
+                return False
+
+
+def get_ortho_record_of_patient(session, person):
+    '''
+    爬取患者的正畸病例
+        1, 判断是否有linked id,根据id下载病例，如果没有则搜索该患者
+        2， 可以根据medicalRecordId 判断是否已经存入
+    :param session:
+    :param person:
+    :return:
+    '''
+    p=person
+    if not p.linkedcareId:  # 没有id
+        # 先搜索，爬取
+        item = search_person_from_linked(p, session)
+        # data = search_from_linked(p.name, s)
+        if item:  # 判断是否有内容
+            if item['name'] == p.name and item['privateId'] == p.idnum:
+                # print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+                update_baseinfo_for_person_with_item(p, item)
+                get_ortho_record_of_patient(session, person)
+                return True
+
+            else:
+                # print('未写入')
+                return False
+        else:
+            # print('未写入\n')
+            return False
+
+    else:  # 有id
+        url = 'https://api.linkedcare.cn:9001/api/v1/medical-record-summary?id=' + str(p.linkedcareId) +'&type=1'
+        headers = get_headers(session)
+        searchResult = session.get(url, headers=headers)
+        # totalcount = eval(r.content)["totalCount"]
+        items = json.loads(searchResult.content.decode('utf-8'))
+        # print(r2)
+
+        if len(items) > 0:
+            print('下载到record共 %d 个\n' % (len(items)))
+            return update_ortho_record_of_patient(p, items)
+
+        else:
+            return False
 
 
 if __name__ == '__main__':

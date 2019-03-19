@@ -7,8 +7,6 @@
     <link href="{% static 'css/lightgallery.css' %}" rel="stylesheet">
     <!--- 播放器来自   http://www.htmleaf.com/jQuery/Image-Effects/201806195182.html           --->
 
-
-
     <div class="mb-4">
         {% if isXray == True %}
             <a onclick="gotoNewXray()" class="btn btn-primary">添加X线片</a>
@@ -19,43 +17,20 @@
         {% endif %}
     </div>
     <br>
-
-{#    <div>#}
-{#      {% if posts %}#}
-{#          <ul class="cbp_tmtimeline">#}
-{#            {% for post in posts.all  %}#}
-{#                <li>#}
-{#                    <time class="cbp_tmtime" datetime="{{ post.upLoadTime|date:'Y-m-d' }}">#}
-{#                        <span>{{ post.upLoadTime|time }}</span>#}
-{#                        {% if post.name %}#}
-{#                            <span >{{ post.name|default:_('') }}</span>#}
-{#                        {% else %}#}
-{#                            <span>{{ post.upLoadTime|date:'Y-m-d'}}</span>#}
-{#                        {% endif %}#}
-{#                    </time>#}
-{#                    <div class="cbp_tmicon cbp_tmicon-phone"></div>#}
-{#                    <div class="cbp_tmlabel">#}
-{#                        <h2>{{ post.name|default:_('') }}</h2>#}
-{#                        <p>{{ post.comment|default:_('') }}</p>#}
-{#                          <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row" data-iframe="true">#}
-{#                              {% for img in post.images.all %}#}
-{##}
-{#                                  <li class="col-xs-12 col-sm-4 col-md-2"  data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600" data-src="{{ img.size_m }}"#}
-{#                                      data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">#}
-{#                                        <a class="thumbnail" href="">#}
-{#                                            <img class="img-responsive" src="{{ img.thumbnail }}">#}
-{#                                        </a>#}
-{#                                  </li>#}
-{##}
-{#                              {% endfor %}#}
-{#                          </ul>#}
-{#                    </div>#}
-{#                </li>#}
-{#            {% endfor %}#}
-{#          </ul>#}
-{#      {% endif %}#}
-{#    </div>#}
-
+<style>
+    .box-inner-toolbar nosee{
+        position: absolute;
+        bottom: 10px;
+        background-color: #a90707;
+        display: none;
+    }
+    .box-inner-toolbar cansee{
+        position: absolute;
+        bottom: 10px;
+        background-color: #a90707;
+        display: block;
+    }
+</style>
 
 <div>
   {% if posts %}
@@ -84,15 +59,27 @@
                     <h3 class="timeline-header"><a href="#"></a> {{ post.comment|default:_('') }}</h3>
 
                     <div class="timeline-body">
-                          <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row" data-iframe="true">
+                          <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row box-inner" data-iframe="true">
                               {% for img in post.images.all %}
 
                                   <li class="col-xs-12 col-sm-4 col-md-2"  data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600" data-src="{{ img.size_m }}"
                                       data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">
-                                        <a class="thumbnail" href="">
+                                        <a class="thumbnail" href="" onmouseenter="picMouseOver({{ img.pk }})"  onmouseleave="picMouseOut({{ img.pk }})">
                                             <img class="img-responsive" src="{{ img.thumbnail }}">
                                         </a>
+                                        <div class="{{ img.pk }} box-inner-toolbar">
+                                            <a class="label label-primary" href="/xxx">上</a>
+                                            <a class="label label-primary" href="#">下</a>
+                                            <a class="label label-primary" href="#">左</a>
+                                            <a class="label label-primary" href="#">右</a>
+                                            <a class="label label-primary" href="#">前</a>
+                                            <a class="label label-primary" href="#">正</a>
+                                            <a class="label label-primary" href="#">正笑</a>
+                                            <a class="label label-primary" href="#">侧面</a>
+
+                                        </div>
                                   </li>
+
 
                               {% endfor %}
                           </ul>
@@ -127,7 +114,7 @@
         });
     {% endfor %}
 
-  function gotoNewPic() {
+    function gotoNewPic() {
         $.get('{% url 'addpost' patient.pk %}', function (r) {
             $("#detail3").html(r);
         });
@@ -137,6 +124,35 @@
             $("#detail3").html(r);
         });
     }
+
+    function  picMouseOver(imgpk){
+        var tool = $("."+imgpk);
+        tool.removeClass().addClass('cansee');
+        //tool.animate({left:'50px'});
+        //console.log(imgpk)
+    }
+    function picMouseOut(imgpk){
+        $("."+imgpk).css("display", "none");
+
+    }
+
+    $(document).ready(function () {
+        {#$('.box-inner').hover(#}
+        {#    function () {#}
+        {#    $('.box-inner-toolbar').css("bottom", "0px");#}
+        {##}
+        {#    },#}
+        {#    function () {#}
+        {#        $('.box-inner-toolbar').css("bottom", "-60px");#}
+        {##}
+        {#    });#}
+        {#$('.box-inner').mouseover(function () {#}
+        {#    $('.box-inner').children('.box-inner-toolbar').css("bottom", "0px");#}
+        {#   }#}
+        {#);#}
+
+
+    });
 </script>
 
 

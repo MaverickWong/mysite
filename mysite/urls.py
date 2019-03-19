@@ -29,8 +29,8 @@ from record import urls as recordurls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^$', home, name='home'),
-    # url(r'^$', bad, name='home'),  # 维护升级用
-    url(r'^$', show_home, name='home'),   # 第1主页入口
+    url(r'^$', bad, name='home'),  # 维护升级用
+    # url(r'^$', show_home, name='home'),   # 第1主页入口
     url(r'^home2', home, name='home2'),  # 第二主页入口
 
     url(r'^ip$', get_host_ip, name='hostip'),
@@ -41,6 +41,8 @@ urlpatterns = [
     # url(r'^filer/', include('filer.urls')),
     url(r'^new/$', new_person, name='new_person'),
     url(r'^wrong/', wrong, name='wrong'),
+    url(r'^test/', test, name='test'),
+    url(r'^testdata/', testdata),
 
     # 搜索
     url(r'^search/', search, name='search'),
@@ -51,7 +53,6 @@ urlpatterns = [
     url(r'^ss/', s_search),
     url(r'^search_patients/', search_patients),
 
-    # url(r'^test/', test, name='test'),
     url(r'^del/person/(?P<pk>\d+)', delperson),
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 

@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 from django.db.models import ImageField
+from django.utils.html import format_html
 
 
 # class UserInfo(models.Model):
@@ -94,6 +95,10 @@ class Image(models.Model):
     comment = models.TextField(max_length=2000, null=True)
     st_ctime = models.IntegerField(null=True) # 对应图像的创建时间，，用于自动导入时的排序
 
+    def img_div(self):
+        return format_html(
+            '<img style="width:150px;" src="{}"', self.thumbnail
+        )
 
     def __str__(self):
         return self.path

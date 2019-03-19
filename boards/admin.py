@@ -25,7 +25,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('name', 'isFirst','type', 'comment')
+    list_display = ('person', 'name', 'type', 'isFirst', 'comment')
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'comment','type', )
@@ -37,7 +37,7 @@ class TagAdmin(admin.ModelAdmin):
 
 class ImageAdmin(admin.ModelAdmin):
     search_fields = ('name','path')
-    list_display = ('name', 'type','comment','path','person','post')
+    list_display = ('person', 'name', 'type','comment','path','post', 'img_div')
 
 # admin.site.register(Board)
 admin.site.register(Person, PersonAdmin)

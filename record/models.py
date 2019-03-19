@@ -11,18 +11,26 @@ from django.utils import timezone
 class Record(models.Model):
     doctorId = models.IntegerField(null=True)
     # "doctorName":"张栋梁",
-    doctor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    person = models.ManyToManyField(Person, related_name='records')
+    doctor = models.ForeignKey(User, related_name='records', null=True, on_delete=models.SET_NULL)
+    person = models.ForeignKey(Person, related_name='records', null=True, on_delete=models.SET_NULL)
 
-    complain = models.TextField(max_length=100, null=True)
-    exam = models.TextField(max_length=2048, null=True)
-    treatmentPlan = models.TextField(max_length=2048, null=True)
+    # 易看牙病例号
+    medicalRecordId = models.IntegerField(null=True)
+
+    complain = models.TextField(max_length=128, null=True)
+    exam = models.TextField(max_length=512, null=True)
+    treatmentPlan = models.TextField(max_length=512, null=True)
+    teethcode = models.TextField(max_length=128, null=True)
+
     # 医嘱
-    note =  models.TextField(max_length=512, null=True)
-    comment = models.TextField(max_length=512, null=True)
+    note =  models.TextField(max_length=128, null=True)
+
+    comment = models.TextField(max_length=128, null=True)
 
     updatedAt = models.DateTimeField(auto_now=True, null=True)
-    createdAt = models.DateTimeField(auto_now=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    createdAtLinkedcare = models.TextField(max_length=32, null=True)
+
 
     # {"planPrice":0.0,
 # "imageId":26186,

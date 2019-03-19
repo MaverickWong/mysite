@@ -5,9 +5,20 @@ from django.shortcuts import render, redirect, reverse
 from boards.models import *
 from record.models import *
 from django import forms
-
+from linkedcare.syncDB import logIn, get_ortho_record_of_patient
 
 # Create your views here.
+
+def total(request, personPk):
+	p = Person.objects.get(pk=personPk)
+	# if p.records.count()>0:
+	#     return render(request, 'record/total.html', {'records': p.records})
+	# else:
+	#     return render(request, 'record/total.html')
+	records = p.records.order_by('createdAt').reverse()
+
+	return render(request, 'record/total.html', {'records': records, 'pk': personPk})
+
 
 def newRecord(request, personPk):
 	if request.method == 'GET':
@@ -42,17 +53,6 @@ def newRecord(request, personPk):
 			return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
 
 
-def total(request, personPk):
-	p = Person.objects.get(pk=personPk)
-	# if p.records.count()>0:
-	#     return render(request, 'record/total.html', {'records': p.records})
-	# else:
-	#     return render(request, 'record/total.html')
-	records = p.records.order_by('createdAt').reverse()
-
-	return render(request, 'record/total.html', {'records': records, 'pk': personPk})
-
-
 def delRecord(request, personPk, recordPk):
 	record = Record.objects.get(pk=recordPk)
 	record.delete()
@@ -65,49 +65,50 @@ def delRecord(request, personPk, recordPk):
 
 class EditForm(forms.Form):
 	treat = forms.CharField(label='处置', required=True, max_length=100,
-	                       widget=forms.Textarea(attrs={'class': 'form-control', 'rows':5}))
+	                        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
 	# idnum = forms.CharField(label='病历号', required=True, max_length=30)
 	# linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
 	note = forms.CharField(label='医嘱', required=False, max_length=200)
 
 
 def editRecord(request, personPk, recordPk):
-    if request.method == 'POST':
-        edit_form = EditForm(request.POST)
 
-        message = '请检查填写内容'
-        if edit_form.is_valid():
-            note = edit_form.cleaned_data['note']
-            treat = edit_form.cleaned_data['treat']
-            # linkedcareId = edit_form.cleaned_data['linkedcareId']
-            #
-            # # startTime = register_form.cleaned_data['startTime']
-            # idnum = edit_form.cleaned_data['idnum']
+	if request.method == 'POST':
+		edit_form = EditForm(request.POST)
 
-            p = Record.objects.get(pk=recordPk)
-            p.treatmentPlan = treat
-            p.note = note
-            # p.doctor = request.user
-            # p.linkedcareId = linkedcareId
-            # task.startTime=startTime
+		message = '请检查填写内容'
+		if edit_form.is_valid():
+			note = edit_form.cleaned_data['note']
+			treat = edit_form.cleaned_data['treat']
+			# linkedcareId = edit_form.cleaned_data['linkedcareId']
 
-            p.save()
-            message = '添加成功'
+			p = Record.objects.get(pk=recordPk)
+			p.treatmentPlan = treat
+			p.note = note
+			# p.doctor = request.user
+			# p.linkedcareId = linkedcareId
+			# task.startTime=startTime
 
-            return redirect('/detail/' + str(personPk), {'msg': message})
-    else:  # get
-        p = Record.objects.get(pk=recordPk)
-        form = EditForm(
-            initial={
-                'treat': p.treatmentPlan,
-                'note': p.note,
-                # 'idnum': p.idnum,
-                # 'linkedcareId': p.linkedcareId,
-                # 'status': task.status,
-                # 'endTime': task.endTime
-            }
-        )
+			p.save()
+			message = '保存成功'
+			# todo 保存后刷新
+			# return HttpResponse('ok', content_type='Application/json')
+			return redirect('/detail/' + str(personPk), {'msg': message})
 
-        return render(request, 'record/edit.html', {'form':form, 'pk':recordPk, 'ppk':personPk})
+	else:  # get
+		p = Record.objects.get(pk=recordPk)
+		form = EditForm(
+			initial={
+				'treat': p.treatmentPlan,
+				'note': p.note,
+			}
+		)
+
+		return render(request, 'record/edit.html', {'form': form, 'pk': recordPk, 'ppk': personPk})
 
 
+def importRecord(request, personPk):
+	s = logIn()
+	p = Person.objects.get(pk=personPk)
+	get_ortho_record_of_patient(s, p)
+	return HttpResponse('ok')

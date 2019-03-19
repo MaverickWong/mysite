@@ -101,7 +101,13 @@ def down_zip(request, pk):
 
 
 def test(request):
-    return HttpResponse("good")
+    return render(request, 'appointment/index.html')
+
+
+def testdata(request):
+    with open('data.json', 'r') as f:
+        data = json.load(f)
+        return HttpResponse(data, content_type='application/json')
 
 
 def get_tag_groups():
@@ -116,7 +122,7 @@ def s_search(request):
     tgroups = get_tag_groups()
     tags = Tag.objects.all()
 
-    return render(request, 's_search.html', {'tags': tags, 'tgroups': tgroups})
+    return render(request, 'search/s_search.html', {'tags': tags, 'tgroups': tgroups})
 
 
 @login_required()

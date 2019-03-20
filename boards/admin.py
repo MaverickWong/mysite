@@ -26,6 +26,10 @@ class PersonAdmin(admin.ModelAdmin):
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ('person', 'name', 'type', 'isFirst', 'comment')
+    raw_id_fields = ('person',)
+    search_fields = ('person__name','name', 'type')  # 搜索外健时指明外键的field
+
+
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'comment','type', )
@@ -38,6 +42,8 @@ class TagAdmin(admin.ModelAdmin):
 class ImageAdmin(admin.ModelAdmin):
     search_fields = ('name','path')
     list_display = ('person', 'name', 'type','comment','path','post', 'img_div')
+    raw_id_fields = ('person',)
+
 
 # admin.site.register(Board)
 admin.site.register(Person, PersonAdmin)

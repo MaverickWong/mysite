@@ -9,12 +9,10 @@
 {#<body>#}
 {#<div class="container">#}
      <div class="mb-4">
-{#            <a class="btn btn-primary" href={% url 'record:newRecord' pk %} > 创建新病历</a>#}
-             <a class="btn btn-primary" onclick="gotoNewRecord()" > 创建新病历</a>
-         <a href="{% url 'record:newRecord' pk %}" data-toggle="modal"  data-target="#myModal" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
-         <a class="btn btn-primary" href="{% url 'record:import' pk %}"> 导入新病历</a>
-
-</div>
+         <a class="btn btn-primary btn-sm" onclick="gotoNewRecord()" > 新病历 <span class="fa fa-plus-circle"></span></a>
+         <a class="btn btn-primary btn-sm" href="{% url 'record:import' pk %}">
+             导入易看牙病历<span class="fa fa-file-import"></span> </a>
+    </div>
 
 <!--- 通知--->
     <div class="mb-4">
@@ -34,34 +32,93 @@
 
 <div class="span4">
     {% if records %}
+        <ul class="timeline">
+
         {% for record in records.all  %}
 
-            <div class="panel panel-default ">
-                <div class="panel-heading">
-                    复诊 -  {{record.createdAt }}
-                    <a class="label label-info" onclick="delRecord({{ pk }}, {{ record.pk }})">
-                        删除 <span class="fa fa-close"></span></a>
-                    <a href="{% url 'record:editRecord' pk record.pk %}"  class="label label-primary" data-toggle="modal" data-target="#myModal2">
-                        编辑 <span class="fa fa-edit"></span>
-                    </a>
-                </div>
+            <!-- timeline time label -->
+            <li class="time-label">
+                <span class="bg-red">
+                        {{ record.createdAt |date:'Y-m-d' }}
+                </span>
+            </li>
+            <!-- /.timeline-label -->
 
-                <div class="panel-body row">
-                  <div class="col-sm-6 col-md-10">
-{#                        主诉： {{ record.complain|default:_('')  }}<br>#}
-{#                        检查： {{ record.exam|default:_('')  }}<br>#}
-                    治疗： {{ record.treatmentPlan|default:_('')  }}<br>
-                    医嘱： {{ record.note|default:_('')  }}<br>
-                  </div>
+            <!-- timeline item -->
+            <li>
+                <!-- timeline icon -->
+                <i class="fa fa-calendar-check-o bg-blue"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fa fa-file-text-o"></i> {{ record.createdAt |time:'H:i' }}</span>
+
+                    <h3 class="timeline-header"><a href="#"></a>
+                        <a class="label label-default" onclick="delRecord({{ pk }}, {{ record.pk }})">
+                        删除 <span class="fa fa-close"></span></a>
+                        <a href="{% url 'record:editRecord' pk record.pk %}"  class="label label-info" data-toggle="modal" data-target="#myModal2">
+                        编辑 <span class="fa fa-edit"></span>
+                        </a>
+                    </h3>
+
+                    <div class="timeline-body">
+                            治疗： {{ record.treatmentPlan|default:_('')  }}<br>
+                            医嘱： {{ record.note|default:_('')  }}<br>
+                    </div>
+
+{#                    <div class="timeline-footer">#}
+{#                        <a class="btn btn-primary btn-xs">...</a>#}
+{#                         <a class="label label-default" onclick="delRecord({{ pk }}, {{ record.pk }})">#}
+{#                        删除 <span class="fa fa-close"></span></a>#}
+{#                        <a href="{% url 'record:editRecord' pk record.pk %}"  class="label label-info" data-toggle="modal" data-target="#myModal2">#}
+{#                        编辑 <span class="fa fa-edit"></span>#}
+{#                        </a>#}
+{#                    </div>#}
                 </div>
-            </div>
+            </li>
 
         {% endfor %}
+        </ul>
 
     {% else %}
+        <hr>
         <p>该患者暂无病例，请创建新病例。</p>
     {% endif %}
 </div>
+
+
+<!---
+
+{#<div class="span4">#}
+{#    {% if records %}#}
+{#        {% for record in records.all  %}#}
+{##}
+{#            <div class="panel panel-default ">#}
+{#                <div class="panel-heading">#}
+{#                    复诊 -  {{record.createdAt }}#}
+{#                    <a class="label label-info" onclick="delRecord({{ pk }}, {{ record.pk }})">#}
+{#                        删除 <span class="fa fa-close"></span></a>#}
+{#                    <a href="{% url 'record:editRecord' pk record.pk %}"  class="label label-primary" data-toggle="modal" data-target="#myModal2">#}
+{#                        编辑 <span class="fa fa-edit"></span>#}
+{#                    </a>#}
+{#                </div>#}
+{##}
+{#                <div class="panel-body row">#}
+{#                  <div class="col-sm-6 col-md-10">#}
+{#                        主诉： {{ record.complain|default:_('')  }}<br>#}
+{#                        检查： {{ record.exam|default:_('')  }}<br>#}
+{#                    治疗： {{ record.treatmentPlan|default:_('')  }}<br>#}
+{#                    医嘱： {{ record.note|default:_('')  }}<br>#}
+{#                  </div>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#        {% endfor %}#}
+{##}
+{#    {% else %}#}
+{#        <hr>#}
+{#        <p>该患者暂无病例，请创建新病例。</p>#}
+{#    {% endif %}#}
+{#</div>#}
+--->
 
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
@@ -122,19 +179,19 @@
     </div><!-- /.modal -->
 </div>
 
-<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="toast-header">
-    <img src="..." class="rounded mr-2" alt="...">
-    <strong class="mr-auto">Bootstrap</strong>
-    <small>11 mins ago</small>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="toast-body">
-    Hello, world! This is a toast message.
-  </div>
-</div>
+{#<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">#}
+{#  <div class="toast-header">#}
+{#    <img src="..." class="rounded mr-2" alt="...">#}
+{#    <strong class="mr-auto">Bootstrap</strong>#}
+{#    <small>11 mins ago</small>#}
+{#    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">#}
+{#      <span aria-hidden="true">&times;</span>#}
+{#    </button>#}
+{#  </div>#}
+{#  <div class="toast-body">#}
+{#    Hello, world! This is a toast message.#}
+{#  </div>#}
+{#</div>#}
 
 <script>
     function gotoNewRecord() {

@@ -9,13 +9,15 @@ from linkedcare.syncDB import logIn, get_ortho_record_of_patient
 
 # Create your views here.
 
+
 def total(request, personPk):
 	p = Person.objects.get(pk=personPk)
 	# if p.records.count()>0:
 	#     return render(request, 'record/total.html', {'records': p.records})
 	# else:
 	#     return render(request, 'record/total.html')
-	records = p.records.order_by('createdAt').reverse()
+
+	records = p.records.order_by('-createdAt')
 
 	return render(request, 'record/total.html', {'records': records, 'pk': personPk})
 
@@ -30,27 +32,28 @@ def newRecord(request, personPk):
 		note = request.POST.get('note')
 
 		p = Person.objects.get(pk=personPk)
-		try:
-			new_record = Record.objects.create(doctor=request.user,
-			                                   exam=exam,
-			                                   complain=complain,
-			                                   treatmentPlan=treat,
-			                                   note=note,
-			                                   )
-			new_record.person.add(p)
-			# url = reverse('person_detail', kwargs={'pk':personPk}) + '?tab=3'
-			# return HttpResponse('保存成功')
-			# return redirect(url)
+		# try:
+		new_record = Record.objects.create(doctor=request.user,
+		                                   exam=exam,
+		                                   complain=complain,
+		                                   treatmentPlan=treat,
+		                                   note=note,
+		                                   )
+		new_record.person = p
+		new_record.save()
+		# url = reverse('person_detail', kwargs={'pk':personPk}) + '?tab=3'
+		# return HttpResponse('保存成功')
+		# return redirect(url)
 
-			# todo 保存后应该只返回状态，让前端出通知，不用后面的再查询浪费
-			p = Person.objects.get(pk=personPk)
-			records = p.records.order_by('createdAt').reverse()
-			return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 1})
-		except:
-			# return HttpResponse('保存失败')
-			p = Person.objects.get(pk=personPk)
-			records = p.records.order_by('createdAt').reverse()
-			return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
+		# todo 保存后应该只返回状态，让前端出通知，不用后面的再查询浪费
+		p = Person.objects.get(pk=personPk)
+		records = p.records.order_by('createdAt').reverse()
+		return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 1})
+		# except:
+		# 	# return HttpResponse('保存失败')
+		# 	p = Person.objects.get(pk=personPk)
+		# 	records = p.records.order_by('createdAt').reverse()
+		# 	return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
 
 
 def delRecord(request, personPk, recordPk):

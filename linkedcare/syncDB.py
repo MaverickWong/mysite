@@ -302,15 +302,21 @@ def search_person_from_linked(person, session):
     # todo 添加 根据病历号搜索人
     # 根据名字搜索
     data = search_from_linked_with_string(person.name, session)
-    print(data['totalCount'])
+    # print(data['totalCount'])
 
     if data['totalCount'] ==0:
         return None
+    # elif data['totalCount'] ==1:
+    #     return data['items'][0]
     else:
         for item in data['items']:
-            if item['privateId'] == person.idnum:
-                print('找到：pk--%d, %s 对应id--%d' % (person.pk, person.name, item['id']))
-                return item
+            if person.idnum:  #  病例库患者有病历号
+                if item['privateId'] == person.idnum:
+                    print('从结果中匹配：pk--%d, %s 对应id--%d' % (person.pk, person.name, item['id']))
+                    return item
+            else:  # 病例库患者无病历号
+                print('患者 %s 搜索结果较多，但是因为病例库无病历号，无法匹配')
+                return None
 
 
 def add_id_for_person(person):
@@ -463,7 +469,10 @@ def update_ortho_record_of_patient(person, items):
 
     utc = pytz.utc
     for item in items:
-        if Record.objects.filter(medicalRecordId=item['medicalRecordId']).count() >0:
+
+        if Record.objects.filter(medicalRecordId=item['medicalRecordId']).count() > 0:
+            # 先判断重复
+            print('重复病历，未导入--日期%s' % (item['recordCreatedTime']))
             continue
         else:
             try:
@@ -476,7 +485,7 @@ def update_ortho_record_of_patient(person, items):
                 # record.createdAt = item['recordCreatedTime']
                 record.createdAtLinkedcare = item['recordCreatedTime']
                 record.save()
-                print('正畸病例写入成功 患者：%s  病例id %d' %(person.name, item['medicalRecordId']))
+                print('正畸病例写入成功 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
                 # return  True
 
                 # 修改创建时间 #'2018-07-29T09:48:37'
@@ -486,7 +495,7 @@ def update_ortho_record_of_patient(person, items):
                 record.save()
 
             except:
-                print('正畸病例写入失败 患者：%s  病例id %d' %(person.name, item['medicalRecordId']))
+                print('正畸病例写入失败 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
                 return False
 
 
@@ -527,7 +536,7 @@ def get_ortho_record_of_patient(session, person):
         # print(r2)
 
         if len(items) > 0:
-            print('下载到record共 %d 个\n' % (len(items)))
+            print('下载到record共 %d 个' % (len(items)))
             return update_ortho_record_of_patient(p, items)
 
         else:

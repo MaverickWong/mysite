@@ -17,8 +17,9 @@ import readFoldersWithNameIdDate
 
 import mimetypes, zipfile
 from django.utils.encoding import smart_str
-from django.utils.encoding import escape_uri_path
-
+# from django.utils.encoding import escape_uri_path
+from linkedcare.syncDB import logIn, get_ortho_record_of_patient, get_baseinfo_of_patient
+from linkedcare.getXrayofLinked import getXrayOfperson
 import django.dispatch
 from django.dispatch import receiver
 
@@ -28,7 +29,7 @@ from django.dispatch import receiver
 sep = '_'
 # 新信号
 post_upload_done = django.dispatch.Signal(providing_args=['post_pk'])
-
+person_created = django.dispatch.Signal(providing_args=['person_pk'])
 
 def importFolders(request):
     """
@@ -133,7 +134,7 @@ def person_detail(request, pk):
     picurl = ''
     if p.icon:
         picurl = p.icon
-        print(picurl)
+        # print(picurl)
 
     posts = p.posts
 
@@ -408,6 +409,8 @@ def new_person(request):
                     tag2.persons.add(person)
                     tag2.save()
 
+        #  发送新建患者信号
+        person_created.send(new_person, person_pk=person.pk)
         # result2 = json.dumps(results)
         return redirect('person_detail', person.pk)
 
@@ -418,6 +421,21 @@ def new_person(request):
             tgroups.append(tgroup)
         tags = Tag.objects.all()
         return render(request, 'upload/newPerson.html', {'tgroups': tgroups, "tags": tags})
+
+
+# 新建患者之后，导入患者信息，x线，病历等后续
+@receiver(person_created, sender=new_person)
+def person_created_todo(sender, **kwargs):
+    person_pk = kwargs['person_pk']
+    p = Person.objects.get(pk=person_pk)
+
+    print('新建患者完成后开始导入其他信息')
+    s = logIn()
+    get_baseinfo_of_patient(s, p)
+    get_ortho_record_of_patient(s, p)
+    getXrayOfperson(s, p)
+
+    return None
 
 
 # 上传x线功能

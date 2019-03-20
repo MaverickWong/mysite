@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from boards.models import Person, Tag, Post,Image
+from record.models import Record
 import json
 from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -26,11 +27,6 @@ from mysite.settings import STATICFILES_DIRS
 # @login_required()
 def show_home(request):
     return render(request, 'show-index2.html')
-
-#
-# @login_required()
-# def home_adminlte(request):
-#     return  render(request,'starter.html')
 
 
 @login_required()
@@ -70,9 +66,12 @@ def home(request):
         total_posts_num = Post.objects.all().count()
         total_img_num = Image.objects.all().count()
         tag_count = Tag.objects.all().count()
+        total_record_num =Record.objects.all().count()
 
-        contx = {'persons': topics, 'total_person_num': total_person_num, 'total_posts_num':total_posts_num,
-                 'total_img_num':total_img_num, 'tgroups':tgroups, 'tags':tags, 'tag_islink':True}
+        contx = {'persons': topics,
+                 'total_person_num': total_person_num, 'total_posts_num':total_posts_num,
+                 'total_img_num':total_img_num, 'total_record_num':total_record_num,
+                 'tgroups':tgroups, 'tags':tags, 'tag_islink':True}
 
         return render(request, 'index.html', contx)
     else:
@@ -125,11 +124,6 @@ def hello(request):
 # 所有post统计
 def allposts(request):
     return render(request, 'log_counPostNum0219-152149.html')
-# def home(request):
-# 	t = get_template('index.html')
-# 	c = {'board': 'i am ok ', 'a':'aaaaa'}
-# 	return HttpResponse( t.render(c))
-#     #return render(request, 'home.html',{'board':'what ', 'a':'aaa'})
 
 
 # 组装paginator, 返回persons
@@ -264,7 +258,7 @@ def super_search(request):
 
     total = persons.count()
 
-    return render(request, 'search/search_result.html', {'persons': persons, 'total':total})
+    return render(request, 'search/search_result.html', {'persons': persons, 'total': total})
 
 
 # 搜索框推荐
@@ -279,34 +273,13 @@ def search_suggest(request):
     data = []
     for p in persons:
         data.append({'name': p.name, 'idnum': p.idnum, 'pnum': p.posts.count(), 'pk':p.pk})
-    # data = {'name':"<a href='/'>沃</a>", 'pk':1}
+
     res = {"code": 200,
            "redirect": "",
            "value": data
            }
     return JsonResponse(res)
     # return HttpResponse(json.dumps(res), content_type="application/json")
-
-
-# 患者详细信息展示
-#
-# @login_required()
-# def home(request):
-#     docname = request.user.username
-#     if request.user.is_authenticated:
-#         if docname == 'zdl': #  用户名为zdl时，可以查看所有患者
-#             persons = Person.objects.order_by('pk').reverse()[:16]
-#             total = Person.objects.all().count()
-#
-#         else:  #  只能看该医生的患者
-#             persons = Person.objects.filter(doctor=docname).order_by('pk')[:16]
-#             total = Person.objects.filter(doctor=docname).count()
-#
-#         tags = Tag.objects.all()
-#         return render(request, 'index.html', {'persons': persons, 'total':total, 'tags':tags})
-#     else:
-#         return redirect('login')
-
 
 
 #  从易看牙同步患者基本信息

@@ -338,7 +338,7 @@ def new_person(request):
         docDir = 'static/picture/' + docname + '/'
         if not os.path.exists(docDir):
             os.makedirs(docDir)
-
+        #  创建privateDir
         privateDir = docDir + name + sep + str(idnum) + '/'
         if not os.path.exists(privateDir):
             os.makedirs(privateDir)

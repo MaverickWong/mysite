@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}患者详情{% endblock %}
+{% block title %}患者详情: {{ patient.name }}{% endblock %}
 
-{#{% block breadcrumb %}#}
-{#  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>#}
-{#  <li class="breadcrumb-item active">患者信息</li>#}
-{#{% endblock %}#}
 
 {% block content %}
 
@@ -13,7 +9,8 @@
  <div id="content" class="panel">
     <div class="panel-body " style="padding: 0px;">
         <div class="row">
-             <div class=" col-md-1 hidden-xs">
+            <!---头像-->
+            <div class=" col-md-1 hidden-xs">
                  {% if patient.icon %}
                     <img src="{{ patient.icon }}" style="height: 60px">
                  {% endif %}
@@ -21,20 +18,26 @@
                     <img src="{% static 'logo.png' %} " style="height: 60px">
                  {% endif %}
             </div>
-            <div class=" col-md-2 col-sm-4 col-xs-4" style="margin-top: -20px" >
+            <!---患者姓名-->
+            <div class=" col-md-1 col-sm-4 col-xs-4" style="margin-top: -20px" >
                 <h2 ><a href= {% url 'person_detail' patient.pk %}>{{ patient.name|default:_('')  }}</a> </h2>
             </div>
+            <!---标签-->
+            <div class=" col-md-1 col-sm-4 col-xs-4" >
+                <i>医生：</i>
+                <a href= "{% url 'baseinfo:edit_label' patient.pk %}" class="label label-success"
+                   data-toggle="modal" data-target="#myModal-editlabel">
+                    {{ patient.comment_label|default:_('')  }} <span class="fa fa-edit"> </span></a>
+            </div>
+            <!---其余信息-->
             <div class="row col-md-8 col-sm-8 col-xs-8">
                 <div class="col-md-2 col-sm-2 col-xs-6">病历号：{{ patient.idnum |default:_('') }}</div>
                 <div class="col-md-4 col-sm-4 col-xs-6">备注：{{ patient.comment |default:_('') }}</div>
                 <div class="col-md-1 col-sm-1 col-xs-2">
-                    <a href="/down/{{ patient.pk }}/" class="label label-warning">打包下载</a>
+                    <a href="/admin/boards/person/{{ patient.pk }}/change/" >
+                        <span class="fa fa-edit"></span></a>
                 </div>
-
-                <div class="col-md-1 col-sm-1 col-xs-2">
-                    <a href="/admin/boards/person/{{ patient.pk }}/change/" class="label label-danger">编辑信息</a>
-                </div>
-
+                <!---标签列表-->
                 <div class="col-md-12 col-xs-12">标签：
                     {% for t in patient.tags.all %}
                         <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
@@ -43,7 +46,9 @@
                             <span class="badge">{{ count }}</span>
                         </a>
                     {% endfor %}
-                     <a href="/addtag/{{ patient.pk }}/" class="label label-danger">添加标签</a>
+                     <a href="/addtag/{{ patient.pk }}/" >
+                          <span class="fa fa-plus-circle"></span>
+                     </a>
 
                 </div>
             </div>
@@ -54,20 +59,6 @@
 
  </div>
 
-<!--- 导航栏  --->
-{#<ul id="navtab"  class="nav nav-tabs" style="margin-top: -15px">#}
-{#    <li class="active"><a href={% url 'posts'  patient.pk  %} target="iframe_a">图像</a></li>#}
-{#    <li ><a href={% url 'posts_xray'  patient.pk  %} target="iframe_a">x线</a></li>#}
-{##}
-{#    <li ><a  href="/baseinfo/{{patient.pk}}" target="iframe_a">基本信息</a></li>#}
-{#    <li><a href={% url 'record:recordHome' patient.pk%} target="iframe_a">病历</a></li>#}
-{#    <li><a href={% url 'charge_record:allCharge' patient.pk%} target="iframe_a">收费</a></li>#}
-{#    <li><a  target="iframe_a">其他</a></li>#}
-{#</ul>#}
-    <!---内部框架--->
-{# <iframe src='{% url 'posts'  patient.pk  %}'  width="100%" height="600" name="iframe_a" id="iframepage" frameborder="0"  marginheight="0" marginwidth="0"  >#}
-{##}
-{# </iframe>#}
 
 <script>
     $(document).ready(function(){
@@ -135,7 +126,53 @@
     <li><a  href="#">其他</a></li>
 </ul>
 
+<!--- detail3 主要内容--->
 <div id="detail3">
 
 </div>
+
+<script>
+    function gotoBaseEdit() {
+        $.get('/baseinfo/edit/{{ person.pk }}/', function (r) {
+            $("#detail3").html(r);
+        });
+    }
+
+     $(function () {
+        $('#myModal-editlabel').on('hidden.bs.modal', function (e) {
+          // do something...//alert("做些操作");
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+
+<!-- 编辑 模态框（Modal） -->
+<div class="modal " id="myModal-editlabel" tabindex="-2" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               模态框（Modal）标题
+            </h4>
+         </div>
+         <div class="modal-body">
+            在这里添加一些文本
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default"
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary">
+               提交更改
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
 {% endblock %}

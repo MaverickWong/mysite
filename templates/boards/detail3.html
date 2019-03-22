@@ -7,16 +7,28 @@
     <link href="{% static 'css/lightgallery.css' %}" rel="stylesheet">
     <!--- 播放器来自   http://www.htmleaf.com/jQuery/Image-Effects/201806195182.html           --->
 
-    <div class="mb-4">
+<!--- 按钮栏-->
+<div class=" row">
+
+    <div class="col-md-3">
         {% if isXray == True %}
-            <a onclick="gotoNewXray()" class="btn btn-primary">添加X线片</a>
-            <a  href="{% url 'sync_xray' patient.pk %}" class="btn btn-warning">同步易看牙影像</a>
+            <a onclick="gotoNewXray()" class="btn btn-primary btn-sm">
+                添加X线片 <span class="fa fa-plus-circle"></span> </a>
+            <a  href="{% url 'sync_xray' patient.pk %}" class="btn btn-warning btn-sm">
+                同步易看牙影像 <span class="fa fa-rotate-right"></span></a>
 
         {% else %}
-            <a onclick="gotoNewPic()" class="btn btn-primary">添加图像</a>
+            <a onclick="gotoNewPic()" class="btn btn-primary btn-sm">添加图像 <span class="fa fa-plus-circle"></span></a>
         {% endif %}
     </div>
+    <div class="col-md-1 col-sm-1 col-xs-2 col-md-offset-8">
+        <a href="/down/{{ patient.pk }}/" class="label label-default">
+            打包下载 <span class="fa fa-arrow-circle-o-down"></span> </a>
+    </div>
     <br>
+
+</div>
+
 <style>
     .box-inner-toolbar nosee{
         position: absolute;
@@ -67,17 +79,17 @@
                                         <a class="thumbnail" href="" onmouseenter="picMouseOver({{ img.pk }})"  onmouseleave="picMouseOut({{ img.pk }})">
                                             <img class="img-responsive" src="{{ img.thumbnail }}">
                                         </a>
-                                        <div class="{{ img.pk }} box-inner-toolbar">
-                                            <a class="label label-primary" href="/xxx">上</a>
-                                            <a class="label label-primary" href="#">下</a>
-                                            <a class="label label-primary" href="#">左</a>
-                                            <a class="label label-primary" href="#">右</a>
-                                            <a class="label label-primary" href="#">前</a>
-                                            <a class="label label-primary" href="#">正</a>
-                                            <a class="label label-primary" href="#">正笑</a>
-                                            <a class="label label-primary" href="#">侧面</a>
-
-                                        </div>
+{#                                        <div class="{{ img.pk }} box-inner-toolbar">#}
+{#                                            <a class="label label-primary" href="/xxx">上</a>#}
+{#                                            <a class="label label-primary" href="#">下</a>#}
+{#                                            <a class="label label-primary" href="#">左</a>#}
+{#                                            <a class="label label-primary" href="#">右</a>#}
+{#                                            <a class="label label-primary" href="#">前</a>#}
+{#                                            <a class="label label-primary" href="#">正</a>#}
+{#                                            <a class="label label-primary" href="#">正笑</a>#}
+{#                                            <a class="label label-primary" href="#">侧面</a>#}
+{##}
+{#                                        </div>#}
                                   </li>
 
 

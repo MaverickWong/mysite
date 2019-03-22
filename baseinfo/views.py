@@ -72,3 +72,32 @@ def edit(request, pk):
 
 		return render(request, 'baseinfo/edit.html', locals())
 
+
+class EditCommentLabelForm(forms.Form):
+	comment = forms.CharField(label='医生标签', required=False, max_length=200)
+
+
+def edit_comment_label(request, pk):
+	if request.method == 'POST':
+		edit_form = EditCommentLabelForm(request.POST)
+
+		message = '请检查填写内容'
+		if edit_form.is_valid():
+			comment = edit_form.cleaned_data['comment']
+
+			p = Person.objects.get(pk=pk)
+			p.comment_label = comment
+			p.save()
+
+			message = '添加成功'
+			return redirect('/detail/'+str(pk), {'msg': message})
+	else:  # get
+		p = Person.objects.get(pk=pk)
+		form = EditCommentLabelForm(
+			initial={
+				'comment': p.comment_label,
+			}
+		)
+
+		ctx = {'form':form, 'pk':p.pk}
+		return render(request, 'baseinfo/edit_comment_label.html', ctx)

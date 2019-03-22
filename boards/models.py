@@ -24,6 +24,7 @@ class Person(models.Model):
     otherPrivateId = models.CharField(max_length=20, null=True, blank=True)
     birth = models.DateField(null=True, blank=True)  # linedcare- "birth": "1991-12-07T00:00:00",
     sex = models.IntegerField(null=True, blank=True)  # 男1 女2
+    comment_label = models.CharField(max_length=64, null=True, blank=True) # 备注，标签，空格分割
 
     privateDir = models.CharField(max_length=255, null=True, blank=True) # 个人目录，所有照片存在里面
     comment = models.TextField(max_length=2000, null=True, blank=True)  # 备注

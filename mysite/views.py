@@ -352,6 +352,8 @@ def sync_xray_of_linkedcare_for_person(request, pk):
 
     get_baseinfo_of_patient(s,p)
     getXrayOfperson(s, p)
+    # uwsgi.reload
+
     return redirect('person_detail', pk)
     # return HttpResponse("good，请返回")
     # else:

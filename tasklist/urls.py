@@ -10,5 +10,7 @@ urlpatterns = [
     url(r'^add/', add),
     url(r'^edit/(?P<pk>\d+)/$', edit),
     url(r'^del/(?P<pk>\d+)/$', del_task),
+    url(r'^search$', search_task, name='search'),
+    url(r'^group$', search_group, name='search_group'),
 
 ]

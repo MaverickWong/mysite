@@ -2,6 +2,7 @@ from django.db import models
 from boards.models import Person
 # Create your models here.
 
+
 class Task(models.Model):
     status_choice = (
         (0, '状态'),
@@ -11,7 +12,7 @@ class Task(models.Model):
         (4, '已戴走'),
     )
     group_choice = (
-        ('default', '默认'),
+        ('default', '无'),
         ('shece', '舌侧'),
         ('lucy', 'Lucy透明矫治器-李志鹏'),
         ('chunce', '唇侧计算机定位'),

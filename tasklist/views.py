@@ -8,35 +8,19 @@ from tasklist.models import *
 
 def home(request):
     tasks = Task.objects.order_by('-pk')
+    group_dict = dict(Task.group_choice)
     # return  HttpResponse('good')
     msg = '欢迎，测试版'
-    return render(request, 'task/index.html', {'tasks': tasks, 'msg':msg})
+    ctx ={'tasks': tasks, 'group_dict': group_dict, 'msg': msg}
+    return render(request, 'task/index.html', ctx)
 
 
 class AddForm(forms.Form):
-    status_choice = (
-        (1, '要做'),
-        (2, '已发送'),
-        (3, '已收到'),
-        (4, '已戴走'),
-    )
-    group_choice =(
-        ('shece', '舌侧'),
-        ('lucy', 'Lucy透明矫治器-李志鹏'),
-        ('chunce', '唇侧计算机定位'),
-        ('tpa', '打印TPA'),
-        ('shececongzuo', '脱落舌侧托槽重新打印-甄浩'),
-        ('shecezhenhao', '舌侧矫治器-甄浩'),
-        ('baochiqi', '保持器机加工-马晨'),
-        ('jianjie', '间接粘接-李志鹏'),
-        ('yinshimei', '隐适美-李志鹏'),
-        ('gongneng', '功能矫治器-韩彬羽'),
-    )
 
     name = forms.CharField(label='项目名称', required=True, max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
     comment = forms.CharField(label='备注', required=False, max_length=200)
-    group = forms.ChoiceField(label='分组', required=False, choices=group_choice)
-    status = forms.ChoiceField(label='状态', required=False, choices=status_choice)
+    group = forms.ChoiceField(label='分组', required=False, choices=Task.group_choice)
+    status = forms.ChoiceField(label='状态', required=False, choices=Task.status_choice)
 
     # person = forms.ForeignKey(Person, related_name='tasks', null=True, blank=True, on_delete=models.SET_NULL)
     # doc = forms.CharField(max_length=20, null=True, blank=True)
@@ -60,7 +44,6 @@ def add(request):
             status = register_form.cleaned_data['status']
             endTime = register_form.cleaned_data['endTime']
 
-
             task = Task.objects.create(name=name)
             task.comment = comment
             task.group = group
@@ -68,10 +51,6 @@ def add(request):
             task.status = status
             task.endTime = endTime
             task.save()
-
-            # task.endTime = request.POST['date']
-            # task.save()
-
 
             # 标签
             tag_list = request.POST['newTags']
@@ -98,32 +77,11 @@ def add(request):
 
 
 class EditForm(forms.Form):
-    status_choice = (
-        (0, '无'),
-        (1, '要做'),
-        (2, '已发送'),
-        (3, '已收到'),
-        (4, '已戴走'),
-    )
-
-    group_choice =(
-        ('default', '无'),
-        ('shece', '舌侧'),
-        ('lucy', 'Lucy透明矫治器-李志鹏'),
-        ('chunce', '唇侧计算机定位'),
-        ('tpa', '打印TPA'),
-        ('shececongzuo', '脱落舌侧托槽重新打印-甄浩'),
-        ('shecezhenhao', '舌侧矫治器-甄浩'),
-        ('baochiqi', '保持器机加工-马晨'),
-        ('jianjie', '间接粘接-李志鹏'),
-        ('yinshimei', '隐适美-李志鹏'),
-        ('gongneng', '功能矫治器-韩彬羽'),
-    )
 
     name = forms.CharField(label='项目名称', required=True, max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
     comment = forms.CharField(label='备注', required=False, max_length=200)
-    group = forms.ChoiceField(label='分组', required=False, choices=group_choice)
-    status = forms.ChoiceField(label='状态', required=False, choices=status_choice)
+    group = forms.ChoiceField(label='分组', required=False, choices=Task.group_choice)
+    status = forms.ChoiceField(label='状态', required=False, choices=Task.status_choice)
 
     # person = forms.ForeignKey(Person, related_name='tasks', null=True, blank=True, on_delete=models.SET_NULL)
     # doc = forms.CharField(max_length=20, null=True, blank=True)
@@ -179,3 +137,27 @@ def del_task(request,pk):
     message = '删除成功'
 
     return redirect('/task/', {'msg': message})
+
+
+def search_task(request):
+    s= request.GET['s']
+    if s:
+        s = s.replace(' ', '')
+        tasks = Task.objects.filter(name__contains=s)
+        msg = '搜索到 %d 条' % (tasks.count())
+        return render(request, 'task/index.html', {'tasks': tasks, 'msg':msg})
+    else:
+        tasks = Task.objects.all()
+        msg = '请检查输入'
+        return render(request, 'task/index.html', {'tasks': tasks, 'msg': msg})
+
+
+class EditForm2(forms.Form):
+    group = forms.ChoiceField(label='分组', required=False, choices=Task.group_choice)
+
+
+def search_group(request):
+    grp = request.GET['s']
+    tasks = Task.objects.filter(group=grp   )
+    msg = 'hh'
+    return render(request, 'task/index.html', {'tasks': tasks, 'msg': msg})

@@ -31,8 +31,8 @@ def logIn(officeId=122, userId = 745):
     # officeId = 122
     # test()
     userId = 745
-    account = "zhangdongliangzl"
-    passwd = "simaierzl123"
+    account = "zhangdongliang"
+    passwd = "simaierzdl123"
     # 登陆参数
     logURL = "https://simaier.linkedcare.cn/LogOn"
     agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
@@ -78,7 +78,7 @@ def get_headers(session):
     return headers
 
 
-def queryPatients(session, pageindex=1, pageSize=10, officeId=122, userId = 2042):
+def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId = 2042):
     '''
     从易看牙同步患者基本信息，并保存到文件
     :param session:

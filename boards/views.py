@@ -31,6 +31,7 @@ sep = '_'
 post_upload_done = django.dispatch.Signal(providing_args=['post_pk'])
 person_created = django.dispatch.Signal(providing_args=['person_pk'])
 
+
 def importFolders(request):
     """
     导入图像文件夹
@@ -51,7 +52,7 @@ def importFolders(request):
     except IOError:
         return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")
 
-
+@login_required()
 def down_zip(request, pk):
     """
     查询person的所有image，根据地址打包所有文件到zip文件
@@ -134,21 +135,23 @@ def person_detail(request, pk):
     picurl = ''
     if p.icon:
         picurl = p.icon
-        # print(picurl)
+
+    yky='https://simaier.linkedcare.cn/#/patient/info/' + str(p.linkedcareId)+'/record'
+    # yky= f'https://simaier.linkedcare.cn/#/patient/imaging/{str(p.linkedcareId)}/imagingHistory'
 
     posts = p.posts
 
-    contex = {'patient': p, 'posts': posts, 'first_tab': 0}
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl':yky}
 
     if request.GET.get('tab'):
         t = request.GET.get('tab')
-        contex = {'patient': p, 'posts': posts, 'first_tab': t}
+        contex = {'patient': p, 'posts': posts, 'first_tab': t,  'ykyurl':yky}
 
     # return render(request, 'detail.html', contex)
     return render(request, 'boards/detail2.html', contex)
 
-@login_required()
 
+@login_required()
 def delperson(request, pk):
     p = Person.objects.get(pk=pk)
     p.delete()

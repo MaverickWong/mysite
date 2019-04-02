@@ -126,7 +126,8 @@ def s_search(request):
 
     return render(request, 'search/s_search.html', {'tags': tags, 'tgroups': tgroups})
 
-from .tasks import add
+
+# from .tasks import add
 @login_required()
 def person_detail(request, pk):
     p = Person.objects.get(pk=pk)
@@ -148,7 +149,8 @@ def person_detail(request, pk):
         contex = {'patient': p, 'posts': posts, 'first_tab': t,  'ykyurl':yky}
 
     # return render(request, 'detail.html', contex)
-    result = add.delay(2,3)
+    # 测试异步操作
+    # result = mytask.delay(2,3)
 
     return render(request, 'boards/detail2.html', contex)
 

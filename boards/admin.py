@@ -10,17 +10,39 @@ import sys;
 # reload(sys);
 # sys.setdefaultencoding("utf8")
 
+
+
+
+
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'idnum', 'birth', 'sex', 'comment', 'doctor', 'privateDir')
+    list_display = ('name', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags')
+    # list_editable = ('comment', )
     search_fields = ('name', 'idnum')
     list_filter = ('last_updated',)
     date_hierarchy = 'last_updated'
     ordering = ('-last_updated',)
     fields = ('name', 'idnum', 'privateDir', 'nameCode', 'isEnd','startDate','mobile','occupation','birth', 'sex', 'comment', 'doctor')
 
-    # def get_tags(self, obj):
-    #     return obj.tags
-    # get_tags.short_description = 'TAG'
+    def post_num(self, obj):
+        #  统计post数目
+        return str(obj.posts.count())
+
+    post_num.short_description = '上传次数'
+
+    def sex(self, obj):
+        if obj.sex == 1:
+            return '男'
+        if obj.sex == 2:
+            return '女'
+
+    sex.short_description = '性别'
+
+    def get_tags(self, obj):
+        tags = ''
+        for t in obj.tags.all():
+            tags = t.name + ', ' + tags
+        return tags
+    get_tags.short_description = '标签'
     # get_tags.admin_order_field = 'person__tag'
 
 

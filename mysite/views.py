@@ -121,8 +121,11 @@ def hello(request):
     return render(request, 'upload-vue2.html')
 
 
+from mysite.tasks import mytask
+
 # 所有post统计
 def allposts(request):
+    mytask.delay(2,3)
     return render(request, 'log_counPostNum0219-152149.html')
 
 

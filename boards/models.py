@@ -52,6 +52,8 @@ class Person(models.Model):
     lastDoctorId = models.IntegerField(null=True, blank=True)
     linkedcareId = models.IntegerField(null=True, blank=True)
 
+    isBaiduFaceSaved = models.NullBooleanField(null=True, blank=True) # 百度上传
+
     # "name": "\u738b\u5929\u8212A", "nameCode": null, "sex": 2, "birth": "1991-12-07T00:00:00",
     # "mobile": "\u672c\u4eba:15210957869"
     # "email": null, "occupation": null, "qq": null, "weixin": null,
@@ -94,8 +96,10 @@ class Image(models.Model):
     person = models.ForeignKey('Person', related_name='images', null=True, on_delete=models.SET_NULL)
     post = models.ForeignKey('Post', related_name='images', null=True, on_delete=models.SET_NULL)
     type = models.TextField(null=True)  # 1正面 2微笑 3侧面 4 56...
-    comment = models.TextField(max_length=2000, null=True)
+    comment = models.TextField(max_length=200, null=True)
     st_ctime = models.IntegerField(null=True) # 对应图像的创建时间，，用于自动导入时的排序
+
+    baiduFaceInfo = models.TextField(max_length=2000, null=True)
 
     def img_div(self):
         return format_html(

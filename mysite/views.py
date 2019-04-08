@@ -7,21 +7,14 @@ import json
 from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
+import dramatiq
 
 import socket
 
 from linkedcare.syncDB import get_patients_fill_DB, logIn, get_baseinfo_of_patient, add_id_for_person
 from linkedcare.getXrayofLinked import getXrayOfperson
-
+from datetime import  datetime
 from mysite.settings import STATICFILES_DIRS
-
-# from filemanager import FileManager
-#
-# def filemanager(request,path):
-#
-#     fm = FileManager(STATICFILES_DIRS[0]+'/')
-#     return fm.render(request, path)
-#
 
 
 # @login_required()
@@ -29,8 +22,25 @@ def show_home(request):
     return render(request, 'show-index2.html')
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    dt = datetime.now()
+    t = dt.strftime("%m.%d-%H:%:%S")
+    file = BASE_DIR + '/log/ip.txt'
+    with open(file, 'a+') as f:
+        f.write('%s\t\t %s\n' %(ip,t))
+    return ip
+
+
 @login_required()
 def home(request):
+    get_client_ip(request)
+
     docname = request.user.username
     if request.user.is_authenticated:
         if docname == 'zdl': #  用户名为zdl时，可以查看所有患者[:16]
@@ -121,11 +131,18 @@ def hello(request):
     return render(request, 'upload-vue2.html')
 
 
-from mysite.tasks import mytask
+# from mysite.tasks import mytask
+#
+# # 所有post统计
+# def allposts(request):
+#     mytask.delay(2,3)
+#     return render(request, 'log_counPostNum0219-152149.html')
 
-# 所有post统计
+#实验 dramatiq 异步任务
+# import dramatiq
+# from tasklist.models import Task
 def allposts(request):
-    mytask.delay(2,3)
+    # mytask(2,3)
     return render(request, 'log_counPostNum0219-152149.html')
 
 
@@ -285,64 +302,17 @@ def search_suggest(request):
     # return HttpResponse(json.dumps(res), content_type="application/json")
 
 
+@dramatiq.actor
+def sync_db_worker():
+    get_patients_fill_DB(20)
+    return None
+
+
 #  从易看牙同步患者基本信息
 def syncDB(request):
-
-    get_patients_fill_DB(20)
+    sync_db_worker.send()
+    # get_patients_fill_DB(20)
     return redirect('home')
-
-
-    # dt = datetime.now()
-    # time2 = dt.strftime("%m%d-%H%M%S")
-    # # officeId 劲松122 华贸124
-    # repeated = []
-    # succeded = []
-    # office = ['124', '122']
-    # # s = logIn()
-    # for id in office:
-    #     s = logIn(officeId=id)
-    #     data = queryPatients(s) # 从易看牙获得数据bing保存到文件
-    #
-    #     totalPages = data['pageCount']
-    #
-    #     # 导入到数据库
-    #     for item in data['items']:
-    #         n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
-    #         if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
-    #             repeated.append(item['privateId'] + item['name'])
-    #
-    #         elif n == 0:
-    #             if item['birth']:
-    #                 birth = item['birth'][0:10]
-    #             else:
-    #                 birth = None
-    #             p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'],
-    #                                       mobile=item['mobile'],
-    #                                       otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
-    #                                       doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'],
-    #                                       email=item['email'],
-    #                                       occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
-    #                                       identityCard=item['identityCard'], homeAddress=item['homeAddress'],
-    #                                       patientType=item['patientType'], lastVisit=item['lastVisit'],
-    #                                       lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
-    #                                       )
-    #             succeded.append(item['privateId'] + '.' +item['name']+'.'+ id)
-    #
-    # # 记录导入log
-    # fname2 = BASE_DIR +  '/log/log-syncDB' + time2 + '.txt'
-    # with open(fname2, 'w') as f:
-    #     # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
-    #     f.write('succeded *******************************\n')
-    #     for i in succeded:
-    #         f.write(i)
-    #         f.write('\n')
-    #
-    #     f.write('\n\n\n')
-    #     f.write('repeated *******************************\n')
-    #     for i in repeated:
-    #         f.write(i)
-    #         f.write('\n')
-
 
 
 from linkedcare.syncDB import get_baseinfo_of_patient

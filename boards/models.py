@@ -32,7 +32,8 @@ class Person(models.Model):
     icon = models.TextField(null=True, max_length=100, blank=True)  # 头像path
     isEnd = models.NullBooleanField(null=True, blank=True)  # 是否结束
     startDate = models.DateTimeField(null=True, blank=True)
-    last_updated = models.DateTimeField(auto_now_add=True, blank=True)
+    last_updated = models.DateTimeField(auto_now=True, blank=True)
+    creatAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     doctor = models.CharField(max_length=20, null=True, blank=True, verbose_name='医生') #  zdl
     doctorId = models.IntegerField(null=True, blank=True)

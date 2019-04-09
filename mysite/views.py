@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
-import dramatiq
+# import dramatiq
 
 import socket
 
@@ -39,7 +39,7 @@ def get_client_ip(request):
 
 @login_required()
 def home(request):
-    get_client_ip(request)
+    get_client_ip(request)  # 记录ip地址
 
     docname = request.user.username
     if request.user.is_authenticated:
@@ -302,7 +302,7 @@ def search_suggest(request):
     # return HttpResponse(json.dumps(res), content_type="application/json")
 
 
-@dramatiq.actor
+# @dramatiq.actor
 def sync_db_worker():
     get_patients_fill_DB(20)
     return None

@@ -28,9 +28,54 @@ def test():
 # 开始
 def logIn(officeId=122, userId = 745):
     # officeId 劲松122 华贸124
-    # officeId = 122
-    # test()
-    userId = 745
+    targetURL = 'https://simaier.linkedcare.cn/'
+
+    # 设置头UA
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"}
+
+    # 开启一个session会话
+    session = requests.session()
+
+    # 设置请求头信息
+    session.headers = headers
+
+    # 申明一个用于存储手动cookies的字典
+    manual_cookies = {}
+
+    if os.path.exists("manual_cookies.txt"):
+
+        with open("manual_cookies.txt", 'r', encoding='utf-8') as frcookie:
+            cookies_txt = frcookie.read().strip(';')  # 读取文本内容
+            # 手动分割添加cookie
+            for item in cookies_txt.split(';'):
+                name, value = item.strip().split('=', 1)  # 用=号分割，分割1次
+                manual_cookies[name] = value  # 为字典cookies添加内容
+
+        # 将字典转为CookieJar：
+        cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None, overwrite=True)
+
+        # 将cookiesJar赋值给会话
+        session.cookies = cookiesJar
+
+        # 向目标网站发起请求
+        res = session.get(targetURL)
+
+        if res.status_code == 200:
+            print('cookie登录成功')
+            return session
+
+        elif res.status_code == 302:
+            print('cookie登录失败，转用户名登录')
+            s = login_save_cookie(officeId=officeId, userId=userId)
+            return s
+
+    else:  # cookie记录文件不存在，则用用户名登录后保存cookie到新建txt
+        s = login_save_cookie(officeId, userId)
+        return s
+
+
+def login_save_cookie(officeId=122, userId=745):
     account = "zhangdongliang"
     passwd = "simaierzdl123"
     # 登陆参数
@@ -43,14 +88,69 @@ def logIn(officeId=122, userId = 745):
                "isCheckMobileValidation": "", "mobileValidationCode": ""}
     # 登录并获得session
     s = requests.session()
-    r = s.post(logURL, params=payload)
+    res = s.post(logURL, params=payload)
 
-    if r.status_code == 200:
-        print('登录成功')
+    if res.status_code == 200:
+        print('用户名登录成功')
+        # 申明一个用于存储手动cookies的字典
+        manual_cookies = {}
+        # 将CookieJar转为字典：
+        res_cookies_dic = requests.utils.dict_from_cookiejar(res.cookies)
+
+        # 将新的cookies信息更新到手动cookies字典
+        for k in res_cookies_dic.keys():
+            manual_cookies[k] = res_cookies_dic[k]
+
+        print(manual_cookies)
+
+        # 重新将新的cookies信息写回文本
+        res_manual_cookies_txt = ""
+
+        # 将更新后的cookies写入到文本
+        for k in manual_cookies.keys():
+            res_manual_cookies_txt += k + "=" + manual_cookies[k] + ";"
+
+        # 将新的cookies写入到文本中更新原来的cookies
+        with open('manual_cookies.txt', "w", encoding="utf-8") as fwcookie:
+            fwcookie.write(res_manual_cookies_txt)
+
+
     else:
-        print('登录失败')
+        print('用户名登录失败')
 
     return s
+
+
+# def logIn(officeId=122, userId = 745):
+#     # officeId 劲松122 华贸124
+#     # officeId = 122
+#     # test()
+#     userId = 745
+#     account = "zhangdongliang"
+#     passwd = "simaierzdl123"
+#     # 登陆参数
+#     logURL = "https://simaier.linkedcare.cn/LogOn"
+#     agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+#
+#     # print(officeId)
+#     payload = {"officeId": officeId, "account": account, "password": passwd, "validationCode": "",
+#                "platform": 1, "kickOther": "false", "clientId": "7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+#                "isCheckMobileValidation": "", "mobileValidationCode": ""}
+#     # 登录并获得session
+#     s = requests.session()
+#     r = s.post(logURL, params=payload)
+#
+#     if r.status_code == 200:
+#         print('登录成功')
+#         # with open('log/token.txt', 'w') as f:
+#         #     token = getTokenFromSession(s)
+#         #     f.write(token)
+#
+#     else:
+#         print('登录失败')
+#
+#     return s
+
 
 # 从cookie中获取token
 def getTokenFromSession(s):

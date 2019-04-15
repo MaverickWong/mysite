@@ -102,6 +102,8 @@ class Image(models.Model):
 
     baiduFaceInfo = models.TextField(max_length=2000, null=True)
 
+    # isRotated = models.BooleanField(null=True)
+
     def img_div(self):
         return format_html(
             '<img style="width:150px;" src="{}"', self.thumbnail

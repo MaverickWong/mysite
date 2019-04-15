@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="zdlteam.com" deleteMissingItems="true" createEmptyFolders="true">
+  <component name="PublishConfigData" serverName="zdlteam.com" deleteMissingItems="true" createEmptyFolders="true" uploadOnCheckin="73730ef1-0b0b-428f-a8a5-a16d95a7fc2a">
     <serverData>
       <paths name="caresmile.cn">
         <serverdata>
@@ -31,5 +31,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="zdlteam.com" />
   </component>
 </project>

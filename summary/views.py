@@ -3,13 +3,13 @@ from django.http import HttpResponse
 
 from boards.models import Person, Post, Image, Tag
 from record.models import Record
-
+from mysite.views import get_client_ip
 
 # Create your views here.
 
 
 def home(request):
-	# get_client_ip(request)  # 记录ip地址
+	get_client_ip(request)  # 记录ip地址
 
 	docname = request.user.username
 	if request.user.is_authenticated:
@@ -49,10 +49,12 @@ def home(request):
 		total_img_num = Image.objects.all().count()
 		tag_count = Tag.objects.all().count()
 		total_record_num = Record.objects.all().count()
+		total_person_newly_updated = persons.count()
 
 		contx = {'persons': persons,
 		         'total_person_num': total_person_num, 'total_posts_num': total_posts_num,
 		         'total_img_num': total_img_num, 'total_record_num': total_record_num,
+		         'total_person_newly_updated': total_person_newly_updated
 		         }
 
 		return render(request, 'summary/index.html', contx)

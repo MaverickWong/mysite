@@ -30,7 +30,7 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
 
     dt = datetime.now()
-    t = dt.strftime("%m.%d-%H:%:%S")
+    t = dt.strftime("%m.%d-%H:%M:%S")
     file = BASE_DIR + '/log/ip.txt'
     with open(file, 'a+') as f:
         f.write('%s\t\t %s\n' %(ip,t))
@@ -302,15 +302,18 @@ def search_suggest(request):
     # return HttpResponse(json.dumps(res), content_type="application/json")
 
 
-# @dramatiq.actor
-def sync_db_worker():
-    get_patients_fill_DB(20)
-    return None
+from celery import shared_task
 
+# @dramatiq.actor
+# @shared_task
+# def sync_db_worker():
+#     get_patients_fill_DB(20)
+#     return None
+from .tasks import sync_db_worker
 
 #  从易看牙同步患者基本信息
 def syncDB(request):
-    sync_db_worker.send()
+    sync_db_worker.delay()
     # get_patients_fill_DB(20)
     return redirect('home')
 

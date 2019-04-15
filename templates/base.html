@@ -102,7 +102,7 @@ desired effect
       </a>
 
       <div class="navbar-left hidden-md hidden-xs" style="padding-top: 10px">
-            <a href="{% url 'home2' %} }}" class="btn btn-primary btn-sm" >首页<span class="fa fa-plus-circle"></span></a>
+          <a href="{% url 'home2' %} }}" class="btn btn-primary btn-sm">首页 <span class="fa fa-home"></span></a>
       </div>
 
       <div class="navbar-left  ">
@@ -315,15 +315,18 @@ desired effect
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">业务</li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active"><a href="/home2/">
-            <i class="fa fa-picture-o"></i> <span>病例</span></a></li>
+          <li class="active"><a href="/sum/">
+              <i class="fa fa-bar-chart-o"></i> <span>汇总</span></a></li>
+          <li class=""><a href="/home2/">
+              <i class="fa fa-address-card-o"></i> <span>病例</span></a></li>
         <li><a href="#" onclick="toastr.info('尚未开通！')">
-            <i class="fa fa-dashboard"></i> <span>预约</span></a></li>
-        <li><a href="#" onclick="gotoSearch()"><i class="fa fa-question"></i> <span>查询</span></a></li>
+            <i class="fa fa-calendar"></i> <span>预约</span></a></li>
+          <li><a href="#" onclick="gotoSearch()">
+              <i class="fa fa-search"></i> <span>查询</span></a></li>
         <li><a href="#"><i class="fa fa-database"></i> <span>库存</span></a></li>
         <li><a href="/task/"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>其他</span>
+            <a href="#"><i class="fa fa-user-secret"></i> <span>其他</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
@@ -331,7 +334,7 @@ desired effect
           <ul class="treeview-menu">
             <li><a href="{% url 'syncdb' %}" class="fa fa-circle-o text-red"> 同步易看牙</a></li>
             <li><a href="/allposts" class="fa fa-circle-o">病例统计</a></li>
-              <li><a href="/log/ip.txt" class="fa fa-circle-o">访客IP</a></li>
+              <li><a href="/netdisk/log/ip.txt" class="fa fa-circle-o">访客IP</a></li>
               <li><a href="/netdisk" class="fa fa-circle-o">网盘应用</a></li>
             <li><a href="{% url 'hostip' %}" class="fa fa-circle-o">局域网IP</a></li>
             <li><a href="{% url 'importFolder' %}" class="fa fa-circle-o">导入文件夹图像</a></li>

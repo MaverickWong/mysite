@@ -128,6 +128,8 @@ def find_face_of_persons(persons):
 	total = persons.count()
 	i = 0
 	for p in persons:
+		print('开始 %s %d 第 %d 个，共 %d 个' % (p.name, p.pk, i, total))
+
 		i = i + 1
 		if not p.isBaiduFaceSaved:  #  先检查是否已存到百度
 			imgs = p.images.all()
@@ -168,6 +170,8 @@ def find_face_of_persons(persons):
 
 				except:
 					error.append(img.pk)
+		else:
+			print('已经有百度识别记录，pass')
 
 
 if __name__ == '__main__':
@@ -179,7 +183,7 @@ if __name__ == '__main__':
 	# find_face(file1path)
 
 	# find_user(file1path)
-	persons = Person.objects.all()
+	persons = Person.objects.all().order_by('pk').reverse()
 	# persons = Person.objects.filter(pk=7815)
 	find_face_of_persons(persons)
 

@@ -27,6 +27,13 @@ def test():
 
 # 开始
 def logIn(officeId=122, userId = 745):
+    '''
+    先判断是否有cookie保存，如果有，则用cookie登录。
+    如果没有cookie，则调用用户名登录，并保存cookie
+    :param officeId:
+    :param userId:
+    :return:
+    '''
     # officeId 劲松122 华贸124
     targetURL = 'https://simaier.linkedcare.cn/'
 
@@ -247,7 +254,8 @@ def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId = 204
 
     # totalcount = eval(r.content)["totalCount"]
     data = json.loads(searchResult.content.decode('utf-8'))
-    print(data)
+    # print(data)
+    print('获取patients 成功')
 
     dt = datetime.now()
     time2 = dt.strftime("%m%d-%H%M%S")
@@ -258,6 +266,7 @@ def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId = 204
             json.dump(data, f)
     except:
         pass
+
     return data
 
 

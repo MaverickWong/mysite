@@ -14,7 +14,7 @@ def mytask(x, y):
 
 @shared_task
 def sync_db_worker():
-	get_patients_fill_DB(20)
+	get_patients_fill_DB(50)
 	return None
 
 

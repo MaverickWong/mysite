@@ -57,6 +57,8 @@ urlpatterns = [
     url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
 
     url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
+    url(r'^detail_no_sidebar/(?P<pk>\d+)/$', person_detail_without_sidebar, name='person_detail_without_sidebar'),
+
     url(r'^down/(?P<pk>\d+)/$', down_zip),
 
     # baseinfo 应用

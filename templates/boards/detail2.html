@@ -4,139 +4,187 @@
 
 
 {% block content %}
-
-<!---个人信息 面板--->
-    <div id="content" class="panel" xmlns="http://www.w3.org/1999/html">
-    <div class="panel-body " style="padding: 0px;">
+    <div class="container">
         <div class="row">
-            <!---头像-->
-            <div class=" col-md-1 hidden-xs">
-                 {% if patient.icon %}
-                    <img src="{{ patient.icon }}" style="height: 60px">
-                 {% endif %}
-                 {% if not patient.icon %}
-                    <img src="{% static 'logo.png' %} " style="height: 60px">
-                 {% endif %}
-            </div>
-            <!---患者姓名-->
-            <div class=" col-md-2 col-sm-4 col-xs-4" style="margin-top: -20px" >
-                <h2 ><a href= {% url 'person_detail' patient.pk %}>{{ patient.name|default:_('')  }}</a> </h2>
-            </div>
-            <!---标签-->
-            <div class=" col-md-1 col-sm-4 col-xs-8" >
-                医生：
-                {% if patient.comment_label %}
-                   <span class="label label-default" >{{ patient.comment_label }} </span>
-                {% endif %}
-                <a href= "{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal" data-target="#myModal-editlabel">
-                <span class="fa fa-edit"> </span></a>
-                <br>
-                <a href="{{ ykyurl }}" >易看牙</a>
-            </div>
-            <div>
 
-            </div>
-            <!---其余信息-->
-            <div class="row col-md-8 col-sm-8 col-xs-8">
-                <div class="col-md-2 col-sm-2 col-xs-10">病历号：{{ patient.idnum |default:_('') }}</div>
-                <div class="col-md-4 col-sm-4 hidden-xs">备注：{{ patient.comment |default:_('') }}</div>
-                <div class="col-md-1 col-sm-1 col-xs-1">
-                    <a href="/admin/boards/person/{{ patient.pk }}/change/" >
-                        <span class="fa fa-edit"></span></a>
+            <!---今日患者 左栏--->
+            {% if today_person_list %}
+                <div id="today_sidebar" class="col-md-2 visible-lg visible-md"
+                     style="position: fixed;padding: 0px;margin: 0px;height:85%; width: 110px;background-color: #d6e3e6">
+                    <nav class="navbar " id="sidebar-wrapper" role="navigation">
+                        <ul class="nav sidebar-nav">
+                            <li class="sidebar-brand"><h5>今日患者</h5></li>
+                            {% for patient in today_person_list %}
+                                <li><a href="{% url 'person_detail' patient.pk %}" onclick=""> <i
+                                        class="fa fa-fw fa-id-badge"> </i> {{ patient.name }} </a></li>
+                            {% endfor %}
+
+                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i
+                                    class="fa fa-fw fa-plus"> </i> 其他 <span class="caret"> </span> </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li class="dropdown-header"> Dropdown heading</li>
+                                    <li><a href="#"> Action </a></li>
+                                    <li><a href="#"> Another action </a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </nav>
                 </div>
-                <!---标签列表-->
-                <div class="col-md-12 col-xs-12">标签：
-                    {% for t in patient.tags.all %}
-                        <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
-                           title="{{ t.name }}">
-                            {{ t.name }}
-                            <span class="badge">{{ count }}</span>
+
+                {#    <script>#}
+                {#        function gotoMainPersonDetail(pk){#}
+                {#             $.get('{% url 'person_detail_without_sidebar' pk %}', function (r) {#}
+                {#                $("#detail3").html(r);#}
+                {#            });#}
+                {#        }#}
+                {#    </script>#}
+
+            {% endif %}
+
+            <!---个人信息 --->
+            <div id="mainPersonDetail" class="col-md-9 col-md-offset-1">
+    <div id="content" class="panel" xmlns="http://www.w3.org/1999/html">
+
+        <!--- 个人信息 标题栏-->
+        <div class="panel-body " style="padding: 0px;">
+            <div class="row">
+                <!---头像-->
+                <div class=" col-md-1 hidden-xs">
+                    {% if patient.icon %}
+                        <img src="{{ patient.icon }}" style="height: 60px">
+                    {% endif %}
+                    {% if not patient.icon %}
+                        <img src="{% static 'logo.png' %} " style="height: 60px">
+                    {% endif %}
+                </div>
+                <!---患者姓名-->
+                <div class=" col-md-2 col-sm-4 col-xs-4" style="margin-top: -20px">
+                    <h2><a href= {% url 'person_detail' patient.pk %}>{{ patient.name|default:_('') }}</a></h2>
+                </div>
+                <!---标签-->
+                <div class=" col-md-1 col-sm-4 col-xs-8">
+                    医生：
+                    {% if patient.comment_label %}
+                        <span class="label label-default">{{ patient.comment_label }} </span>
+                    {% endif %}
+                    <a href="{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal"
+                       data-target="#myModal-editlabel">
+                        <span class="fa fa-edit"> </span></a>
+                    <br>
+                    <a href="{{ ykyurl }}">易看牙</a>
+                </div>
+                <div>
+
+                </div>
+                <!---其余信息-->
+                <div class="row col-md-8 col-sm-8 col-xs-8">
+                    <div class="col-md-2 col-sm-2 col-xs-10">病历号：{{ patient.idnum |default:_('') }}</div>
+                    <div class="col-md-4 col-sm-4 hidden-xs">备注：{{ patient.comment |default:_('') }}</div>
+                    <div class="col-md-1 col-sm-1 col-xs-1">
+                        <a href="/admin/boards/person/{{ patient.pk }}/change/">
+                            <span class="fa fa-edit"></span></a>
+                    </div>
+                    <!---标签列表-->
+                    <div class="col-md-12 col-xs-12">标签：
+                        {% for t in patient.tags.all %}
+                            <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+                               title="{{ t.name }}">
+                                {{ t.name }}
+                                <span class="badge">{{ count }}</span>
+                            </a>
+                        {% endfor %}
+                        <a href="/addtag/{{ patient.pk }}/">
+                            <span class="fa fa-plus-circle"></span>
                         </a>
-                    {% endfor %}
-                     <a href="/addtag/{{ patient.pk }}/" >
-                          <span class="fa fa-plus-circle"></span>
-                     </a>
 
+                    </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 
- </div>
+
+                <!--- 导航栏  --->
+                <ul id="navtab" class="nav nav-tabs " style="margin-top: -15px">
+                    <li class="active" onclick="gotoPic()"><a href="#">图像 </a></li>
+                    <li onclick="gotoXray()"><a href="#">易看牙影像 </a></li>
+
+                    <li onclick="gotoBase()"><a href="#">基本信息</a></li>
+                    <li onclick="gotoRecord()"><a href="#">病历</a></li>
+                    <li onclick="gotoCharge()"><a href="#">收费</a></li>
+                    <li><a href="#">其他</a></li>
+                </ul>
+
+                <!--- detail3 主要内容--->
+                <div id="detail3">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
-<script>
-    $(document).ready(function(){
-        //激活标签
-        $("ul#navtab li").click(function(){
-              $("li.active").attr("class", "");
-              $(this).attr("class", "active");
-        });
+    <script>
+        $(document).ready(function () {
+            //激活标签
+            $("ul#navtab li").click(function () {
+                $("li.active").attr("class", "");
+                $(this).attr("class", "active");
+            });
 
-        //设置首tab
-{#        {% if first_tab %}#}
-{#            switch ({{ first_tab }}) {#}
-{#                case 0: gotoPic(); break;#}
-{#                case 1: gotoXray(); break;#}
-{#                case 2: gotoBase(); break;#}
-{#                case 3: gotoRecord(); break;#}
-{#                case 4: gotoCharge(); break;#}
-{#                case 5:  ; break;#}
-{#            }#}
-{#        {% else %}#}
-{#            gotoPic();#}
-{#        {% endif %}#}
+            //设置首tab
+            {#        {% if first_tab %}#}
+            {#            switch ({{ first_tab }}) {#}
+            {#                case 0: gotoPic(); break;#}
+            {#                case 1: gotoXray(); break;#}
+            {#                case 2: gotoBase(); break;#}
+            {#                case 3: gotoRecord(); break;#}
+            {#                case 4: gotoCharge(); break;#}
+            {#                case 5:  ; break;#}
+            {#            }#}
+            {#        {% else %}#}
+            {#            gotoPic();#}
+            {#        {% endif %}#}
             gotoPic();
 
-    });
-
-    function gotoPic() {
-        $.get('/posts/{{ patient.pk }}/', function (r) {
-            $("#detail3").html(r);
         });
-    }
 
-    function gotoXray() {
-        $.get('/posts_xray/{{ patient.pk }}/', function (r) {
-            $("#detail3").html(r);
-        });
-    }
-    function gotoBase() {
-        $.get('/baseinfo/{{ patient.pk }}/', function (r) {
-            $("#detail3").html(r);
-        });
-    }
-    function gotoRecord() {
-        $.get('/record/{{ patient.pk }}/', function (r) {
-            $("#detail3").html(r);
-        });
-        {#$("li.active").attr("class", "");#}
-        {#$(this).attr("class", "active");#}
-    }
-    function gotoCharge() {
-        $.get('/charge/{{ patient.pk }}/', function (r) {
-            $("#detail3").html(r);
-        });
-    }
-</script>
+        function gotoPic() {
+            $.get('/posts/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+        }
 
-<!--- 导航栏  --->
-<ul id="navtab"  class="nav nav-tabs " style="margin-top: -15px">
-    <li class="active" onclick="gotoPic()"><a href="#">图像 </a></li>
-    <li onclick="gotoXray()"><a href="#">易看牙影像 </a></li>
+        function gotoXray() {
+            $.get('/posts_xray/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+        }
 
-    <li onclick="gotoBase()"><a  href="#">基本信息</a></li>
-    <li onclick="gotoRecord()"><a href="#">病历</a></li>
-    <li onclick="gotoCharge()"><a href="#">收费</a></li>
-    <li><a  href="#">其他</a></li>
-</ul>
+        function gotoBase() {
+            $.get('/baseinfo/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+        }
 
-<!--- detail3 主要内容--->
-<div id="detail3">
+        function gotoRecord() {
+            $.get('/record/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+            {#$("li.active").attr("class", "");#}
+            {#$(this).attr("class", "active");#}
+        }
 
-</div>
+        function gotoCharge() {
+            $.get('/charge/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+        }
+    </script>
 
 <script>
     function gotoBaseEdit() {

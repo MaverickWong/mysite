@@ -127,9 +127,44 @@ def s_search(request):
     return render(request, 'search/s_search.html', {'tags': tags, 'tgroups': tgroups})
 
 
-# from .tasks import add
+def get_person_list_from_stringlist(string):
+    if string:
+        person_list = []
+        list = string.split(';')
+        list2 = []
+        for l in list:  # 去重
+            if l not in list2:
+                list2.append(l)
+
+        for l in list2:
+            p = Person.objects.get(pk=int(l))
+            person_list.append(p)
+        return person_list
+    else:
+        return None
+
+
 @login_required()
 def person_detail(request, pk):
+    person_list = ''
+
+    # session
+    today = datetime.today().strftime('%Y%m%d')
+    if request.session.get('date_of_list', None) == today:
+        if request.session.get('person_list', None):
+            list = request.session['person_list']
+            person_list = list + ';' + str(pk)
+            request.session['person_list'] = person_list
+        else:
+            person_list = str(pk)
+            request.session['person_list'] = person_list
+    else:
+        request.session['date_of_list'] = today
+        person_list = str(pk)
+        request.session['person_list'] = person_list
+
+    today_person_list = get_person_list_from_stringlist(person_list)
+
     p = Person.objects.get(pk=pk)
     name = p.name
 
@@ -142,17 +177,36 @@ def person_detail(request, pk):
 
     posts = p.posts
 
-    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl':yky}
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky, 'today_person_list': today_person_list,}
 
     if request.GET.get('tab'):
         t = request.GET.get('tab')
-        contex = {'patient': p, 'posts': posts, 'first_tab': t,  'ykyurl':yky}
-
-    # return render(request, 'detail.html', contex)
-    # 测试异步操作
-    # result = mytask.delay(2,3)
+        contex = {'patient': p, 'posts': posts, 'first_tab': t,
+                  'ykyurl': yky, 'today_person_list': today_person_list,}
 
     return render(request, 'boards/detail2.html', contex)
+
+
+@login_required()
+def person_detail_without_sidebar(request, pk):
+    p = Person.objects.get(pk=pk)
+    picurl = ''
+    if p.icon:
+        picurl = p.icon
+
+    yky = 'https://simaier.linkedcare.cn/#/patient/info/' + str(p.linkedcareId) + '/record'
+
+    posts = p.posts
+
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky}
+
+    if request.GET.get('tab'):
+        t = request.GET.get('tab')
+        contex = {'patient': p, 'posts': posts, 'first_tab': t,
+                  'ykyurl': yky}
+
+    return render(request, 'boards/detail2.html', contex)
+
 
 
 @login_required()

@@ -478,10 +478,10 @@ desired effect
 
 <script type="text/javascript">
     //激活标签
-        $("ul.sidebar-menu li").click(function(){
-              $("li.active").attr("class", "");
-              $(this).attr("class", "active");
-        });
+    $("ul.sidebar-menu li").click(function () {
+        $("li.active").attr("class", "");
+        $(this).attr("class", "active");
+    });
 
     $("input#search").bsSuggest({
         url: "/search_suggest/?s=",
@@ -501,7 +501,10 @@ desired effect
         window.location.href='/detail/' + selectedRawData['pk'] + '/'
     });
 
-
+    //缩小左侧边栏
+    $(document).ready(
+        $('[data-toggle="push-menu"]').pushMenu('toggle')
+    )
 </script>
 
 

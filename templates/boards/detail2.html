@@ -4,46 +4,48 @@
 
 
 {% block content %}
-    <div class="container">
-        <div class="row">
 
-            <!---今日患者 左栏--->
-            {% if today_person_list %}
-                <div id="today_sidebar" class="col-md-2 visible-lg visible-md"
-                     style="position: fixed;padding: 0px;margin: 0px;height:85%; width: 110px;background-color: #d6e3e6">
-                    <nav class="navbar " id="sidebar-wrapper" role="navigation">
-                        <ul class="nav sidebar-nav">
-                            <li class="sidebar-brand"><h5>今日患者</h5></li>
-                            {% for patient in today_person_list %}
-                                <li><a href="{% url 'person_detail' patient.pk %}" onclick=""> <i
-                                        class="fa fa-fw fa-id-badge"> </i> {{ patient.name }} </a></li>
-                            {% endfor %}
+    <div class="row">
 
-                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i
-                                    class="fa fa-fw fa-plus"> </i> 其他 <span class="caret"> </span> </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li class="dropdown-header"> Dropdown heading</li>
-                                    <li><a href="#"> Action </a></li>
-                                    <li><a href="#"> Another action </a></li>
-                                </ul>
-                            </li>
+        <!---今日患者 左栏--->
+        {% if today_person_list %}
+            <div id="today_sidebar" class="col-md-1 visible-lg visible-md"
+                 style=";padding: 0px;margin: 0px;height:100%;;background-color: #d6e3e6">
+                {#        position: absolute;  高度调整 #}
+                <nav class="navbar " id="sidebar-wrapper" role="navigation">
+                    <ul class="nav sidebar-nav">
+                        <li class="sidebar-brand"><strong>今日患者</strong></li>
 
-                        </ul>
-                    </nav>
-                </div>
+                        {% for patient in today_person_list %}
+                            <li><a href="{% url 'person_detail' patient.pk %}" onclick=""> <i
+                                    class="fa fa-fw fa-id-badge"> </i> {{ patient.name }} </a></li>
+                        {% endfor %}
 
-                {#    <script>#}
-                {#        function gotoMainPersonDetail(pk){#}
-                {#             $.get('{% url 'person_detail_without_sidebar' pk %}', function (r) {#}
-                {#                $("#detail3").html(r);#}
-                {#            });#}
-                {#        }#}
-                {#    </script>#}
+                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i
+                                class="fa fa-fw fa-circle-o"> </i> 其他 <span class="caret"> </span> </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-header"> Dropdown heading</li>
+                                <li><a href="#"> Action </a></li>
+                                <li><a href="#"> Another action </a></li>
+                            </ul>
+                        </li>
 
-            {% endif %}
+                    </ul>
+                </nav>
+            </div>
 
-            <!---个人信息 --->
-            <div id="mainPersonDetail" class="col-md-9 col-md-offset-1">
+            {#    <script>#}
+            {#        function gotoMainPersonDetail(pk){#}
+            {#             $.get('{% url 'person_detail_without_sidebar' pk %}', function (r) {#}
+            {#                $("#detail3").html(r);#}
+            {#            });#}
+            {#        }#}
+            {#    </script>#}
+
+        {% endif %}
+
+        <!---个人信息 --->
+        <div id="mainPersonDetail" class="col-md-11 ">
     <div id="content" class="panel" xmlns="http://www.w3.org/1999/html">
 
         <!--- 个人信息 标题栏-->
@@ -74,9 +76,7 @@
                     <br>
                     <a href="{{ ykyurl }}">易看牙</a>
                 </div>
-                <div>
 
-                </div>
                 <!---其余信息-->
                 <div class="row col-md-8 col-sm-8 col-xs-8">
                     <div class="col-md-2 col-sm-2 col-xs-10">病历号：{{ patient.idnum |default:_('') }}</div>
@@ -123,9 +123,8 @@
 
             </div>
 
-        </div>
-
     </div>
+
 
 
     <script>

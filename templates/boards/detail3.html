@@ -71,10 +71,13 @@
                     <h3 class="timeline-header"><a href="#"></a> {{ post.comment|default:_('') }}</h3>
 
                     <div class="timeline-body">
-                          <ul id="lightgallery-{{forloop.counter}}" class="list-unstyled row box-inner" data-iframe="true">
+                        <ul id="lightgallery-{{ forloop.counter }}" class="thumbnails list-unstyled row box-inner"
+                            data-iframe="true">
                               {% for img in post.images.all %}
 
-                                  <li class="col-xs-12 col-sm-4 col-md-2"  data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600" data-src="{{ img.size_m }}"
+                                  <li class="col-xs-12 col-sm-4 col-md-2 span2"
+                                      data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600"
+                                      data-src="{{ img.size_m }}"
                                       data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">
                                         <a class="thumbnail" href="" onmouseenter="picMouseOver({{ img.pk }})"  onmouseleave="picMouseOut({{ img.pk }})">
                                             <img class="img-responsive" src="{{ img.thumbnail }}">

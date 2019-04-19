@@ -319,7 +319,7 @@ desired effect
               <i class="fa fa-bar-chart-o"></i> <span>汇总</span></a></li>
           <li class=""><a href="/home2/">
               <i class="fa fa-address-card-o"></i> <span>病例</span></a></li>
-        <li><a href="#" onclick="toastr.info('尚未开通！')">
+          <li><a href="/appt/">
             <i class="fa fa-calendar"></i> <span>预约</span></a></li>
           <li><a href="#" onclick="gotoSearch()">
               <i class="fa fa-search"></i> <span>查询</span></a></li>
@@ -335,6 +335,7 @@ desired effect
             <li><a href="{% url 'syncdb' %}" class="fa fa-circle-o text-red"> 同步易看牙</a></li>
             <li><a href="/allposts" class="fa fa-circle-o">病例统计</a></li>
               <li><a href="/netdisk/log/ip.txt" class="fa fa-circle-o">访客IP</a></li>
+              <li><a href="/netdisk/db.sqlite3" class="fa fa-circle-o">备份</a></li>
               <li><a href="/netdisk" class="fa fa-circle-o">网盘应用</a></li>
             <li><a href="{% url 'hostip' %}" class="fa fa-circle-o">局域网IP</a></li>
             <li><a href="{% url 'importFolder' %}" class="fa fa-circle-o">导入文件夹图像</a></li>
@@ -387,14 +388,14 @@ desired effect
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="pull-right hidden-xs">
-
-    </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; 2019 <a href="#">ZDLteam</a>.</strong> All rights reserved.
-  </footer>
+    {#  <footer class="main-footer">#}
+    {#    <!-- To the right -->#}
+    {#    <div class="pull-right hidden-xs">#}
+    {##}
+    {#    </div>#}
+    {#    <!-- Default to the left -->#}
+    {#    <strong>Copyright &copy; 2019 <a href="#">ZDLteam</a>.</strong> All rights reserved.#}
+    {#  </footer>#}
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -490,8 +491,8 @@ desired effect
         separator: ",", //多关键字支持时的分隔符
         getDataMethod: "url", //总是从 URL 获取数据
         showHeader: true,
-        effectiveFields: ['name', 'idnum', 'pnum'],
-        // 有效显示于列表中的字段，非有效字段都会过滤，默认全部有效。
+        effectiveFields: [],
+        // 有效显示于列表中的字段，非有效字段都会过滤，默认全部有效。'name', 'idnum', 'pnum'
         effectiveFieldsAlias: {'name':'姓名', 'idnum':'病历号' , 'pnum':'图像数'},
         // 有效字段的别名对象，用于 header 的显示
     }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {

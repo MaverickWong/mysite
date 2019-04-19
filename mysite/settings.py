@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     # 'linkedcare',
     'baseinfo',
 	'summary',
+	'appointment',
+
 ]
 
 MIDDLEWARE = [

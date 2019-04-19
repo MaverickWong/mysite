@@ -55,6 +55,11 @@ class Person(models.Model):
 
     isBaiduFaceSaved = models.NullBooleanField(null=True, blank=True) # 百度上传
 
+    def link(self):
+	    return format_html(
+		    '<a href="/detail/{}"> {}</a>', self.pk, self.pk
+	    )
+
     # "name": "\u738b\u5929\u8212A", "nameCode": null, "sex": 2, "birth": "1991-12-07T00:00:00",
     # "mobile": "\u672c\u4eba:15210957869"
     # "email": null, "occupation": null, "qq": null, "weixin": null,

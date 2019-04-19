@@ -15,7 +15,7 @@ import sys;
 
 
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags')
+	list_display = ('name', 'link', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags')
     # list_editable = ('comment', )
     search_fields = ('name', 'idnum')
     list_filter = ('last_updated',)

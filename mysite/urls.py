@@ -89,6 +89,7 @@ urlpatterns = [
     url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
 
     url(r'^sum/', include(('summary.urls', 'summary'), namespace='summary')),
+    url(r'^appt/', include(('appointment.urls', 'appointment'), namespace='appointment')),
 
     # 收费
     url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),

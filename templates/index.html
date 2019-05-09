@@ -75,171 +75,183 @@
     </script>
 
     <!--  抬头的info Box --->
-    <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-user-o"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">患者总数</span>
-              <span class="info-box-number">{{ total_person_num }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">上传次数</span>
-              <span class="info-box-number">{{ total_posts_num }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-picture-o"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">照片总量</span>
-              <span class="info-box-number">{{ total_img_num }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-pencil-square-o"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">病历记录</span>
-              <span class="info-box-number">{{ total_record_num }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-      </div>
+    {#    <div class="row">#}
+    {#        <div class="col-md-3 col-sm-6 col-xs-12">#}
+    {#          <div class="info-box">#}
+    {#            <span class="info-box-icon bg-aqua"><i class="fa fa-user-o"></i></span>#}
+    {##}
+    {#            <div class="info-box-content">#}
+    {#              <span class="info-box-text">患者总数</span>#}
+    {#              <span class="info-box-number">{{ total_person_num }}</span>#}
+    {#            </div>#}
+    {#            <!-- /.info-box-content -->#}
+    {#          </div>#}
+    {#          <!-- /.info-box -->#}
+    {#        </div>#}
+    {#        <!-- /.col -->#}
+    {#        <div class="col-md-3 col-sm-6 col-xs-12">#}
+    {#          <div class="info-box">#}
+    {#            <span class="info-box-icon bg-green"><i class="fa fa-flag-o"></i></span>#}
+    {##}
+    {#            <div class="info-box-content">#}
+    {#              <span class="info-box-text">上传次数</span>#}
+    {#              <span class="info-box-number">{{ total_posts_num }}</span>#}
+    {#            </div>#}
+    {#            <!-- /.info-box-content -->#}
+    {#          </div>#}
+    {#          <!-- /.info-box -->#}
+    {#        </div>#}
+    {#        <!-- /.col -->#}
+    {#        <div class="col-md-3 col-sm-6 col-xs-12">#}
+    {#          <div class="info-box">#}
+    {#            <span class="info-box-icon bg-yellow"><i class="fa fa-picture-o"></i></span>#}
+    {##}
+    {#            <div class="info-box-content">#}
+    {#              <span class="info-box-text">照片总量</span>#}
+    {#              <span class="info-box-number">{{ total_img_num }}</span>#}
+    {#            </div>#}
+    {#            <!-- /.info-box-content -->#}
+    {#          </div>#}
+    {#          <!-- /.info-box -->#}
+    {#        </div>#}
+    {#        <!-- /.col -->#}
+    {#        <div class="col-md-3 col-sm-6 col-xs-12">#}
+    {#          <div class="info-box">#}
+    {#            <span class="info-box-icon bg-red"><i class="fa fa-pencil-square-o"></i></span>#}
+    {##}
+    {#            <div class="info-box-content">#}
+    {#              <span class="info-box-text">病历记录</span>#}
+    {#              <span class="info-box-number">{{ total_record_num }}</span>#}
+    {#            </div>#}
+    {#            <!-- /.info-box-content -->#}
+    {#          </div>#}
+    {#          <!-- /.info-box -->#}
+    {#        </div>#}
+    {#        <!-- /.col -->#}
+    {#      </div>#}
 
 
 <!--  主体列表  -->
-<div class="col-lg-12 col-sm-12  row">
-    <br>
-    <div class="md-8 ">
-        <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>
-    </div>
-
-    <div class="row">
-        {% for person in persons %}
-            <div class="infocard row" pk="{% url 'person_detail' person.pk %}">
-                <div class="col-md-2">
-                    <div>
-                      <h4>{{ person.name }}</h4>
+    {#<div class="col-lg-12 col-sm-12  row">#}
+    {#    <br>#}
+    {#    <div class="md-8 ">#}
+    {#        <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>#}
+    {#    </div>#}
+    {##}
+    {#    <div class="row">#}
+    {#        {% for person in persons %}#}
+    {#            <div class="infocard row" pk="{% url 'person_detail' person.pk %}">#}
+    {#                <div class="col-md-2">#}
+    {#                    <div>#}
+    {#                      <h4>{{ person.name }}</h4>#}
 {#                    <a href="{% url 'person_detail' person.pk %}"><h4>{{ person.name }}</h4></a>#}
         {#            <small class="text-muted d-block">{{ person.idnum}}</small>#}
-                    </div>
-                    <div>{{ person.idnum|default:_('') }}</div>
-                    <div> <span class="label label-success">{{ person.posts.count|default:_('')  }} </span></div>
-                </div>
-
-
-                <div class="col-md-10">
-                    {% with p=person.posts.first  %}
-                        {% if p %}
-                            <ul >
-                                {% for img in p.images.all %}
-                                    {% if forloop.counter < 5 %}
-                                        <li class="pic">
-                                         <img  src="{{ img.thumbnail }}" >
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="text-muted d-block">暂无照片</p>
-                        {% endif %}
-                    {% endwith %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    {#                    </div>#}
+    {#                    <div>{{ person.idnum|default:_('') }}</div>#}
+    {#                    <div> <span class="label label-success">{{ person.posts.count|default:_('')  }} </span></div>#}
+    {#                </div>#}
+    {##}
+    {##}
+    {#                <div class="col-md-10">#}
+    {#                    {% with p=person.posts.first  %}#}
+    {#                        {% if p %}#}
+    {#                            <ul >#}
+    {#                                {% for img in p.images.all %}#}
+    {#                                    {% if forloop.counter < 5 %}#}
+    {#                                        <li class="pic">#}
+    {#                                         <img  src="{{ img.thumbnail }}" >#}
+    {#                                        </li>#}
+    {#                                    {% endif %}#}
+    {#                                {% endfor %}#}
+    {#                            </ul>#}
+    {#                        {% else %}#}
+    {#                            <p class="text-muted d-block">暂无照片</p>#}
+    {#                        {% endif %}#}
+    {#                    {% endwith %}#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        {% endfor %}#}
+    {#    </div>#}
 
 <!--  主体列表  -->
-{#<div class="col-lg-8 col-sm-12  ">#}
-{#    <br>#}
-{#    <div class="md-8 ">#}
-{#        <a href="{% url 'new_person'  %}" class="btn btn-primary">添加新患者</a>#}
-{#    </div>#}
-{##}
-{#    <div class="panel panel-default">#}
-{#      <div class="panel-body">#}
-{#            <table class="table table-hover">#}
-{#                <thead class="thead-inverse">#}
-{#                  <tr>#}
-{#                    <th>患者姓名</th>#}
-{#                      <th>病历号</th>#}
-{#                    <th>照相次数</th>#}
-{#                    <th class="hidden-xs">性别</th>#}
-{#                      {% if user.username == 'zdl' %}#}
-{#                      <td class="hidden-xs"> 医生</td>#}
-{#                      {% endif %}#}
-{#                    <th class="hidden-xs">序号</th>#}
-{#                    <th class="hidden-xs">最后上传时间</th>#}
-{#                  </tr>#}
-{#                </thead>#}
-{#              <!--- 列表 --->#}
-{#                <tbody>#}
-{#                  {% for person in persons %}#}
-{#                    <tr>#}
-{#                      <td>#}
-{#                        <a href="{% url 'person_detail' person.pk %}"><strong>{{ person.name }}</strong></a>#}
-{#                        <small class="text-muted d-block">{{ person.idnum  |default:_('')}}</small></td>#}
-{#                      <td>{{ person.idnum |default:_('') }}</td>#}
-{#                      <td> <span class="badge">{{ person.posts.count }} </span></td>#}
-{#                        <td class="hidden-xs">#}
-{#                            {% if person.sex == 1 %}男{% endif %}#}
-{#                            {% if person.sex == 2 %}女{% endif %}#}
-{##}
-{#                        </td>#}
-{#                        {% if user.username == 'zdl' %}#}
-{#                            {% if not person.doctor %} <td class="hidden-xs"> 无 </td>{% endif %}#}
-{#                            {% if person.doctor %}  <td class="hidden-xs"> {{ person.doctor |default:_('') }}</td> {% endif %}#}
-{#                        {% endif %}#}
-{##}
-{#                        <td class="hidden-xs">{{ person.pk }}</td>#}
-{#                      <td class="hidden-xs">{{ person.last_updated }}</td>#}
-{#                    </tr>#}
-{#                  {% endfor %}#}
-{#                </tbody>#}
-{#            </table>#}
-{#      </div>#}
-{#    </div>#}
+    <div class="col-lg-12 col-sm-12  row">
+        <br>
+        <div class="md-8 ">
+            <a href="{% url 'new_person' %}" class="btn btn-primary">添加新患者</a>
+            <a href="{% url 'new_person' %}" class="btn btn-primary">待定</a>
+            <a href="{% url 'new_person' %}" class="btn btn-primary">待定</a>
+            <a href="{% url 'new_person' %}" class="btn btn-primary">待定</a>
+            <a href="{% url 'new_person' %}" class="btn btn-primary">待定</a>
+            <a href="{% url 'new_person' %}" class="btn btn-primary">待定</a>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th>患者姓名</th>
+                        <th>病历号</th>
+                        <th>上传次数</th>
+                        <th class="hidden-xs">性别</th>
+                        {% if user.username == 'zdl' %}
+                            <td class="hidden-xs"> 医生</td>
+                        {% endif %}
+                        <th class="hidden-xs">序号</th>
+                        <th class="hidden-xs">最后上传时间</th>
+                    </tr>
+                    </thead>
+                    <!--- 列表 --->
+                    <tbody>
+                    {% for person in persons %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'person_detail' person.pk %}"><strong>{{ person.name }}</strong></a>
+                                <small class="text-muted d-block">{{ person.idnum  |default:_('') }}</small>
+                            </td>
+                            <td>{{ person.idnum |default:_('') }}</td>
+                            <td><span class="badge">{{ person.posts.count }} </span></td>
+                            <td class="hidden-xs">
+                                {% if person.sex == 1 %}男{% endif %}
+                                {% if person.sex == 2 %}女{% endif %}
+
+                            </td>
+                            {% if user.username == 'zdl' %}
+                                {% if not person.doctor %}
+                                    <td class="hidden-xs"> 无</td>{% endif %}
+                                {% if person.doctor %}
+                                    <td class="hidden-xs"> {{ person.doctor |default:_('') }}</td> {% endif %}
+                            {% endif %}
+
+                            <td class="hidden-xs">{{ person.pk }}</td>
+                            <td class="hidden-xs">{{ person.last_updated }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
 <!--- 分页 ---->
     {% if persons.has_other_pages %}
       <nav aria-label="persons pagination" class="mb-4">
         <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="?page=1"><span class="fa fa-step-backward"></span> 首页 </a>
+            </li>
           {% if persons.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ persons.previous_page_number }}">上一页</a>
+                <a class="page-link" href="?page={{ persons.previous_page_number }}"><span
+                        class="fa fa-chevron-left"></span>上一页 </a>
             </li>
           {% else %}
             <li class="page-item disabled">
-              <span class="page-link">上一页</span>
+                <span class="page-link"><span class="fa fa-chevron-left"></span> 上一页</span>
             </li>
           {% endif %}
           <li class="page-item active">
             <span class="page-link">
-              {{ persons.number }}
+              第 {{ persons.number }} 页 | 共{{ persons.paginator.num_pages }}页
               <span class="sr-only">(current)</span>
             </span>
           </li>
@@ -247,14 +259,19 @@
 
           {% if persons.has_next %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ persons.next_page_number }}">下一页</a>
+                <a class="page-link" href="?page={{ persons.next_page_number }}">下一页 <span
+                        class="fa fa-chevron-right"></span></a>
             </li>
           {% else %}
             <li class="page-item disabled">
-              <span class="page-link">下一页</span>
+                <span class="page-link">下一页 <span class="fa fa-chevron-right"></span></span>
             </li>
           {% endif %}
 
+            <li class="page-item">
+                <a class="page-link" href="?page={{ persons.paginator.num_pages }}">最后页 <span
+                        class="fa fa-step-forward"></span></a>
+            </li>
         </ul>
       </nav>
     {% endif %}

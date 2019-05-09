@@ -2,10 +2,12 @@ from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
 from django import forms
 from tasklist.models import *
+from django.contrib.auth.decorators import permission_required
 
 # Create your views here.
 
 
+# @permission_required('tasklist.view_task')
 def home(request):
     tasks = Task.objects.order_by('-pk')
     group_dict = dict(Task.group_choice)

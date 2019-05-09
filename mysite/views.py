@@ -55,7 +55,7 @@ def home(request):
 
         # 分页
         page = request.GET.get('page', 1)
-        paginator = Paginator(persons, 6)
+        paginator = Paginator(persons, 10)
         try:
             topics = paginator.page(page)
         except PageNotAnInteger:
@@ -336,5 +336,8 @@ def sync_xray_of_linkedcare_for_person(request, pk):
     #     return HttpResponse('此患者无linkedcareId，请联系管理员添加')
 
 
-
-
+def baidu_sdk(request):
+    # find_user(file1path)
+    persons = Person.objects.all().order_by('pk').reverse()
+# persons = Person.objects.filter(pk=7815)
+# find_face_of_persons(persons)

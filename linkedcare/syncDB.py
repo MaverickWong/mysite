@@ -176,7 +176,7 @@ def get_headers(session):
     # 组装header
     headers = {'authority': 'api.linkedcare.cn:9001',
                "authorization": "bearer " + token, "access_token": token,
-               # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+               # "clientId":"d5724218-5265-4b42-a1b8-fb1191c399bc",
                "origin": "https://simaier.linkedcare.cn",
                'Connection': 'keep-alive', 'user-agent': agent,
                'referer': 'https://simaier.linkedcare.cn/',

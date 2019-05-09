@@ -59,52 +59,64 @@
 </div>
 
 <!-- 卡片-->
-<div>
-    {% if tasks %}
-        {% for task in tasks %}
-        <div class="panel panel-body col-md-7">
-            <div class="row">
-                <div style="background-color: #9fcdff">
-                    <div class="col-md-10 col-xs-6">{{ task.name  }}  <small>{{ task.comment  }}</small></div>
-                    <div class="col-md-2 col-xs-6">
-                        <a href="\task\edit\{{ task.pk }}" data-toggle="modal"  data-target="#myModal2" title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
-                        <a href="\task\del\{{ task.pk }}" onclick="return delete_data()" title="删除"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+    {% if  perms.tasklist.view_task %}
+        <div>
+            {% if tasks %}
+                {% for task in tasks %}
+                    <div class="panel panel-body col-md-7">
+                        <div class="row">
+                            <div style="background-color: #9fcdff">
+                                <div class="col-md-10 col-xs-6">{{ task.name }}
+                                    <small>{{ task.comment }}</small>
+                                </div>
+                                <div class="col-md-2 col-xs-6">
+                                    <a href="\task\edit\{{ task.pk }}" data-toggle="modal" data-target="#myModal2"
+                                       title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
+                                    <a href="\task\del\{{ task.pk }}" onclick="return delete_data()" title="删除"><i
+                                            class="glyphicon glyphicon-trash text-danger"></i></a>
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label class="label label-default">{{ task.get_group_display }}</label>
+
+                                {% if task.get_status_display   == '要做' %}
+                                    <label class="label label-warning">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '已发送' %}
+                                    <label class="label label-info">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '已收到' %}
+                                    <label class="label label-success">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '已戴走' %}
+                                    <label class="label label-success">{{ task.get_status_display }}</label>
+                                {% endif %}
+                            </div>
+                            <div>
+                            </div>
+
+                            开始时间：<span>{{ task.startTime }}</span>
+                            结束时间：<span>{{ task.endTime }}</span>
+
+
+                            <div>{% for t in task.tags.all %}
+                                <label class="label label-success">{{ t.name }}</label>
+                            {% endfor %}
+                            </div>
+
+
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
 
-
-                <div>
-                    <label class="label label-default">{{ task.get_group_display  }}</label>
-
-                    {% if task.get_status_display   == '要做' %}
-                        <label class="label label-warning">{{ task.get_status_display  }}</label>
-                    {% elif task.get_status_display   == '已发送'  %}
-                        <label class="label label-info">{{ task.get_status_display  }}</label>
-                    {% elif task.get_status_display   == '已收到'  %}
-                        <label class="label label-success">{{ task.get_status_display  }}</label>
-                    {% elif task.get_status_display   == '已戴走'  %}
-                        <label class="label label-success">{{ task.get_status_display  }}</label>
-                    {% endif %}
-                </div>
-                <div>
-                </div>
-
-                开始时间：<span>{{ task.startTime  }}</span>
-                结束时间：<span>{{ task.endTime  }}</span>
-
-
-                <div>{% for t in task.tags.all %}
-                        <label class="label label-success">{{ t.name }}</label>
-                    {% endfor %}
-                </div>
-
-
-            </div>
+            {% endif %}
         </div>
-        {% endfor %}
+    {% else %}
+        <div>
+            哥，你没有权限啊！
+        </div>
 
     {% endif %}
-</div>
+
 
 <script language="JavaScript">
     function delete_data() {

@@ -16,8 +16,10 @@ def home(request):
 	fmt = '%Y-%m-%d'
 
 	adate = datetime.datetime.now()
+	date_str = adate.strftime(fmt)
 	if request.GET.get('date'):
 		adate = get_date_from_string(request.GET['date'])
+		date_str = adate.strftime(fmt)
 
 	all_appitem = ApptItem.objects.filter(startDateTime__date=adate)
 
@@ -25,7 +27,7 @@ def home(request):
 	if all_appitem.count() == 0:
 		get_appointments_of_date(adate.strftime(fmt))
 
-	cntx = {'apptItem': all_appitem}
+	cntx = {'apptItem': all_appitem, 'date_str': date_str}
 
 	return render(request, 'appointment/index.html', context=cntx)
 
@@ -107,7 +109,7 @@ def get_appointments_of_date(date_str, isUpdate=False):
 				                                  patient=p, patientName=item['patientName'],
 				                                  dateForAppt=newDateforAppoint,
 				                                  isFirstVisit=item['isFirstVisit'],
-				                                  isCharged=item['hasChargeOrder'],
+				                                  isCharged=item['hasChargeOrder'], hasRevisit=item['hasRevisit'],
 				                                  isCheckedIn=item['isCheckedIn'], checkInType=item['checkInType'],
 				                                  isFinished=item['isCompleted'], isLeft=item['isLeft'],
 				                                  isFail=item['isFailed'], isPending=item['isPending'],
@@ -135,7 +137,7 @@ def get_appointments_of_date(date_str, isUpdate=False):
 				appt = items.first()
 				items.update(isFirstVisit=item['isFirstVisit'], isCheckedIn=item['isCheckedIn'],
 				             isFinished=item['isCompleted'], isLeft=item['isLeft'],
-				             isPending=item['isPending'],
+				             isPending=item['isPending'], hasRevisit=item['hasRevisit'],
 				             isSeated=item['isSeated'],
 				             )
 

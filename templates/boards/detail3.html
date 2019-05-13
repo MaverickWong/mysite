@@ -4,8 +4,14 @@
     <!---时间线http://www.jq22.com/jquery-info164-->
     <link href="{% static 'css/timeline-component.css' %}" rel="stylesheet">
 
-    <link href="{% static 'css/lightgallery.css' %}" rel="stylesheet">
+{#    <link href="{% static 'css/lightgallery.css' %}" rel="stylesheet">#}
     <!--- 播放器来自   http://www.htmleaf.com/jQuery/Image-Effects/201806195182.html           --->
+{#<script src="{% static 'js/lightgallery-all.min.js' %}"></script>#}
+
+<!-- Core photoviewer CSS file   https://github.com/fengyuanchen/viewerjs   -->
+<link href="{% static 'plugins/imageviewer/viewer.css' %}" rel="stylesheet">
+<!-- Core photoviewer JS file -->
+<script src="{% static 'plugins/imageviewer/viewer.js' %}"></script>
 
 <!--- 按钮栏-->
 <div class=" row">
@@ -71,17 +77,19 @@
                     <h3 class="timeline-header"><a href="#"></a> {{ post.comment|default:_('') }}</h3>
 
                     <div class="timeline-body">
-                        <ul id="lightgallery-{{ forloop.counter }}" class="thumbnails list-unstyled row box-inner"
+                        <ul class="images-viewer-{{ forloop.counter }} thumbnails list-unstyled row box-inner"
                             data-iframe="true">
                               {% for img in post.images.all %}
+                                  <li class="col-xs-12 col-sm-4 col-md-2 span2">
+                                      {#                                        <a class="thumbnail" href="" onmouseenter="picMouseOver({{ img.pk }})"  onmouseleave="picMouseOut({{ img.pk }})">#}
+                                      {#                                            <img class="img-responsive" src="{{ img.thumbnail }}">#}
+                                      {#                                        </a>#}
 
-                                  <li class="col-xs-12 col-sm-4 col-md-2 span2"
-                                      data-responsive="{{ img.thumbnail }} 375, {{ img.size_m }} 480, {{ img.size_m }} 600"
-                                      data-src="{{ img.size_m }}"
-                                      data-sub-html="<h4>{{post.person  }}</h4><p>{{ post.comment }}</p>">
-                                        <a class="thumbnail" href="" onmouseenter="picMouseOver({{ img.pk }})"  onmouseleave="picMouseOut({{ img.pk }})">
-                                            <img class="img-responsive" src="{{ img.thumbnail }}">
-                                        </a>
+                                      <a class="thumbnail">
+                                          <img data-original="{{ img.size_m }}" src="{{ img.thumbnail }}"
+                                               alt="<h4>{{ post.person }} {{ post.comment }}</h4>"
+                                               class="viewer-toggle">
+                                      </a>
 {#                                        <div class="{{ img.pk }} box-inner-toolbar">#}
 {#                                            <a class="label label-primary" href="/xxx">上</a>#}
 {#                                            <a class="label label-primary" href="#">下</a>#}
@@ -91,10 +99,8 @@
 {#                                            <a class="label label-primary" href="#">正</a>#}
 {#                                            <a class="label label-primary" href="#">正笑</a>#}
 {#                                            <a class="label label-primary" href="#">侧面</a>#}
-{##}
 {#                                        </div>#}
                                   </li>
-
 
                               {% endfor %}
                           </ul>
@@ -106,28 +112,49 @@
                 </div>
             </li>
             <!-- END timeline item -->
-      {% endfor %}
+            <script>
+                // View some images
+                {#$('.images-viewer-{{ forloop.counter }}').viewer();#}
+
+                var Viewer = window.Viewer;
+                var console = window.console || {
+                    log: function () {
+                    }
+                };
+                var pictures = document.querySelector('.images-viewer-{{ forloop.counter }}');
+                var toggles = document.querySelector('.docs-toggles');
+                var buttons = document.querySelector('.docs-buttons');
+                var options = {
+                    // inline: true,
+                    url: 'data-original',
+                    navbar: 0,
+                };
+                var viewer = new Viewer(pictures, options);
+            </script>
+
+        {% endfor %}
 {% endif %}
 
 </ul>
 </div>
 
 
-<script src="{% static 'js/lightgallery-all.min.js' %}"></script>
 <script type="text/javascript">
-    {% for post in posts.all %}
-        $(document).ready(function(){
-            $('#lightgallery-{{forloop.counter}}').lightGallery({
-                thumbnail: 'false',
+
+
+    {#    {% for post in posts.all %}#}
+    {#        $(document).ready(function(){#}
+    {#            $('#lightgallery-{{forloop.counter}}').lightGallery({#}
+    {#                thumbnail: 'false',#}
                 {#selector: 'this',#}
                 {#iframeMaxHeight: '80%',#}
                 {#height:'70%',#}
                 {#width:'800px',#}
-                mousewheel:'false',
+    {#                mousewheel:'false',#}
                 {#iframeMaxWidth: '70%',#}
-            });
-        });
-    {% endfor %}
+    {#            });#}
+    {#        });#}
+    {#    {% endfor %}#}
 
     function gotoNewPic() {
         $.get('{% url 'addpost' patient.pk %}', function (r) {
@@ -140,16 +167,17 @@
         });
     }
 
-    function  picMouseOver(imgpk){
-        var tool = $("."+imgpk);
-        tool.removeClass().addClass('cansee');
-        //tool.animate({left:'50px'});
-        //console.log(imgpk)
-    }
-    function picMouseOut(imgpk){
-        $("."+imgpk).css("display", "none");
-
-    }
+    {##}
+    {#function  picMouseOver(imgpk){#}
+    {#    var tool = $("."+imgpk);#}
+    {#    tool.removeClass().addClass('cansee');#}
+    {#    //tool.animate({left:'50px'});#}
+    {#    //console.log(imgpk)#}
+    {#}#}
+        {#function picMouseOut(imgpk){#}
+        {#    $("."+imgpk).css("display", "none");#}
+        {##}
+        {#}#}
 
     $(document).ready(function () {
         {#$('.box-inner').hover(#}

@@ -172,17 +172,23 @@ def person_detail(request, pk):
     if p.icon:
         picurl = p.icon
 
+    num_xray = Post.objects.filter(type__gte=99).filter(person=p).count()
+
     yky='https://simaier.linkedcare.cn/#/patient/info/' + str(p.linkedcareId)+'/record'
     # yky= f'https://simaier.linkedcare.cn/#/patient/imaging/{str(p.linkedcareId)}/imagingHistory'
 
     posts = p.posts
 
-    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky, 'today_person_list': today_person_list,}
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky,
+              'today_person_list': today_person_list,
+              'num_xray': num_xray,
+              }
 
     if request.GET.get('tab'):
         t = request.GET.get('tab')
         contex = {'patient': p, 'posts': posts, 'first_tab': t,
-                  'ykyurl': yky, 'today_person_list': today_person_list,}
+                  'ykyurl': yky, 'today_person_list': today_person_list,
+                  'num_xray': num_xray, }
 
     return render(request, 'boards/detail2.html', contex)
 

@@ -35,7 +35,7 @@ def logIn(officeId=122, userId = 745):
     :return:
     '''
     # officeId 劲松122 华贸124
-    targetURL = 'https://simaier.linkedcare.cn/'
+    targetURL = 'http://simaier.linkedcare.cn/'
 
     # 设置头UA
     headers = {
@@ -66,20 +66,26 @@ def logIn(officeId=122, userId = 745):
         session.cookies = cookiesJar
 
         # 向目标网站发起请求
-        res = session.get(targetURL)
+        res = session.get(targetURL, allow_redirects=False)
 
         if res.status_code == 200:
+            # if res.url != targetURL:
+            #     session = login_save_cookie(officeId=officeId, userId=userId)
+            #     print('登录遭遇rediret')
+            #     return session
+            # else:
             print('cookie登录成功')
             return session
 
-        elif res.status_code == 302:
+        # elif res.status_code == 302:  # https://2.python-requests.org//zh_CN/latest/user/quickstart.html
+        else:
             print('cookie登录失败，转用户名登录')
-            s = login_save_cookie(officeId=officeId, userId=userId)
-            return s
+            session = login_save_cookie(officeId=officeId, userId=userId)
+            return session
 
     else:  # cookie记录文件不存在，则用用户名登录后保存cookie到新建txt
-        s = login_save_cookie(officeId, userId)
-        return s
+        session = login_save_cookie(officeId, userId)
+        return session
 
 
 def login_save_cookie(officeId=122, userId=745):
@@ -95,7 +101,7 @@ def login_save_cookie(officeId=122, userId=745):
                "isCheckMobileValidation": "", "mobileValidationCode": ""}
     # 登录并获得session
     s = requests.session()
-    res = s.post(logURL, params=payload)
+    res = s.post(logURL, params=payload, allow_redirects=False)
 
     if res.status_code == 200:
         print('用户名登录成功')

@@ -284,10 +284,12 @@ def super_search(request):
 # 搜索框推荐
 def search_suggest(request):
     docname = request.user.username
+    docname = 'zdl'  # 为了测试，anyone可以搜索所有zdl
     s = request.GET['s']
     if s == '':
         persons = Person.objects.none()
     else:
+
         persons = search_person_with_str(s, docname)
 
     data = []

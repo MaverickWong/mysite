@@ -101,7 +101,7 @@ def get_appointments_of_date(date_str, isUpdate=False):
 				ps = Person.objects.filter(linkedcareId=item['patientId'])
 				if ps.count() == 0:
 					p = Person.objects.create(name=item['patientName'], linkedcareId=item['patientId'],
-					                          idnum=item['privateId'], nameCode=item['patientNameCode'])
+					                          idnum=item['privateId'], nameCode=item['patientNameCode'], doctor='zdl')
 				else:
 					p = ps[0]
 

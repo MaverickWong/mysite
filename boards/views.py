@@ -144,6 +144,16 @@ def get_person_list_from_stringlist(string):
         return None
 
 
+def get_last_person_pk_from_stringlist(string):
+    if string:
+        if string.find(';'):
+            list = string.split(';')
+            return list[-1]
+        else:
+            return string
+    else:
+        return None
+
 @login_required()
 def person_detail(request, pk):
     person_list = ''
@@ -192,6 +202,39 @@ def person_detail(request, pk):
 
     return render(request, 'boards/detail2.html', contex)
 
+
+@login_required()
+def today_person_detail(request):
+    # session
+    today = datetime.today().strftime('%Y%m%d')
+    if request.session.get('date_of_list', None) == today:
+        person_list = request.session['person_list']
+    else:
+        # request.session['date_of_list'] = today
+        person_list = ''
+
+    today_person_list = get_person_list_from_stringlist(person_list)
+    i = get_last_person_pk_from_stringlist(person_list)
+    if i:
+        p = Person.objects.get(pk=int(i))
+    else:
+        p = Person.objects.first()
+
+    posts = p.posts
+    num_xray = Post.objects.filter(type__gte=99).filter(person=p).count()
+
+    contex = {'patient': p, 'posts': posts, 'first_tab': 0,
+              'today_person_list': today_person_list,
+              'num_xray': num_xray,
+              }
+
+    if request.GET.get('tab'):
+        t = request.GET.get('tab')
+        contex = {'patient': p, 'posts': posts, 'first_tab': t,
+                  'today_person_list': today_person_list,
+                  'num_xray': num_xray, }
+
+    return render(request, 'boards/detail2.html', contex)
 
 @login_required()
 def person_detail_without_sidebar(request, pk):

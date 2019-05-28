@@ -35,46 +35,21 @@ urlpatterns = [
 
     url(r'^ip$', get_host_ip, name='hostip'),
 
-    # url(r'^boards/(?P<pk>\d+)/$', board_topics, name='board_topics'),
-    # url(r'^creat_new/$', creat_new_person, name='new_person'),
-    # url(r'^(?P<pk>\d+)/$', person_detail, name='person_detail'),
-    # url(r'^filer/', include('filer.urls')),
-    url(r'^new/$', new_person, name='new_person'),
-    url(r'^wrong/', wrong, name='wrong'),
-    url(r'^test/', test, name='test'),
-    url(r'^testdata/', testdata),
-
     # 搜索
     url(r'^search/', search, name='search'),
     url(r'^search_suggest/', search_suggest, name='searchs'),
 
     url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
     url(r'^super_search/', super_search),
-    url(r'^ss/', s_search),
     url(r'^search_patients/', search_patients),
 
-    url(r'^del/person/(?P<pk>\d+)', delperson),
-    url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
-
-    url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
-    url(r'^detail_no_sidebar/(?P<pk>\d+)/$', person_detail_without_sidebar, name='person_detail_without_sidebar'),
-
-    url(r'^down/(?P<pk>\d+)/$', down_zip),
+    url(r'^boards/', include(('boards.urls', 'boards'), namespace='boards')),
 
     # baseinfo 应用
     # url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
     url(r'^baseinfo/', include(('baseinfo.urls', 'baseinfo'), namespace='baseinfo')),
 
-    url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
-
-    # post 获取所有post列表
-    url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
-    url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
     url(r'^allposts$', allposts),
-
-    #  获取所有x线的post列表
-    url(r'^posts_xray/(?P<pk>\d+)/$', posts_xray, name='posts_xray'),
-    url(r'^posts_xray/(?P<pk>\d+)/addpost$', addpost_xray, name='addpost_xray'),
 
     # account
     url(r'^signup/$', accounts_views.signup, name='signup'),
@@ -97,10 +72,33 @@ urlpatterns = [
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
     url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
 
-    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
+    # boards view
+    url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
 
-    # url(r'up/$', hello),
-    # url(r'^p/', person_detail),
-    # url(r'^abc/' + path_end, filemanager, name='filemanager'),
+    # post 获取所有post列表
+    url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
+    url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
+
+    #  获取所有x线的post列表
+    url(r'^posts_xray/(?P<pk>\d+)/$', posts_xray, name='posts_xray'),
+    url(r'^posts_xray/(?P<pk>\d+)/addpost$', addpost_xray, name='addpost_xray'),
+
+    url(r'^new/$', new_person, name='new_person'),
+    url(r'^wrong/', wrong, name='wrong'),
+    url(r'^test/', test, name='test'),
+    url(r'^testdata/', testdata),
+
+    url(r'^ss/', s_search),
+
+    url(r'^del/person/(?P<pk>\d+)', delperson),
+    url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
+
+    url(r'^detail_no_sidebar/(?P<pk>\d+)/$', person_detail_without_sidebar, name='person_detail_without_sidebar'),
+
+    url(r'^down/(?P<pk>\d+)/$', down_zip),
+
+    url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
+
+    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
 
 ]

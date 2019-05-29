@@ -107,7 +107,7 @@ desired effect
 
       <div class="navbar-left  ">
         <!---搜索框--->
-        <form action="/search/" method="get" class=" navbar-form col-lg-3">
+          <form action="{% url 'nav_search' %}" method="get" class=" navbar-form col-lg-3">
             <div class="input-group">
               <input type="text" name="s" class="form-control" id="search" placeholder="姓名、病历号、标签.." autocomplete="off">
               <span class="input-group-btn">
@@ -126,7 +126,8 @@ desired effect
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
           <div class="navbar-left hidden-xs" style="padding-top: 10px">
-            <a href="/new/" class="btn btn-primary btn-sm" >新建患者 <span class="fa fa-plus-circle"></span></a>
+              <a href="{% url 'boards:new_person' %}" class="btn btn-primary btn-sm">新建患者 <span
+                      class="fa fa-plus-circle"></span></a>
           </div>
 
 
@@ -268,7 +269,7 @@ desired effect
                   <a href="#" class="btn btn-default btn-flat">账号</a>
                 </div>
                 <div class="pull-right">
-                  <a href="/logout" class="btn btn-default btn-flat">退出</a>
+                    <a href="{% url 'logout' %}" class="btn btn-default btn-flat">退出</a>
                 </div>
               </li>
             </ul>
@@ -317,14 +318,25 @@ desired effect
         <!-- Optionally, you can add icons to the links -->
           <li class="active"><a href="/sum/">
               <i class="fa fa-bar-chart-o"></i> <span>汇总</span></a></li>
-          <li class=""><a href="/home2/">
-              <i class="fa fa-address-card-o"></i> <span>病例</span></a></li>
-          <li><a href="/appt/">
+          {#          <li class=""><a href="/home2/">#}
+          {#              <i class="fa fa-address-card-o"></i> <span>病例</span></a></li>#}
+          <li class="treeview">
+              <a href="#"><i class="fa fa-address-card-o"></i> <span>病例</span>
+                  <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                  <li><a href="{% url 'boards:today_person' %}" class="fa fa-circle-o text-red"> 今日患者 </a></li>
+                  <li><a href="{% url 'home2' %}"><i class="fa fa-address-card-o"></i> <span>所有病例</span></a></li>
+              </ul>
+          </li>
+          <li><a href="{% url 'appointment:apptHome' %}">
             <i class="fa fa-calendar"></i> <span>预约</span></a></li>
           <li><a href="#" onclick="gotoSearch()">
               <i class="fa fa-search"></i> <span>查询</span></a></li>
         <li><a href="#"><i class="fa fa-database"></i> <span>库存</span></a></li>
-        <li><a href="/task/"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
+          <li><a href="{% url 'tasklist:taskhome' %}"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
         <li class="treeview">
             <a href="#"><i class="fa fa-user-secret"></i> <span>其他</span>
             <span class="pull-right-container">

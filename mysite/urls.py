@@ -33,22 +33,28 @@ urlpatterns = [
     url(r'^$', show_home, name='home'),   # 第1主页入口
     url(r'^home2', home, name='home2'),  # 第二主页入口
 
-    url(r'^ip$', get_host_ip, name='hostip'),
-
     # 搜索
-    url(r'^search/', search, name='search'),
+    url(r'^search/', search, name='nav_search'),
     url(r'^search_suggest/', search_suggest, name='searchs'),
-
+    url(r'^ss/', s_search),
     url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
     url(r'^super_search/', super_search),
     url(r'^search_patients/', search_patients),
 
+    # 应用
     url(r'^boards/', include(('boards.urls', 'boards'), namespace='boards')),
-
-    # baseinfo 应用
-    # url(r'^baseinfo/(?P<pk>\d+)/$', baseinfo),
+    # baseinfo
     url(r'^baseinfo/', include(('baseinfo.urls', 'baseinfo'), namespace='baseinfo')),
+    # record
+    url(r'^record/', include(('record.urls', 'record'), namespace='record')),
+    url(r'^netdisk/', include('netdisk.urls')),
+    url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
+    url(r'^sum/', include(('summary.urls', 'summary'), namespace='summary')),
+    url(r'^appt/', include(('appointment.urls', 'appointment'), namespace='appointment')),
+    # 收费
+    url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
 
+    # 统计post
     url(r'^allposts$', allposts),
 
     # account
@@ -57,48 +63,13 @@ urlpatterns = [
     url(r'^login/$', accounts_views.login, name='login'),
     # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 
-    # record
-    url(r'^record/', include(('record.urls', 'record'), namespace='record')),
-
-    url(r'^netdisk/', include('netdisk.urls')),
-    url(r'^task/', include(('tasklist.urls', 'tasklist'), namespace='tasklist')),
-
-    url(r'^sum/', include(('summary.urls', 'summary'), namespace='summary')),
-    url(r'^appt/', include(('appointment.urls', 'appointment'), namespace='appointment')),
-
-    # 收费
-    url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
-
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
     url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
+    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
 
-    # boards view
-    url(r'^detail/(?P<pk>\d+)/$', person_detail, name='person_detail'),
-
-    # post 获取所有post列表
-    url(r'^posts/(?P<pk>\d+)/$', posts, name='posts'),
-    url(r'^posts/(?P<pk>\d+)/addpost$', addpost, name='addpost'),
-
-    #  获取所有x线的post列表
-    url(r'^posts_xray/(?P<pk>\d+)/$', posts_xray, name='posts_xray'),
-    url(r'^posts_xray/(?P<pk>\d+)/addpost$', addpost_xray, name='addpost_xray'),
-
-    url(r'^new/$', new_person, name='new_person'),
-    url(r'^wrong/', wrong, name='wrong'),
+    url(r'^ip$', get_host_ip, name='hostip'),
     url(r'^test/', test, name='test'),
     url(r'^testdata/', testdata),
 
-    url(r'^ss/', s_search),
-
-    url(r'^del/person/(?P<pk>\d+)', delperson),
-    url(r'^del/person(?P<ppk>\d+)/post(?P<postpk>\d+)', delpost),
-
-    url(r'^detail_no_sidebar/(?P<pk>\d+)/$', person_detail_without_sidebar, name='person_detail_without_sidebar'),
-
-    url(r'^down/(?P<pk>\d+)/$', down_zip),
-
-    url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person),
-
-    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
 
 ]

@@ -12,7 +12,7 @@ def home(request, pk):
 	:return:
 	"""
 	p = Person.objects.get(pk=pk)
-	return render(request, 'baseinfo/baseInfo.html', {'person': p})
+	return render(request, 'baseInfo.html', {'person': p})
 
 
 class EditForm(forms.Form):
@@ -70,7 +70,7 @@ def edit(request, pk):
 			}
 		)
 
-		return render(request, 'baseinfo/edit.html', locals())
+		return render(request, 'edit.html', locals())
 
 
 class EditCommentLabelForm(forms.Form):
@@ -100,4 +100,4 @@ def edit_comment_label(request, pk):
 		)
 
 		ctx = {'form':form, 'pk':p.pk}
-		return render(request, 'baseinfo/edit_comment_label.html', ctx)
+		return render(request, 'edit_comment_label.html', ctx)

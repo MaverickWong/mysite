@@ -45,7 +45,7 @@
             {% for appt in apptItem %}
                 <tr class="dataLine" onclick="changeColor(this)">
                     <td>{{ forloop.counter }}</td>
-                    <td><a href="{% url 'person_detail' appt.patient.pk %}">
+                    <td><a href="{% url 'boards:person_detail' appt.patient.pk %}">
                         <strong style="color: #0a0a0a">{{ appt.patient }}</strong> </a></td>
                     <td>{{ appt.startDateTime |time:"H:i" }}</td>
                     <td>{{ appt.checkInTime|time:"H:i" }}</td>

@@ -73,11 +73,11 @@
 <div class="row">
 
 {% for person in persons %}
-    <div class="infocard row" pk="{% url 'person_detail' person.pk %}">
+    <div class="infocard row" pk="{% url 'boards:person_detail' person.pk %}">
 
         <div class="col-md-1">
             <div>
-            <a href="{% url 'person_detail' person.pk %}"><h4>{{ person.name }}</h4></a>
+                <a href="{% url 'boards:person_detail' person.pk %}"><h4>{{ person.name }}</h4></a>
 {#            <small class="text-muted d-block">{{ person.idnum}}</small>#}
             </div>
             <div>{{ person.idnum|default:_('') }}</div>
@@ -169,7 +169,6 @@ $(document).ready(function (){
     }
 )
 </script>
-
 
 
 {% endblock %}

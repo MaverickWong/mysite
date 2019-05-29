@@ -118,6 +118,7 @@ def add_user(imgpath, person ):
 base = BASE_DIR
 # dir = "/static/picture/a正畸患者照片"
 
+persons_new_face = []
 
 error=[]
 imgAddIcon =[]
@@ -160,18 +161,66 @@ def find_face_of_persons(persons):
 									p.icon = img.thumbnail
 									p.save()
 
+									persons_new_face.append(p)
+
+
 								elif abs(f['angle']['yaw']) > 70:
 									img.baiduFaceInfo = json.dumps(re)
 									img.type = 2 # 侧面
 									img.save()
+									p.isBaiduFaceSaved = True
+									p.save()
 
 						else:
 							print('pic has no face ')
+							p.isBaiduFaceSaved = True
+							p.save()
 
 				except:
 					error.append(img.pk)
 		else:
 			print('已经有百度识别记录，pass')
+
+
+from PIL import Image as Image2
+
+
+def correct_face_oritation_of_persons(persons):
+	total = len(persons)
+	i = 0
+	for p in persons:
+		i = i + 1
+		imgs = p.images.all()
+		for img in imgs:
+			if img.type == '1':
+				# try:
+				info = json.loads(img.baiduFaceInfo)
+				f = info['result']['face_list'][0]
+				angle = f['angle']['roll']
+				print(angle)
+				if angle > 0:
+					print('270旋转 %s %d 第 %d 个人，共 %d 个' % (p.name, p.pk, i, total))
+					rotate_img_degree(img, 270)
+				if angle < 0:
+					rotate_img_degree(img, 90)
+					print('90旋转 %s %d 第 %d 个人，共 %d 个' % (p.name, p.pk, i, total))
+
+			# except:
+			# 	error.append(img.pk)
+
+
+def rotate_img_degree(img, degree):
+	''' 旋转img对象的小图中图，到degree 度数 '''
+	# 中图
+	mpath = base + img.size_m
+	img_m = Image2.open(mpath)
+	img_m = img_m.rotate(degree, expand=True)
+	img_m.save(mpath, "JPEG")
+	# 缩略图
+	spath = base + img.thumbnail
+	img_s = Image2.open(spath)
+	img_s = img_s.rotate(degree, expand=True)
+	img_s.save(spath, "JPEG")
 
 
 if __name__ == '__main__':
@@ -181,11 +230,18 @@ if __name__ == '__main__':
 	# res = faceRec(file1path, file2path)
 	# add_user(file1path)
 	# find_face(file1path)
-
 	# find_user(file1path)
+
 	persons = Person.objects.all().order_by('pk').reverse()
-	# persons = Person.objects.filter(pk=7815)
 	find_face_of_persons(persons)
+
+# p = Person.objects.get(pk=5373)
+# p2 = Person.objects.get(pk=8067)
+#
+# persons_new_face.append(p)
+# persons_new_face.append(p2)
+#
+# correct_face_oritation_of_persons(persons_new_face)
 
 '''
 先上传图片，并检查是否有人脸，如果有则加入user，id,并保存图片检测信息，更新logo

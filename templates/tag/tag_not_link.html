@@ -45,7 +45,7 @@
 
         </td>
     </tr>
-    <tr id="allTags" hidden>
+    <tr id="allTags">
         <td>
            {% for t in tags %}
                 {% block tag_button2  %}
@@ -64,11 +64,13 @@
 </table>
 
 <script>
-$(document).ready(function(){
+    {#$(document).ready(function(){#}
   $("#showAllTags").click(function(){
-    $("#allTags").toggle(1000);
+      $("#allTags").toggle();
   });
-});
+    {#})
+    ;
+    #}
 </script>
 
 

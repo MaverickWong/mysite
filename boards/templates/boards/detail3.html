@@ -28,7 +28,7 @@
         {% endif %}
     </div>
     <div class="col-md-1 col-sm-1 col-xs-2 col-md-offset-8">
-        <a href="/down/{{ patient.pk }}/" class="label label-default">
+        <a href="{% url 'boards:down_posts' patient.pk %}" class="label label-default">
             打包下载 <span class="fa fa-arrow-circle-o-down"></span> </a>
     </div>
     <br>
@@ -157,12 +157,12 @@
     {#    {% endfor %}#}
 
     function gotoNewPic() {
-        $.get('{% url 'addpost' patient.pk %}', function (r) {
+        $.get('{% url 'boards:addpost' patient.pk %}', function (r) {
             $("#detail3").html(r);
         });
     }
     function gotoNewXray() {
-        $.get('{% url 'addpost_xray' patient.pk %}', function (r) {
+        $.get('{% url 'boards:addpost_xray' patient.pk %}', function (r) {
             $("#detail3").html(r);
         });
     }

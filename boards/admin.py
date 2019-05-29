@@ -46,7 +46,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('person', 'name', 'type', 'isFirst', 'comment')
+	list_display = ('person', 'type', 'upLoadTime', 'name', 'isFirst', 'comment')
     raw_id_fields = ('person',)
     search_fields = ('person__name','name', 'type')  # 搜索外健时指明外键的field
 

@@ -11,27 +11,32 @@
               &times;
         </button>
         <h4 class="modal-title" id="myModalLabel">
-           编辑任务
+            编辑基本信息
         </h4>
      </div>
      <div class="modal-body">
 
-         <form action="/task/edit/{{ pk }}/" method="post">
+         <form action="/baseinfo/edit/{{ pk }}/" method="post">
             {% csrf_token %}
             {{ form }}
-            <input class="btn btn-primary" type="submit" value="Submit" />
+             {#             <div class="form-row">#}
+             {#                 <div class="form-group  col-md-6 ">#}
+             {#                     <label>姓名</label>#}
+             {#                     {{ form.name }}#}
+             {#                 </div>#}
+             {#                 <div class="form-group  col-md-6">#}
+             {#                     <label>病历号</label>#}
+             {#                     {{ form.idnum }}#}
+             {#                 </div>#}
+             {#             </div>#}
+
+             <br>
+             <input class="btn btn-primary" type="submit" value="提交"/>
         </form>
 
      </div>
-{#     <div class="modal-footer">#}
-{#        <button type="button" class="btn btn-default"#}
-{#           data-dismiss="modal">关闭#}
-{#        </button>#}
-{#        <button type="button" class="btn btn-primary">#}
-{#           提交更改#}
-{#        </button>#}
-{#     </div>#}
-<script>
+
+    <script>
     //日期时间选择器
          $('#datetimepicker2').datetimepicker({
              showTodayButton:true,

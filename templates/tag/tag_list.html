@@ -24,8 +24,9 @@
         <td>
            {% for t in tgroup %}
                {% if tag_islink %}
-                   <a href="/tags/{{ t.name }}" class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
-                       title="{{ t.name }}">
+                   <a href="{% url 'search:tag_search' t.name %}" class="label label-success"
+                      style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
+                      title="{{ t.name }}">
                         {{ t.name }}
                         <span class="badge">{{ t.persons.count }}</span>
                     </a>
@@ -38,6 +39,7 @@
     </tr>
 {% endfor %}
 
+    {# /search/tags/{{ t.name }}  #}
 {% if tags %}
     <tr id="showAllTags">
         <td><div style="border:solid 1px #c3c3c3; background: #e5eecc">
@@ -46,11 +48,12 @@
 
         </td>
     </tr>
-    <tr id="allTags" hidden>
+    <tr id="allTags">
         <td>
            {% for t in tags %}
                 {% if tag_islink %}
-                   <a href="/tags/{{ t.name }}" class="label label-success" style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
+                    <a href="/search/tags/{{ t.name }}  " class="label label-success"
+                       style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
                        title="{{ t.name }}">
                         {{ t.name }}
                         <span class="badge">{{ t.persons.count }}</span>

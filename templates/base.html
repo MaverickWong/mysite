@@ -107,7 +107,7 @@ desired effect
 
       <div class="navbar-left  ">
         <!---搜索框--->
-          <form action="{% url 'nav_search' %}" method="get" class=" navbar-form col-lg-3">
+          <form method="get" class=" navbar-form col-lg-3">
             <div class="input-group">
               <input type="text" name="s" class="form-control" id="search" placeholder="姓名、病历号、标签.." autocomplete="off">
               <span class="input-group-btn">
@@ -361,7 +361,7 @@ desired effect
 
 <script>
     function gotoSearch() {
-        $.get('/search_patients/', function (r) {
+        $.get('{% url 'search:search_index' %}', function (r) {
             $("section.content").html(r);
         });
     }
@@ -497,7 +497,7 @@ desired effect
     });
 
     $("input#search").bsSuggest({
-        url: "/search_suggest/?s=",
+        url: "{% url 'search:search_suggest' %}" + "/?s=", // /search/search_suggest/?s=
         allowNoKeyword: false, //无输入时不执行过滤请求
         multiWord: true, //以分隔符号分割的多关键字支持
         separator: ",", //多关键字支持时的分隔符
@@ -511,7 +511,7 @@ desired effect
         {#console.log('onSetSelectValue: ', e.target.value, selectedData, selectedRawData);#}
         {#console.log(selectedRawData['pk'])#}
         // 点击菜单后打开具体页面
-        window.location.href='/detail/' + selectedRawData['pk'] + '/'
+        window.location.href = '/boards/detail/' + selectedRawData['pk'] + '/'
     });
 
     //缩小左侧边栏

@@ -3,7 +3,7 @@ from django.conf.urls import url
 from boards.views import *
 
 urlpatterns = [
-	# url(r'^admin/', admin.site.urls),
+	url(r'^$', home),
 	# 今日患者
 	url(r'^today_person$', today_person_detail, name='today_person'),
 	# 详细信息

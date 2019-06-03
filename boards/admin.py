@@ -11,9 +11,6 @@ import sys;
 # sys.setdefaultencoding("utf8")
 
 
-
-
-
 class PersonAdmin(admin.ModelAdmin):
 	list_display = ('name', 'link', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags',)
 	search_fields = ('name', 'idnum',)
@@ -49,7 +46,6 @@ class PostAdmin(admin.ModelAdmin):
 	list_display = ('person', 'type', 'upLoadTime', 'name', 'isFirst', 'comment')
     raw_id_fields = ('person',)
     search_fields = ('person__name','name', 'type')  # 搜索外健时指明外键的field
-
 
 
 class TagAdmin(admin.ModelAdmin):

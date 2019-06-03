@@ -34,14 +34,16 @@ urlpatterns = [
     url(r'^home2', home, name='home2'),  # 第二主页入口
 
     # 搜索
-    url(r'^search/', search, name='nav_search'),
-    url(r'^search_suggest/', search_suggest, name='searchs'),
-    url(r'^ss/', s_search),
-    url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
-    url(r'^super_search/', super_search),
-    url(r'^search_patients/', search_patients),
+    # url(r'^search/', search, name='nav_search'),
+    # url(r'^search_suggest/', search_suggest, name='searchs'),
+    # url(r'^ss/', s_search),
+    # url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
+    # url(r'^super_search/', super_search),
+    # url(r'^search_patients/', search_patients),
 
     # 应用
+    url(r'^search/', include(('search.urls', 'search'), namespace='search')),
+
     url(r'^boards/', include(('boards.urls', 'boards'), namespace='boards')),
     # baseinfo
     url(r'^baseinfo/', include(('baseinfo.urls', 'baseinfo'), namespace='baseinfo')),

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-# from django.core.urlresolvers import reverse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -32,14 +31,15 @@ post_upload_done = django.dispatch.Signal(providing_args=['post_pk'])
 person_created = django.dispatch.Signal(providing_args=['person_pk'])
 
 
+def home(request):
+	return HttpResponse('boards, ok')
+
+
 def importFolders(request):
 	"""
     导入图像文件夹
     """
 	fname = readFoldersWithNameIdDate.start()
-	# with open(fname, 'r') as f:
-	#     content = f.readlines()
-	# return HttpResponse(content)
 
 	content_type, encoding = mimetypes.guess_type(str(fname))
 	content_type = content_type or 'application/octet-stream'

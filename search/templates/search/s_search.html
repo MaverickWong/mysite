@@ -33,7 +33,8 @@
 
 <div class="container">
     <p></p>
-    <form role="form"  id="fileupload" name="files[]" class="form-inline" action="/super_search/" method="GET" >
+    <form role="form" id="fileupload" name="files[]" class="form-inline" action="{% url 'search:super_search' %}"
+          method="GET">
 
         <div class="form-group " >
             <lable class=" control-label">搜索标签  ：</lable>

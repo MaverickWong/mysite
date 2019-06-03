@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'baseinfo',
 	'summary',
 	'appointment',
+	'search',
 
 ]
 

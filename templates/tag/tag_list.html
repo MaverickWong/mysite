@@ -24,14 +24,15 @@
         <td>
            {% for t in tgroup %}
                {% if tag_islink %}
-                   <a href="{% url 'search:tag_search' t.name %}" class="label label-success"
-                      style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
+                   <a href="{% url 'search:tag_search' t.name %}" class="label label-default"
+                      style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05); {% include 'tag/tag_color.html' %}"
                       title="{{ t.name }}">
                         {{ t.name }}
                         <span class="badge">{{ t.persons.count }}</span>
                     </a>
                {% else %}
-                    <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+                   <span id="addTag" type="button" class="label label-default"
+                         style="{% include 'tag/tag_color.html' %};" onclick="addText(this)">{{ t.name }}</span>
                {% endif %}
 
             {% endfor %}
@@ -52,14 +53,15 @@
         <td>
            {% for t in tags %}
                 {% if tag_islink %}
-                    <a href="/search/tags/{{ t.name }}  " class="label label-success"
-                       style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05)"
+                    <a href="/search/tags/{{ t.name }}  " class="label label-default"
+                       style="display: inline-block; margin-bottom: 10px; box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.05); {% include 'tag/tag_color.html' %}"
                        title="{{ t.name }}">
                         {{ t.name }}
                         <span class="badge">{{ t.persons.count }}</span>
                    </a>
                {% else %}
-                    <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+                    <span id="addTag" type="button" class="label label-default"
+                          style="{% include 'tag/tag_color.html' %};" onclick="addText(this)">{{ t.name }}</span>
                {% endif %}
             {% endfor %}
         </td>

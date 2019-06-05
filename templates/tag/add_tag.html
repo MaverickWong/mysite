@@ -4,7 +4,8 @@
     <div>
         <lable class=" control-label">患者现有标签  ：</lable>
         {% for t in patient.tags.all %}
-            <a class="label label-success" style="display: inline-block;" href="/tags/{{ t.name }}"
+            <a class="label label-default" style="display: inline-block; {% include 'tag/tag_color.html' %}"
+               href="/tags/{{ t.name }}"
                title="{{ t.name }}">
                 {{ t.name }}
                 <span class="badge">{{ count }}</span>

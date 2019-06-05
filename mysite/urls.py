@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from mysite.views import *
-from boards.views import *
+# from boards.views import *
 from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
 from record import urls as recordurls
@@ -33,17 +33,19 @@ urlpatterns = [
     url(r'^$', show_home, name='home'),   # 第1主页入口
     url(r'^home2', home, name='home2'),  # 第二主页入口
 
-    # 搜索
-    # url(r'^search/', search, name='nav_search'),
-    # url(r'^search_suggest/', search_suggest, name='searchs'),
-    # url(r'^ss/', s_search),
-    # url(r'^tags/(?P<tag>\w+[^/]+)', tag_search),
-    # url(r'^super_search/', super_search),
-    # url(r'^search_patients/', search_patients),
+    url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
+    url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
+    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
+
+    url(r'^ip$', get_host_ip, name='hostip'),
+    url(r'^test/', test, name='test'),
+    url(r'^testdata/', testdata),
+
+    # 统计post
+    url(r'^allposts$', allposts),
 
     # 应用
     url(r'^search/', include(('search.urls', 'search'), namespace='search')),
-
     url(r'^boards/', include(('boards.urls', 'boards'), namespace='boards')),
     # baseinfo
     url(r'^baseinfo/', include(('baseinfo.urls', 'baseinfo'), namespace='baseinfo')),
@@ -56,22 +58,11 @@ urlpatterns = [
     # 收费
     url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
 
-    # 统计post
-    url(r'^allposts$', allposts),
-
     # account
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^login/$', accounts_views.login, name='login'),
     # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-
-    url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
-    url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
-    url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
-
-    url(r'^ip$', get_host_ip, name='hostip'),
-    url(r'^test/', test, name='test'),
-    url(r'^testdata/', testdata),
 
 
 ]

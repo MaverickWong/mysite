@@ -120,11 +120,41 @@ class Image(models.Model):
 
 #
 class Tag(models.Model):
+    type_choice = (
+        (1, '总分类'),
+        (2, '水平向'),
+        (3, '垂直向'),
+        (4, '是否拔牙'),
+        (5, '矫治器分类'),
+        (6, '活动矫治器'),
+        (7, '保持器'),
+        (8, '患者类型'),
+        (9, '主诉'),
+        (101, '未分类'),
+
+    )
+
     name = models.CharField(max_length=30, unique=True, blank=True, verbose_name='标签')
-    type = models.IntegerField(null=False, default=1, blank=True, verbose_name='类型')  # 0初诊 9结束 23456...
+    type = models.IntegerField(null=False, default=1, blank=True, choices=type_choice,
+                               verbose_name='类型')  # 0初诊 9结束 23456...
     comment = models.CharField(max_length=100, blank=True, verbose_name='备注')
     images = models.ManyToManyField(Image, related_name='tags', blank=True)
     persons = models.ManyToManyField(Person, related_name='tags', blank=True, verbose_name='患者')
+    # color = models.PositiveSmallIntegerField(blank=True, null=True, choices=color_choice)
+    color = models.CharField(max_length=8, blank=True, null=True)
+
+    color_choice = (
+        (0, 'green'),
+        (1, 'red'),
+        (2, 'blue'),
+        (3, 'yellow')
+    )
+
+    def color_div(self):
+        if self.color:
+            return format_html(
+                '<p style="background-color:{};"> {}</p>', self.color, self.color
+            )
 
     def __str__(self):
         return self.name

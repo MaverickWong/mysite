@@ -29,7 +29,8 @@
     <tr>
         <td>
            {% for t in tgroup %}
-            <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+               <span id="addTag" type="button" class="label label-default" style="{% include 'tag/tag_color.html' %};"
+                     onclick="addText(this)">{{ t.name }}</span>
 
 
             {% endfor %}
@@ -77,9 +78,11 @@
 {#</body>#}
 {#</html>#}
 {% block tag_buttton %}
-<span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+    <span id="addTag" type="button" class="label label-default" style="{% include 'tag/tag_color.html' %};"
+          onclick="addText(this)">{{ t.name }}</span>
 {% endblock %}
 
 {% block tag_buttton2 %}
-<span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>
+    <span id="addTag" type="button" class="label label-default" style="{% include 'tag/tag_color.html' %};"
+          onclick="addText(this)">{{ t.name }}</span>
 {% endblock %}

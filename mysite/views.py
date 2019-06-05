@@ -1,15 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from boards.models import Person, Tag, Post, Image
 from record.models import Record
 import json
-from datetime import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 # import dramatiq
-
-from linkedcare.syncDB import get_baseinfo_of_patient
 
 import socket
 
@@ -94,6 +91,15 @@ def bad(request):
 	''' 升级维护用 '''
 	return render(request, '404.html')
 
+
+def test(request):
+	return render(request, 'appointment/index.html')
+
+
+def testdata(request):
+	with open('data.json', 'r') as f:
+		data = json.load(f)
+		return HttpResponse(data, content_type='application/json')
 
 '''############################################'''
 
@@ -181,3 +187,24 @@ def sync_xray_of_linkedcare_for_person(request, pk):
 def baidu_sdk(request):
 	# find_user(file1path)
 	persons = Person.objects.all().order_by('pk').reverse()
+
+
+def importFolders(request):
+	"""
+    导入图像文件夹
+    """
+	import readFoldersWithNameIdDate
+
+	fname = readFoldersWithNameIdDate.start()
+	import mimetypes
+
+	content_type, encoding = mimetypes.guess_type(str(fname))
+	content_type = content_type or 'application/octet-stream'
+	try:
+		f = open(fname, 'rb')
+		response = FileResponse(f, content_type=content_type)
+		response['Content-Disposition'] = 'attachment;filename="111.txt"'
+		return response
+
+	except IOError:
+		return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")

@@ -12,7 +12,6 @@ from datetime import datetime
 import os
 import json
 from PIL import Image as Image2
-import readFoldersWithNameIdDate
 
 import mimetypes, zipfile
 from django.utils.encoding import smart_str
@@ -33,24 +32,6 @@ person_created = django.dispatch.Signal(providing_args=['person_pk'])
 
 def home(request):
 	return HttpResponse('boards, ok')
-
-
-def importFolders(request):
-	"""
-    导入图像文件夹
-    """
-	fname = readFoldersWithNameIdDate.start()
-
-	content_type, encoding = mimetypes.guess_type(str(fname))
-	content_type = content_type or 'application/octet-stream'
-	try:
-		f = open(fname, 'rb')
-		response = FileResponse(f, content_type=content_type)
-		response['Content-Disposition'] = 'attachment;filename="111.txt"'
-		return response
-
-	except IOError:
-		return HttpResponse(" 无法打开记录文件，请手工检查图像是否导入 ")
 
 
 @login_required()
@@ -101,16 +82,6 @@ def down_zip(request, pk):
 		return response
 	except IOError:
 		return HttpResponse(" 无法打开该文件，请检查文件名 ")
-
-
-def test(request):
-	return render(request, 'appointment/index.html')
-
-
-def testdata(request):
-	with open('data.json', 'r') as f:
-		data = json.load(f)
-		return HttpResponse(data, content_type='application/json')
 
 
 def get_person_list_from_stringlist(string):

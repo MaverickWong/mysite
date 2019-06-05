@@ -1,0 +1,15 @@
+background-color:
+{% if t.color %} {{ t.color }}
+{% else %}
+    {% if t.type == 1 %} #00a65a
+    {% elif t.type == 2 %} #FF241C
+    {% elif t.type == 3 %} #35ff15
+    {% elif t.type == 4 %} #ffc624
+    {% elif t.type == 5 %} #315fff
+    {% elif t.type == 6 %} #ff7ca7
+    {% elif t.type == 7 %} #9b7cff
+    {% elif t.type == 8 %} #4fbfff
+    {% else %} #d1d6de
+    {% endif %}
+{% endif %}
+;

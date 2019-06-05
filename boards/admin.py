@@ -12,8 +12,8 @@ import sys;
 
 
 class PersonAdmin(admin.ModelAdmin):
-	list_display = ('name', 'link', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags',)
-	search_fields = ('name', 'idnum',)
+    list_display = ('name', 'link', 'idnum', 'post_num', 'privateDir', 'doctor', 'birth', 'sex', 'comment', 'get_tags',)
+    search_fields = ('name', 'idnum',)
     list_filter = ('last_updated',)
     date_hierarchy = 'last_updated'
     ordering = ('-last_updated',)
@@ -43,15 +43,15 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-	list_display = ('person', 'type', 'upLoadTime', 'name', 'isFirst', 'comment')
+    list_display = ('person', 'type', 'upLoadTime', 'name', 'isFirst', 'comment')
     raw_id_fields = ('person',)
     search_fields = ('person__name','name', 'type')  # 搜索外健时指明外键的field
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'comment','type', )
+    list_display = ('name', 'comment', 'type', 'color_div')
     # filter_horizontal = ('images','persons')
-    fields = ('name', 'type', 'comment',)
+    fields = ('name', 'type', 'comment', 'color')
     search_fields = ('name', 'type')
     ordering = ('type',)
 

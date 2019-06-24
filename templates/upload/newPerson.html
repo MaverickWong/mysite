@@ -44,7 +44,8 @@
 
 
     <table class="col-lg-12">
-    <form role="form"  id="fileupload" name="files[]" class="form-inline" action="/new/" method="POST" enctype="multipart/form-data">
+        <form role="form" id="fileupload" name="files[]" class="form-inline" action="{% url 'boards:new_person' %}"
+              method="POST" enctype="multipart/form-data">
         <!-- 新添加的-->
         {% csrf_token %}
 

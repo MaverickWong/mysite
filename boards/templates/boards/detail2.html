@@ -89,23 +89,8 @@
                     <div class="col-md-12 col-xs-12">标签：
                         {% for t in patient.tags.all %}
                             <a class="label label-default"
-                               style="display: inline-block;
-                                       background-color:
-                                       {% if t.color %} {{ t.color }}
-                                       {% else %}
-                                           {% if t.type == 1 %} #00a65a
-                                           {% elif t.type == 2 %} #FF241C
-                                           {% elif t.type == 3 %} #35ff15
-                                           {% elif t.type == 4 %} #ffc624
-                                           {% elif t.type == 5 %} #315fff
-                                           {% elif t.type == 6 %} #ff7ca7
-                                           {% elif t.type == 7 %} #9b7cff
-                                           {% elif t.type == 8 %} #4fbfff
-                                           {% else %} #d1d6de
-                                           {% endif %}
-                                       {% endif %}
-                                       ;"
-                               href="/tags/{{ t.name }}"
+                               style="display: inline-block; {% include 'tag/tag_color.html' %};"
+
                                title="{{ t.name }}">
                                 {{ t.name }} <span class="badge">{{ count }}</span>
                             </a>
@@ -123,11 +108,13 @@
 
                 <!--- 导航栏  --->
                 <ul id="navtab" class="nav nav-tabs " style="margin-top: -15px">
-                    <li class="active" onclick="gotoPic()"><a href="#">照相 </a></li>
+                    <li class="active" onclick="gotoPic()"><a href="#">照相-<span
+                            class="label label-success">{{ num_post }}</span> </a></li>
                     <li onclick="gotoXray()"><a href="#">易看牙影像-<span class="label label-success">{{ num_xray }}</span>
                     </a></li>
                     <li onclick="gotoBase()"><a href="#">基本信息</a></li>
-                    <li onclick="gotoRecord()"><a href="#">病历</a></li>
+                    <li onclick="gotoRecord()"><a href="#">病历-<span class="label label-success">{{ num_record }}</span></a>
+                    </li>
                     <li onclick="gotoCharge()"><a href="#">收费</a></li>
                     <li><a href="#">其他</a></li>
                 </ul>

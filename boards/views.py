@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, FileResponse
 from django.db.models import ProtectedError
 from boards.models import Person, Tag, Post, Image
+from record.models import Record
 from mysite.settings import BASE_DIR
 from datetime import datetime
 import os
@@ -140,23 +141,23 @@ def person_detail(request, pk):
 	if p.icon:
 		picurl = p.icon
 
-	num_xray = Post.objects.filter(type__gte=99).filter(person=p).count()
-
 	yky = 'https://simaier.linkedcare.cn/#/patient/info/' + str(p.linkedcareId) + '/record'
-	# yky= f'https://simaier.linkedcare.cn/#/patient/imaging/{str(p.linkedcareId)}/imagingHistory'
 
 	posts = p.posts
+	num_post = posts.count()
+	num_xray = Post.objects.filter(type__gte=99).filter(person=p).count()
+	num_record = Record.objects.filter(person=p).count()
 
 	contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky,
 	          'today_person_list': today_person_list,
-	          'num_xray': num_xray,
+	          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post,
 	          }
 
 	if request.GET.get('tab'):
 		t = request.GET.get('tab')
 		contex = {'patient': p, 'posts': posts, 'first_tab': t,
 		          'ykyurl': yky, 'today_person_list': today_person_list,
-		          'num_xray': num_xray, }
+		          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post, }
 
 	return render(request, 'boards/detail2.html', contex)
 
@@ -480,7 +481,7 @@ def new_person(request):
 		#  发送新建患者信号
 		person_created.send(new_person, person_pk=person.pk)
 		# result2 = json.dumps(results)
-		return redirect('person_detail', person.pk)
+		return redirect('boards:person_detail', person.pk)
 
 	if request.method == 'GET':
 		tgroups = []

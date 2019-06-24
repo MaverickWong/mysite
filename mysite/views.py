@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, FileResponse
 from boards.models import Person, Tag, Post, Image
 from record.models import Record
-import json
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from mysite.settings import BASE_DIR
 # import dramatiq
@@ -21,21 +20,6 @@ def show_home(request):
 	return render(request, 'show-index2.html')
 
 
-def get_client_ip(request):
-	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-	if x_forwarded_for:
-		ip = x_forwarded_for.split(',')[0]
-	else:
-		ip = request.META.get('REMOTE_ADDR')
-
-	dt = datetime.now()
-	t = dt.strftime("%m.%d-%H:%M:%S")
-	file = BASE_DIR + '/log/ip.txt'
-	with open(file, 'a+') as f:
-		f.write('%s\t\t %s\n' % (ip, t))
-	return ip
-
-
 @login_required()
 def home(request):
 	get_client_ip(request)  # 记录ip地址
@@ -49,8 +33,6 @@ def home(request):
 		else:  # 只能看该医生的患者
 			persons = Person.objects.filter(doctor=docname).order_by('pk')
 			total_person_num = Person.objects.filter(doctor=docname).count()
-
-		# tags = Tag.objects.all()
 
 		# 分页
 		page = request.GET.get('page', 1)
@@ -92,18 +74,6 @@ def bad(request):
 	return render(request, '404.html')
 
 
-def test(request):
-	return render(request, 'appointment/index.html')
-
-
-def testdata(request):
-	with open('data.json', 'r') as f:
-		data = json.load(f)
-		return HttpResponse(data, content_type='application/json')
-
-'''############################################'''
-
-
 def summary_index(request):
 	docname = request.user.username
 	if request.user.is_authenticated:
@@ -134,11 +104,6 @@ def get_host_ip(request):
 		s.close()
 
 	return HttpResponse(ip)
-
-
-def hello(request):
-	return render(request, 'upload-vue2.html')
-
 
 # from mysite.tasks import mytask
 #
@@ -182,6 +147,21 @@ def sync_xray_of_linkedcare_for_person(request, pk):
 	# uwsgi.reload
 
 	return redirect('boards:person_detail', pk)
+
+
+def get_client_ip(request):
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+
+	dt = datetime.now()
+	t = dt.strftime("%m.%d-%H:%M:%S")
+	file = BASE_DIR + '/log/ip.txt'
+	with open(file, 'a+') as f:
+		f.write('%s\t\t %s\n' % (ip, t))
+	return ip
 
 
 def baidu_sdk(request):

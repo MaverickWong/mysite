@@ -36,15 +36,14 @@ urlpatterns = [
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
     url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据
     url(r'imoprtFolders', importFolders, name='importFolder'),  # 从文件夹导入图像
-
     url(r'^ip$', get_host_ip, name='hostip'),
-    url(r'^test/', test, name='test'),
-    url(r'^testdata/', testdata),
-
+    # url(r'^test/', test, name='test'),
+    # url(r'^testdata/', testdata),
     # 统计post
     url(r'^allposts$', allposts),
 
     # 应用
+    url(r'^test/', include(('testapp.urls', 'testapp'), namespace='test')),
     url(r'^search/', include(('search.urls', 'search'), namespace='search')),
     url(r'^boards/', include(('boards.urls', 'boards'), namespace='boards')),
     # baseinfo

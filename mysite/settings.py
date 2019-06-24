@@ -58,6 +58,7 @@ INSTALLED_APPS = [
 	'summary',
 	'appointment',
 	'search',
+	'testapp',
 
 ]
 

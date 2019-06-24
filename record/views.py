@@ -96,7 +96,8 @@ def editRecord(request, personPk, recordPk):
 			message = '保存成功'
 			# todo 保存后刷新
 			# return HttpResponse('ok', content_type='Application/json')
-			return redirect('/detail/' + str(personPk), {'msg': message})
+			# return redirect('/detail/' + str(personPk), {'msg': message})
+			return redirect(reverse('boards:person_detail', args=(str(personPk),)), {'msg': message})
 
 	else:  # get
 		p = Record.objects.get(pk=recordPk)
@@ -114,4 +115,5 @@ def importRecord(request, personPk):
 	s = logIn()
 	p = Person.objects.get(pk=personPk)
 	get_ortho_record_of_patient(s, p)
-	return HttpResponse('ok')
+	message = '导入成功'
+	return redirect(reverse('boards:person_detail', args=(str(personPk),)), {'msg': message})

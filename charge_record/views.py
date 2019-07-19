@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 # -*- coding: utf-8 -*-
@@ -72,3 +72,8 @@ def all_orders(request, personPk):
     return render(request, 'charge_record/total.html', context)
 
 
+def print_record(request, recordPk):
+    # record = ChargeOrder.objects.get(pk=recordpk)
+    record = get_object_or_404(ChargeOrder, pk=recordPk)
+    context = {'record': record}
+    return render(request, 'charge_record/printRecord.html', context)

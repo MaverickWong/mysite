@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>收费详单</title>
+
+    <style>
+        @media only print {
+            footer, header, .sidebar {
+                display: none;
+            }
+        }
+
+        .biaoti {
+            font-family: 微软雅黑;
+            font-size: 26px;
+            font-weight: bold;
+            border-bottom: 1px dashed #CCCCCC;
+            color: #255e95;
+        }
+
+        .fubiaoti {
+            font-family: 微软雅黑;
+            font-size: 12px;
+            font-weight: bold;
+            border-bottom: 1px dashed #CCCCCC;
+            color: #255e95;
+        }
+
+        .huanzhexinxi {
+            font-size: 12px;
+            font-weight: bold;
+            border-bottom: 2px dashed #0a0a0a;
+        }
+
+        .heji {
+            font-size: 12px;
+            font-weight: bold;
+            border-bottom: 2px dashed #0a0a0a;
+        }
+    </style>
+</head>
+<body>
+<div style="width:600px;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+            <td align="center" class="biaoti" height="60">禾禾齿科</td>
+        </tr>
+
+    </table>
+
+    <table width="100%" cellspacing="0" cellpadding="0" align="center">
+
+        <tr class="huanzhexinxi">
+            <td width="20%" class="huanzhexinxi" rowspan="1">病历号: {{ record.person.idnum }}</td>
+            <td width="20%" class="huanzhexinxi" rowspan="1">姓名: {{ record.person.name }}</td>
+            <td class="huanzhexinxi" align="right">单据号: {{ record.pk }}</td>
+            <td class="huanzhexinxi" align="right">日期： {{ record.createdAt }}</td>
+        </tr>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">收费项目</td>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">合计</td>
+            <td colspan="1" class="btbg font-center titfont" rowspan="1">备注</td>
+        </tr>
+
+        <tr>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.planPrice }}</td>
+            <td colspan="1" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
+        </tr>
+        <tr>
+            <td height="40px"></td>
+        </tr>
+    </table>
+
+    <table width="100%">
+        <td style="border-bottom:2px dashed #0a0a0a;"></td>
+    </table>
+
+    <table width="100%">
+        <td class="heji" width="30%">总计应收：xxx</td>
+        <td class="heji" width="30%">实收：xxx</td>
+        <td class="heji" width="30%">欠款：xxx</td>
+    </table>
+
+    <table width="100%">
+        <td width="30%">收款人：xxx</td>
+        <td width="30%" align="right">收款时间：xxx</td>
+    </table>
+
+</div>
+</body>
+</html>

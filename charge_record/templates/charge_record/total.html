@@ -4,13 +4,23 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+    {#    <style>#}
+    {#        .biaoti{#}
+    {#            font-family: 微软雅黑;#}
+    {#            font-size: 26px;#}
+    {#            font-weight: bold;#}
+    {#            border-bottom:1px dashed #CCCCCC;#}
+    {#            color: #255e95;#}
+    {#        }#}
+    {#    </style>#}
 </head>
 <body>
 {#<div class="container">#}
      <div class="mb-4">
 {#            <a class="btn btn-primary" href={% url 'charge_record:newChargeRecord' pk %} > 创建新收费</a>#}
          <a class="btn btn-primary" onclick="gotoNewCharge()"> 创建新收费</a>
+         <a class="btn btn-warning" onclick="printDiv()"> 打印</a>
+
 
      </div>
 <!--- 通知--->
@@ -42,11 +52,24 @@
     <div>
 
     </div>
-    {% if records %}
+{% if records %}
+    <div id="areaToPrint">
+        <style>
+            .biaoti {
+                font-family: 微软雅黑;
+                font-size: 26px;
+                font-weight: bold;
+                border-bottom: 1px dashed #CCCCCC;
+                color: #255e95;
+            }
+        </style>
+
 
         <table class="table table-hover">
+            <tr>
+                <td class="biaoti" align="center" colspan="6">思迈尔收费详单</td>
+            </tr>
         <tr>
-
             <th>时间</th>
             <th>医生</th>
             <th>应收</th>
@@ -55,7 +78,6 @@
             <th>*</th>
         </tr>
 
-
         {% for record in records.all  %}
             <tr>
                 <td>{{record.createdAt }}</td>
@@ -63,17 +85,20 @@
                 <td>{{ record.planPrice }}</td>
                 <td style="color: #a90707">{{ record.inPrice }}</td>
                 <td>{{ record.comment }}</td>
-                <td>*</td>
+                <td><span onclick="printDiv({{ record.pk }})" class="fa fa-print">打印</span>
+                </td>
             </tr>
         {% endfor %}
 
         </table>
+    </div>
 
 
-    {% else %}
+{% else %}
     该患者暂无收费，请创建新收费。
-    {% endif %}
+{% endif %}
 {#</div>#}
+
 <script>
     function gotoNewCharge() {
         $.get("{% url 'charge_record:newChargeRecord' pk %}", function (r) {
@@ -87,7 +112,29 @@
              $('.alert').slideUp();
         }, 2000)
     )
+
+    function printDiv(recordpk) {
+
+        $.get('/charge/print/' + recordpk, function (r) {
+            newWin = window.open("");
+            newWin.document.write(r);
+            newWin.print();
+            newWin.close();
+        });
+    }
+
+    {#     var divToPrint = document.getElementById('areaToPrint');#}
+    {#     var url = 'zdlteam.com:888/charge/print/' + recordpk;#}
+    {#     newWin = window.open(url);#}
+    {#var head = '';#}
+    {#newWin.document.write(head);#}
+    {#newWin.document.write(divToPrint.outerHTML);#}
+    {#     newWin.print();#}
+    {#     newWin.close();#}
+    {
+    #}#}
 </script>
+
 
 </body>
 </html>

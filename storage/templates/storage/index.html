@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}库存管理{% endblock %}
+
+
+{% block stylesheet %}
+
+{% endblock %}
+
+{% block content %}
+
+    <script src="{% static '/js/moment.js' %}"></script>
+    <script src="{% static '/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/bootstrap-datetimepicker.min.css' %}">
+    <style>
+        th, td {
+            padding: 6px;
+        }
+
+        th {
+            border-bottom: 1px solid #0a0a0a;
+        }
+
+        td {
+            border-bottom: 1px dashed rgba(77, 77, 77, 0.71);
+        }
+
+    </style>
+
+    {% if msg %}
+    {% endif %}
+
+    <div>
+        <div class="col-md-1">
+            <a class="btn btn-warning" href="{% url 'storage:additem' %} " title="添加新任务" data-toggle="modal"
+               data-target="#myModal">
+                添加 <i class="glyphicon glyphicon-plus"></i></a>
+        </div>
+
+        <div class="col-md-3">
+            <form id="searchForm" action="{% url 'storage:search' %}" method="get" role="search">
+                <div class="form-group form-inline">
+                    <input name="s" type="text" class="form-control form-inline" id="search" placeholder="物品名称">
+                    <button class="btn-sm btn-default" type="submit">搜索</button>
+                </div>
+            </form>
+            <script>
+                function submitSearch() {
+                    $('#searchForm').submit();
+                }
+            </script>
+        </div>
+    </div>
+
+    {#<div>#}
+    {#    <form id="xx" action="{% url 'tasklist:search_group'%} " method="post">#}
+    {#        {% csrf_token %}#}
+    {#        {{ form }}#}
+    {##}
+    {#        <input type="submit" value="保存" />#}
+    {#    </form>#}
+    {#</div>#}
+
+    <div>
+        {% if group_dict %}
+            {% for group, name in group_dict.items %}
+                <a href="/storage/group?s={{ group }}" class="label label-default">
+                    {{ name }}</a>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+
+
+    <div>
+        <table class="col-md-10">
+            {% if tasks %}
+                <tr>
+                    <th class="head">名称</th>
+                    <th>数目</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    <th width="8%">出入库</th>
+                    <th width="5%">修改</th>
+                    <th width="5%">删除</th>
+                </tr>
+                {% for task in tasks %}
+                    <tr {% if task.count < task.min_count %}  style="background-color: #fd211e" {% endif %} >
+                        <td><a href="{% url 'storage:inout_detail' task.pk %}">{{ task.name }}</a></td>
+                        {% if task.count < 5 %}
+                            <td style="background-color: #c76e5d"><strong>{{ task.count }}</strong></td>
+                        {% elif task.count < 10 %}
+                            <td style="background-color: #FFFF66"><strong>{{ task.count }}</strong></td>
+                        {% else %}
+                            <td style="background-color: #93C763"><strong>{{ task.count }}</strong></td>
+                        {% endif %}
+                        <td>
+                            <div>
+                                <label class="label label-default">{{ task.get_group_display }}</label>
+
+                                {% if task.get_status_display   == '缺货' %}
+                                    <label class="label label-warning">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '已发送' %}
+                                    <label class="label label-info">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '充足' %}
+                                    <label class="label label-success">{{ task.get_status_display }}</label>
+                                {% elif task.get_status_display   == '' %}
+                                    <label class="label label-success">{{ task.get_status_display }}</label>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>{{ task.comment }}</td>
+                        <td><a href="{% url 'storage:inout' task.pk %}" data-toggle="modal" data-target="#myModal2"
+                               title="出入库"><i class="glyphicon glyphicon-pencil"></i></a>
+                        <td><a href="{% url 'storage:edit' task.pk %}" data-toggle="modal" data-target="#myModal2"
+                               title="修改"><i class="glyphicon glyphicon-pencil"></i></a>
+                        </td>
+                        <td><a href="{% url 'storage:del' task.pk %} " onclick="return delete_data()" title="删除"><i
+                                class="glyphicon glyphicon-trash text-danger"></i></a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+
+            {% endif %}
+        </table>
+    </div>
+
+
+    {#    {% if  perms.tasklist.view_task %}#}
+    <div>
+
+    </div>
+    {#    {% else %}#}
+    {#        <div>#}
+    {#            哥，你没有权限啊！#}
+    {#        </div>#}
+
+    {#    {% endif %}#}
+
+
+    <script language="JavaScript">
+        function delete_data() {
+            if (confirm('您确定要删除吗？')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //设定提示
+        toastr.options = {
+            closeButton: false,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+            debug: false,                                                    // 是否使用deBug模式
+            progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+            positionClass: "toast-top-right",              // 设置提示款显示的位置
+            onclick: null,                                                     // 点击消息框自定义事件 
+            showDuration: "300",                                      // 显示动画的时间
+            hideDuration: "1000",                                     //  消失的动画时间
+            timeOut: "2000",                                             //  自动关闭超时时间 
+            extendedTimeOut: "1000",                             //  加长展示时间
+            showEasing: "swing",                                     //  显示时的动画缓冲方式
+            hideEasing: "linear",                                       //   消失时的动画缓冲方式
+            showMethod: "fadeIn",                                   //   显示时的动画方式
+            hideMethod: "fadeOut"                                   //   消失时的动画方式
+        };
+        $(document).ready(
+            toastr.info('{{ msg }}')
+
+            //等待两秒后隐藏通知
+            {#setTimeout(function () {#}
+            {#$('.alert').slideUp();#}
+            {#{, 3000)#}
+        );
+
+
+        $(function () {
+            $('#myModal2').on('hidden.bs.modal', function (e) {
+                // do something...//alert("做些操作");
+                $(this).removeData("bs.modal");
+            });
+        });
+        //日期时间选择器
+        $('#datetimepicker1').datetimepicker({
+            showTodayButton: true,
+            format: 'YYYY-MM-DD',
+        });
+    </script>
+
+
+    <!-- 添加task 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 编辑 模态框（Modal） -->
+    <div class="modal fade" id="myModal2" tabindex="-2" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        模态框（Modal）标题
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    在这里添加一些文本
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        提交更改
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+{% endblock content %}

@@ -658,6 +658,167 @@ def get_ortho_record_of_patient(session, person):
             return False
 
 
+def get_charge_record_of_patient(session, person):
+    '''获取收费记录'''
+    p = person
+    if not p.linkedcareId:  # 没有id
+        # 先搜索，爬取
+        item = search_person_from_linked(p, session)
+        # data = search_from_linked(p.name, s)
+        if item:  # 判断是否有内容
+            if item['name'] == p.name and item['privateId'] == p.idnum:
+                # print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+                update_baseinfo_for_person_with_item(p, item)
+                get_ortho_record_of_patient(session, person)
+                return True
+
+            else:
+                # print('未写入')
+                return False
+        else:
+            # print('未写入\n')
+            return False
+
+    else:  # 有id
+        url_sum = 'https://api.linkedcare.cn:9001/api/v1/charge-order/patient-price-info/145330'
+        url_detaillist = 'https://api.linkedcare.cn:9001/api/v1/charge-order/paging?hasCancel=true&hasOverdue=true&hasRefund=true&hasSquare=true&pageIndex=1&pageSize=10&patientId=145330'
+
+        ''' respond
+        {"pageIndex":1,"pageSize":10,"pageCount":1,"totalCount":3,"items":[{"chargeOrderDetailList":[],"chargeOrderSimpleDetailList":[{"chargeOrderId":255025,"sourceDetailId":105547,"chargeType":"正畸费","chargeSuperType":"缺省大类","originalTotalPrice":10000.00,"totalPrice":10000.00,"allowDiscount":null,"discount":100.0,"discountPrice":0.0,"actualPrice":10000.00,"overdue":0.00,"isReimburse":false,"price":10000.00,"doctorId":913,"doctorName":"张栋梁","nurseId":null,"nurseName":"","consultantId":null,"consultantName":"","sellerId":null,"id":105547}],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":255025,"appointmentId":411973,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":255025,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":10000.00,"planPrice":10000.00,"actualPrice":10000.00,"overdue":0.00,"discountPrice":0.00,"discount":100.0,"payType":"银行卡","actualPrice1":10000.00,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2016-04-17T18:51:40","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2016-04-17T18:51:40","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":913,"doctorName":"张栋梁","nurseId":0,"nurseName":"","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"simple","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false},{"chargeOrderDetailList":[{"chargeOrderId":253613,"sourceDetailId":395605,"chargeItemId":54981,"itemName":"一次性器械","srcCount":0.0,"count":1.0,"unit":"个","price":50.00,"originalTotalPrice":50.00,"srcTotalPrice":0.0,"totalPrice":50.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"综合收费","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":42.50,"srcPlanPrice":0.0,"planPrice":42.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":1,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395605},{"chargeOrderId":253613,"sourceDetailId":395606,"chargeItemId":55032,"itemName":"窝洞充填（3M ESPE Z250）","srcCount":0.0,"count":1.0,"unit":"牙","price":350.00,"originalTotalPrice":350.00,"srcTotalPrice":0.0,"totalPrice":350.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"口内治疗","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":297.50,"srcPlanPrice":0.0,"planPrice":297.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":2,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395606},{"chargeOrderId":253613,"sourceDetailId":395607,"chargeItemId":55030,"itemName":"垫底/深龋安抚","srcCount":0.0,"count":1.0,"unit":"牙","price":150.00,"originalTotalPrice":150.00,"srcTotalPrice":0.0,"totalPrice":150.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"口内治疗","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":127.50,"srcPlanPrice":0.0,"planPrice":127.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":3,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395607},{"chargeOrderId":253613,"sourceDetailId":395608,"chargeItemId":54991,"itemName":"进口麻药","srcCount":0.0,"count":1.0,"unit":"支","price":50.00,"originalTotalPrice":50.00,"srcTotalPrice":0.0,"totalPrice":50.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"麻药费","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":42.50,"srcPlanPrice":0.0,"planPrice":42.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":4,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395608},{"chargeOrderId":253613,"sourceDetailId":395609,"chargeItemId":55002,"itemName":"超声波洁治洁治+抛光","srcCount":0.0,"count":1.0,"unit":"口","price":650.00,"originalTotalPrice":650.00,"srcTotalPrice":0.0,"totalPrice":650.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"牙周治疗项目","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":552.50,"srcPlanPrice":0.0,"planPrice":552.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":5,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395609}],"chargeOrderSimpleDetailList":[],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":253613,"appointmentId":409972,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":253613,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":1250.00,"planPrice":1250.00,"actualPrice":1062.50,"overdue":0.00,"discountPrice":187.50,"discount":85.0,"payType":"银行卡","actualPrice1":1062.50,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2015-11-01T17:17:02","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2015-11-01T17:17:02","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"detail","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false},{"chargeOrderDetailList":[],"chargeOrderSimpleDetailList":[{"chargeOrderId":245448,"sourceDetailId":102604,"chargeType":"正畸费","chargeSuperType":"缺省大类","originalTotalPrice":10000.00,"totalPrice":10000.00,"allowDiscount":null,"discount":100.0,"discountPrice":0.0,"actualPrice":10000.00,"overdue":0.00,"isReimburse":false,"price":10000.00,"doctorId":913,"doctorName":"张栋梁","nurseId":922,"nurseName":"郑春燕","consultantId":null,"consultantName":"","sellerId":null,"id":102604}],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":245448,"appointmentId":419481,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":245448,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":10000.00,"planPrice":10000.00,"actualPrice":10000.00,"overdue":0.00,"discountPrice":0.00,"discount":100.0,"payType":"银行卡","actualPrice1":10000.00,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2013-08-18T18:09:36","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2013-08-18T18:09:36","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":913,"doctorName":"张栋梁","nurseId":922,"nurseName":"郑春燕","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"simple","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false}]}
+        
+        pageIndex	1
+        pageSize	10
+        pageCount	1
+        totalCount	3
+        items	[…]
+            0	{…}
+                chargeOrderDetailList	[]
+                chargeOrderSimpleDetailList	[…]
+                    0	{…}
+                        chargeOrderId	255025
+                        sourceDetailId	105547
+                        chargeType	正畸费
+                        chargeSuperType	缺省大类
+                        originalTotalPrice	10000
+                        totalPrice	10000
+                        allowDiscount	null
+                        discount	100
+                        discountPrice	0
+                        actualPrice	10000
+                        overdue	0
+                        isReimburse	false
+                        price	10000
+                        doctorId	913
+                        doctorName	张栋梁
+                        nurseId	null
+                        nurseName	
+                        consultantId	null
+                        consultantName	
+                        sellerId	null
+                        id	105547
+                giftCertificateList	[]
+                officeAdvancePaymentUsedInfoList	null
+                groupBuyCertificateList	null
+                chargeDeductionExecution	null
+                freeField	null
+                id	255025
+                appointmentId	411973
+                patientId	145330
+                memberShipCardId	null
+                payOfficeId	122
+                giftCertificateId	null
+                giftTransactionId	null
+                sourceChargeOrderId	255025
+                fromChargeOrderId	0
+                giftCardId	null
+                insuranceOrderId	null
+                yibaoOrderId	0
+                tenantId	47d876b6-fc2f-4842-b88e-85ef85425e34
+                officeId	122
+                lisOrderId	null
+                totalPrice	10000
+                planPrice	10000
+                actualPrice	10000
+                overdue	0
+                discountPrice	0
+                discount	100
+                payType	银行卡
+                actualPrice1	10000
+                payType2	
+                actualPrice2	null
+                payType3	
+                actualPrice3	null
+                advancePlanPrice	0
+                advancePrice	0
+                advanceOverdue	0
+                advancePricePaymentTypes	null
+                scenario	0
+                recordCreatedTime	2016-04-17T18:51:40
+                recordUpdatedTime	2016-11-22T00:26:26
+                payDateTime	2016-04-17T18:51:40
+                visitingTime	null
+                payeeId	975
+                payee	管理员
+                doctorId	913
+                doctorName	张栋梁
+                nurseId	0
+                nurseName	
+                consultantId	null
+                consultantName	null
+                billNo	null
+                comments	
+                authCode	null
+                chargePoint	null
+                createBy	null
+                recordCreatedUser	-1
+                overdueStatus	null
+                reason	null
+                status	已收费
+                orderType	simple
+                isHandle	null
+                notUseMembershipDiscount	false
+                isAppend	null
+                feeType	0
+                feeSubType	0
+                channel	0
+                isAliPay	false
+                isWeixinPay	false
+                isNotAutoCheckOut	false
+                isArchived	null
+                isNeedConfirm	false
+                isConfirmed	false
+                isDefaultDeduction	false
+                workflowStatus	null
+                workflowType	null
+                workflowApprovedTime	null
+                deviceCode	null
+                lastTimeOverdue	0
+                officeName	null
+                isPrompt	false
+                allowWeixinBillOrder	false
+                openId	null
+                isAliPayOrder	null
+                membershipTransaction	null
+                isOldCharge	false
+                isPayOverdue	false
+                isOldToNew	false
+        '''
+        url = 'https://api.linkedcare.cn:9001/api/v1/medical-record-summary?id=' + str(p.linkedcareId) + '&type=1'
+        headers = get_headers(session)
+        searchResult = session.get(url, headers=headers)
+        # totalcount = eval(r.content)["totalCount"]
+        items = json.loads(searchResult.content.decode('utf-8'))
+        # print(r2)
+
+        if len(items) > 0:
+            print('下载到record共 %d 个' % (len(items)))
+            return update_ortho_record_of_patient(p, items)
+
+        else:
+            return False
+
+
+
 if __name__ == '__main__':
     pass
     # read_jsontxt_add_link_id()

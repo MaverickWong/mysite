@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static '/js/moment.js' %}"></script>
+    <script src="{% static '/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/bootstrap-datetimepicker.min.css' %}">
+</head>
+<body>
+
+<div class="modal-header">
+    <button type="button" class="close"
+            data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <h4 class="modal-title" id="myModalLabel">
+        添加任务
+    </h4>
+</div>
+
+<div class="modal-body">
+
+    <form id="fileupload" action="{% url 'storage:additem' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+
+        <!--标签-->
+        {#            <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">#}
+        {#                <hr>#}
+        {#                <div class="form-group " >#}
+        {#                    <lable class=" control-label">添加标签  ：</lable>#}
+        {#                    <input id="newTagsText" type ="text" name="newTags"  class="form-control" >#}
+        {##}
+        {#                    {% for t in tags %}#}
+        {#                        <span id="addTag" type="button"  class="label label-success" onclick="addText(this)">{{ t.name }}</span>#}
+        {#                    {% endfor %}#}
+        {#                </div>#}
+        {#            </div>#}
+
+        <input type="submit" value="保存"/>
+    </form>
+
+
+</div>
+
+<script>
+    //日期时间选择器
+    $('#datetimepicker1').datetimepicker({
+        showTodayButton: true,
+        format: 'YYYY-MM-DD',
+    });
+    {##}
+    {#//添加标签名到文本框#}
+    {#function addText(t) {#}
+    {#   var x =  document.forms["fileupload"]["newTagsText"].value + " "+ t.innerHTML;#}
+    {#   document.forms["fileupload"]["newTagsText"].value = x;#}
+    {
+        #};
+        #}
+        {#function clear() {#}
+        {#    var obj = document.getElementById("newTagsText");#}
+        {#    obj.setAttribute("value", "");#}
+        {
+            #};
+    #}
+
+</script>
+
+</body>
+</html>

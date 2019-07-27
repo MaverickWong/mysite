@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}库存管理{% endblock %}
+
+
+{% block stylesheet %}
+
+{% endblock %}
+
+{% block content %}
+
+
+    {% if msg %}
+    {% endif %}
+
+    {#<div>#}
+    {##}
+    {#    <div class="col-md-3">#}
+    {#        <form id="searchForm" action="{% url 'storage:search' %}" method="get"  role="search">#}
+    {#        <div class="form-group form-inline">#}
+    {#            <input name="s" type="text" class="form-control form-inline" id="search" placeholder="物品名称"  >#}
+    {#            <button class="btn-sm btn-default" type="submit">搜索</button>#}
+    {#        </div>#}
+    {#      </form>#}
+    {#        <script>#}
+    {#            function submitSearch() {#}
+    {#                $('#searchForm').submit();#}
+    {#            }#}
+    {#        </script>#}
+    {#    </div>#}
+    {#</div>#}
+
+    <div>
+        {% if details %}
+            <table class="col-md-10">
+                <tr>
+                    <th colspan="6" style="font-size: larger; border-bottom: #0a0a0a solid 1px;">出入库明细 - {{ drug }}</th>
+                </tr>
+                <tr>
+                    <th class="head">操作</th>
+                    <th>数目</th>
+                    <th>价格</th>
+                    <th>备注</th>
+                    <th width="5%">操作人</th>
+                    <th width="20%">时间</th>
+                </tr>
+                {% for item in details %}
+                    <tr>
+                        <td>{{ item.prop }}</td>
+                        <td>{{ item.count }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.comment }}</td>
+                        <td>{{ item.user }}
+                        <td>{{ item.create_time }}</td>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <h1>暂无明细</h1>
+        {% endif %}
+
+    </div>
+
+
+
+    <script language="JavaScript">
+        function delete_data() {
+            if (confirm('您确定要删除吗？')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //设定提示
+        toastr.options = {
+            closeButton: false,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+            debug: false,                                                    // 是否使用deBug模式
+            progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+            positionClass: "toast-top-right",              // 设置提示款显示的位置
+            onclick: null,                                                     // 点击消息框自定义事件 
+            showDuration: "300",                                      // 显示动画的时间
+            hideDuration: "1000",                                     //  消失的动画时间
+            timeOut: "2000",                                             //  自动关闭超时时间 
+            extendedTimeOut: "1000",                             //  加长展示时间
+            showEasing: "swing",                                     //  显示时的动画缓冲方式
+            hideEasing: "linear",                                       //   消失时的动画缓冲方式
+            showMethod: "fadeIn",                                   //   显示时的动画方式
+            hideMethod: "fadeOut"                                   //   消失时的动画方式
+        };
+        $(document).ready(
+            toastr.info('{{ msg }}')
+
+            //等待两秒后隐藏通知
+            {#setTimeout(function () {#}
+            {#$('.alert').slideUp();#}
+            {#{, 3000)#}
+        );
+
+
+        $(function () {
+            $('#myModal2').on('hidden.bs.modal', function (e) {
+                // do something...//alert("做些操作");
+                $(this).removeData("bs.modal");
+            });
+        });
+        //日期时间选择器
+        $('#datetimepicker1').datetimepicker({
+            showTodayButton: true,
+            format: 'YYYY-MM-DD',
+        });
+    </script>
+
+
+    <!-- 添加task 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 编辑 模态框（Modal） -->
+    <div class="modal fade" id="myModal2" tabindex="-2" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        模态框（Modal）标题
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    在这里添加一些文本
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        提交更改
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+{% endblock content %}

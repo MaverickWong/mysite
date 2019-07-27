@@ -56,6 +56,7 @@ urlpatterns = [
     url(r'^appt/', include(('appointment.urls', 'appointment'), namespace='appointment')),
     # 收费
     url(r'^charge/', include(('charge_record.urls', 'charge_record'), namespace='charge_record')),
+	url(r'^storage/', include(('storage.urls', 'storage'), namespace='storage')),
 
     # account
     url(r'^signup/$', accounts_views.signup, name='signup'),

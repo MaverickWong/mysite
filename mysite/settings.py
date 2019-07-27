@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 	'appointment',
 	'search',
 	'testapp',
-
+	'storage',
 ]
 
 MIDDLEWARE = [

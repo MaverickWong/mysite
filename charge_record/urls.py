@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^(?P<personPk>\d+)/$', all_orders, name='allCharge'),
     url(r'^new/(?P<personPk>\d+)/$', new_record, name='newChargeRecord'),
     url(r'^print/(?P<recordPk>\d+)/$', print_record, name='printRecord'),
+    url(r'^import/(?P<pk>\d+)/$', import_record, name='importRecord'),
 
 ]

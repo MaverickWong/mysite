@@ -15,43 +15,32 @@
     {#    </style>#}
 </head>
 <body>
-{#<div class="container">#}
-     <div class="mb-4">
-{#            <a class="btn btn-primary" href={% url 'charge_record:newChargeRecord' pk %} > 创建新收费</a>#}
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<!--- 通知--->
+<div class="mb-4">
+    {% if succeed == 1 %}
+        <script> toastr.success('保存成功!')</script>
+
+    {% elif succeed == 0 %}
+        <script> toastr.error('保存失败！请进行一些更改!');</script>
+
+    {% endif %}
+</div>
+
+<div class="mb-4">
          <a class="btn btn-primary" onclick="gotoNewCharge()"> 创建新收费</a>
          <a class="btn btn-warning" onclick="printDiv()"> 打印</a>
-
-
+    <a class="btn btn-warning" href="{% url 'charge_record:importRecord' pk %} "> 导入</a>
      </div>
-<!--- 通知--->
-    <div class="mb-4">
-        {% if succeed == 1 %}
-            <script> toastr.success('保存成功!')</script>
 
-{#            <div class="alert alert-success alert-dismissable">#}
-{#                <button type="button" class="close" data-dismiss="alert"#}
-{#                        aria-hidden="true">#}
-{#                    &times;#}
-{#                </button>#}
-{#                保存成功。#}
-{#            </div>#}
 
-        {% elif succeed == 0 %}
-            <script> toastr.error('保存失败！请进行一些更改!');</script>
 
-{#            <div class="alert alert-danger alert-dismissable">#}
-{#                <button type="button" class="close" data-dismiss="alert"#}
-{#                        aria-hidden="true">#}
-{#                    &times;#}
-{#                </button>#}
-{#                保存失败！请进行一些更改。#}
-{#            </div>#}
-        {% endif %}
-    </div>
-
-    <div>
-
-    </div>
 {% if records %}
     <div id="areaToPrint">
         <style>
@@ -61,30 +50,64 @@
                 font-weight: bold;
                 border-bottom: 1px dashed #CCCCCC;
                 color: #255e95;
+                width: 100%;
+                alignment: center;
+            }
+
+            .summary {
+                font-family: 微软雅黑;
+                font-size: 20px;
+                font-weight: bold;
+                padding-top: 4px;
+                border-bottom: 1px dashed #CCCCCC;
+            {#color: #255e95;#}
+            }
+
+            .summary td {
+                width: 300px;
+
             }
         </style>
 
 
-        <table class="table table-hover">
-            <tr>
-                <td class="biaoti" align="center" colspan="6">思迈尔收费详单</td>
+        <table width="100%">
+            <tr class="biaoti">
+                <td>收费详单</td>
             </tr>
+        </table>
+
+        {% if summary %}
+            <table>
+                <tr class="summary">
+                    <td>应收总额：{{ summary.totalPlanPrice }}</td>
+                    <td style="color: red">欠费总额：{{ summary.totalOverdue }} </td>
+                    <td>实收总额: {{ sumamry.totalActualPrice }}</td>
+                </tr>
+            </table>
+        {% endif %}
+
+        <table class="table table-hover">
         <tr>
             <th>时间</th>
-            <th>医生</th>
             <th>应收</th>
             <th>实收</th>
+            <th>欠费</th>
+            <th>支付方式</th>
+            <th>医生</th>
             <th>备注</th>
-            <th>*</th>
+            <th>导入</th>
         </tr>
 
         {% for record in records.all  %}
-            <tr>
-                <td>{{record.createdAt }}</td>
-                <td>张栋梁</td>
-                <td>{{ record.planPrice }}</td>
-                <td style="color: #a90707">{{ record.inPrice }}</td>
-                <td>{{ record.comment }}</td>
+            <tr style="background-color: {% if record.isImported %} #9fcdff{% endif %}" }}>
+                <td>{{ record.recordCreatedTime }}</td>
+                <td>{{ record.totalPrice }}</td>
+                <td style="color: #a90707">{{ record.actualPrice }}</td>
+                <td style="color: #a90707">{{ record.overdue }}</td>
+                <td>{{ record.payType }}</td>
+                <td>{{ record.doctorName }}</td>
+                <td>{{ record.comments }}</td>
+                <td>{% if record.isImported %}* {% else %} {% endif %} </td>
                 <td><span onclick="printDiv({{ record.pk }})" class="fa fa-print">打印</span>
                 </td>
             </tr>
@@ -114,7 +137,6 @@
     )
 
     function printDiv(recordpk) {
-
         $.get('/charge/print/' + recordpk, function (r) {
             newWin = window.open("");
             newWin.document.write(r);
@@ -123,16 +145,31 @@
         });
     }
 
-    {#     var divToPrint = document.getElementById('areaToPrint');#}
-    {#     var url = 'zdlteam.com:888/charge/print/' + recordpk;#}
-    {#     newWin = window.open(url);#}
-    {#var head = '';#}
-    {#newWin.document.write(head);#}
-    {#newWin.document.write(divToPrint.outerHTML);#}
-    {#     newWin.print();#}
-    {#     newWin.close();#}
-    {
-    #}#}
+    //设定提示
+    toastr.options = {
+        closeButton: false,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+        debug: false,                                                    // 是否使用deBug模式
+        progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+        positionClass: "toast-top-right",              // 设置提示款显示的位置
+        onclick: null,                                                     // 点击消息框自定义事件 
+        showDuration: "300",                                      // 显示动画的时间
+        hideDuration: "1000",                                     //  消失的动画时间
+        timeOut: "2000",                                             //  自动关闭超时时间 
+        extendedTimeOut: "1000",                             //  加长展示时间
+        showEasing: "swing",                                     //  显示时的动画缓冲方式
+        hideEasing: "linear",                                       //   消失时的动画缓冲方式
+        showMethod: "fadeIn",                                   //   显示时的动画方式
+        hideMethod: "fadeOut"                                   //   消失时的动画方式
+    };
+    $(document).ready(
+        toastr.info('{{ msg }}')
+
+        //等待两秒后隐藏通知
+        {#setTimeout(function () {#}
+        {#$('.alert').slideUp();#}
+        {#{, 3000)#}
+    );
+
 </script>
 
 

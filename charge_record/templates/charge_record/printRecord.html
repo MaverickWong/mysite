@@ -62,12 +62,15 @@
     <table width="100%">
         <tr>
             <td width="20%" class="btbg font-center titfont" rowspan="1">收费项目</td>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">数量</td>
             <td width="20%" class="btbg font-center titfont" rowspan="1">合计</td>
+
             <td colspan="1" class="btbg font-center titfont" rowspan="1">备注</td>
         </tr>
 
         <tr>
             <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">1</td>
             <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.planPrice }}</td>
             <td colspan="1" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
         </tr>
@@ -81,8 +84,8 @@
     </table>
 
     <table width="100%">
-        <td class="heji" width="30%">总计应收：xxx</td>
-        <td class="heji" width="30%">实收：xxx</td>
+        <td class="heji" width="30%">总计应收：{{ record.planPrice }}</td>
+        <td class="heji" width="30%">实收：{{ record.inPrice }}</td>
         <td class="heji" width="30%">欠款：xxx</td>
     </table>
 

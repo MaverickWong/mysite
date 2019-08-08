@@ -12,11 +12,27 @@
         {% csrf_token %}
       <div class="form-group">
         <label for="complain" class="control-label">应收</label>
-        <input id="planPrice" name="planPrice" type="number" value="0" required class="form-control">
+          <input id="totalPrice" name="totalPrice" type="number" value="0" required class="form-control">
+      </div>
+<div class="form-group">
+    <label for="exam" class="control-label">折扣百分数</label>
+    <input id="discount" name="discount" type="number" value="0" required class="form-control">
+
+    <label for="exam" class="control-label">折扣数额</label>
+    <input id="discountPrice" name="discountPrice" type="number" value="0" required class="form-control">
       </div>
       <div class="form-group">
         <label for="exam" class="control-label">实收</label>
-        <input id="inPrice" name="inPrice" type="number" value="0"  required class="form-control">
+          <input id="actualPrice" name="actualPrice" type="number" value="0" required class="form-control">
+      </div>
+
+<div class="form-group">
+    <label for="exam" class="control-label">欠费</label>
+    <input id="overdue" name="overdue" type="number" value="0" required class="form-control">
+</div>
+<div class="form-group">
+    <label for="exam" class="control-label">支付方式</label>
+    <input id="payType" name="payType" type="number" value="0" required class="form-control">
       </div>
       <div class="form-group">
         <label for="treat" class="control-label">备注</label>
@@ -35,9 +51,15 @@
     $('#btn2').click(function () {
 
         $.post('/charge/new/{{ pk }}/',
-            {planPrice: $('[name="planPrice"]').val(),
-                inPrice: $('[name="inPrice"]').val(),
+            {
+                totalPrice: $('[name="totalPrice"]').val(),
+                actualPrice: $('[name="actualPrice"]').val(),
+                overdue: $('[name="overdue"]').val(),
                 comment: $('[name="comment"]').val(),
+                discount: $('[name="discount"]').val(),
+                discountPrice: $('[name="discountPrice"]').val(),
+                payType: $('[name="payType"]').val(),
+
                 csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
             },
             function(data) {

@@ -42,7 +42,7 @@
 </head>
 <body>
 <div style="width:600px;">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="margin-bottom: 20px;">
         <tr>
             <td align="center" class="biaoti" height="60">禾禾齿科</td>
         </tr>
@@ -55,7 +55,7 @@
             <td width="20%" class="huanzhexinxi" rowspan="1">病历号: {{ record.person.idnum }}</td>
             <td width="20%" class="huanzhexinxi" rowspan="1">姓名: {{ record.person.name }}</td>
             <td class="huanzhexinxi" align="right">单据号: {{ record.pk }}</td>
-            <td class="huanzhexinxi" align="right">日期： {{ record.createdAt }}</td>
+            {#            <td class="huanzhexinxi" align="right">日期： {{ record.createdAt }}</td>#}
         </tr>
     </table>
 
@@ -71,7 +71,7 @@
         <tr>
             <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
             <td width="20%" class="btbg font-center titfont" rowspan="1">1</td>
-            <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.planPrice }}</td>
+            <td width="20%" class="btbg font-center titfont" rowspan="1">{{ record.actualPrice }}</td>
             <td colspan="1" class="btbg font-center titfont" rowspan="1">{{ record.comment }}</td>
         </tr>
         <tr>
@@ -84,14 +84,19 @@
     </table>
 
     <table width="100%">
-        <td class="heji" width="30%">总计应收：{{ record.planPrice }}</td>
-        <td class="heji" width="30%">实收：{{ record.inPrice }}</td>
-        <td class="heji" width="30%">欠款：xxx</td>
+        <td class="heji" width="30%">总计应收：{{ record.totalPrice }}</td>
+        <td class="heji" width="30%">实收：{{ record.actualPrice }}</td>
+        <td class="heji" width="30%">欠款：{{ record.overdue }}</td>
     </table>
 
     <table width="100%">
-        <td width="30%">收款人：xxx</td>
-        <td width="30%" align="right">收款时间：xxx</td>
+        <td width="30%">收款人：前台</td>
+        <td width="30%" align="right">收款时间：
+            {% if record.recordCreatedTime_text %}
+                {{ record.recordCreatedTime_text }}
+            {% else %} {{ record.recordCreatedTime }}
+            {% endif %}
+        </td>
     </table>
 
 </div>

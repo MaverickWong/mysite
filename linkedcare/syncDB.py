@@ -3,8 +3,10 @@
 import mysite
 # 这个一定要，不然会报错，但是错误很明显，容易定位。
 import os
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 import django
+
 django.setup()
 # django版本大于1.7时需要这两句
 
@@ -17,121 +19,120 @@ from boards.models import *
 from record.models import Record
 from mysite.settings import BASE_DIR
 
-
 agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
 
 def test():
-    print('tesst')
+	print('tesst')
 
 
 # 开始
-def logIn(officeId=122, userId = 745):
-    '''
+def logIn(officeId=122, userId=745):
+	'''
     先判断是否有cookie保存，如果有，则用cookie登录。
     如果没有cookie，则调用用户名登录，并保存cookie
     :param officeId:
     :param userId:
     :return:
     '''
-    # officeId 劲松122 华贸124
-    targetURL = 'http://simaier.linkedcare.cn/'
+	# officeId 劲松122 华贸124
+	targetURL = 'http://simaier.linkedcare.cn/'
 
-    # 设置头UA
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"}
+	# 设置头UA
+	headers = {
+		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"}
 
-    # 开启一个session会话
-    session = requests.session()
+	# 开启一个session会话
+	session = requests.session()
 
-    # 设置请求头信息
-    session.headers = headers
+	# 设置请求头信息
+	session.headers = headers
 
-    # 申明一个用于存储手动cookies的字典
-    manual_cookies = {}
+	# 申明一个用于存储手动cookies的字典
+	manual_cookies = {}
 
-    if os.path.exists("manual_cookies.txt"):
+	if os.path.exists("manual_cookies.txt"):
 
-        with open("manual_cookies.txt", 'r', encoding='utf-8') as frcookie:
-            cookies_txt = frcookie.read().strip(';')  # 读取文本内容
-            # 手动分割添加cookie
-            for item in cookies_txt.split(';'):
-                name, value = item.strip().split('=', 1)  # 用=号分割，分割1次
-                manual_cookies[name] = value  # 为字典cookies添加内容
+		with open("manual_cookies.txt", 'r', encoding='utf-8') as frcookie:
+			cookies_txt = frcookie.read().strip(';')  # 读取文本内容
+			# 手动分割添加cookie
+			for item in cookies_txt.split(';'):
+				name, value = item.strip().split('=', 1)  # 用=号分割，分割1次
+				manual_cookies[name] = value  # 为字典cookies添加内容
 
-        # 将字典转为CookieJar：
-        cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None, overwrite=True)
+		# 将字典转为CookieJar：
+		cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None, overwrite=True)
 
-        # 将cookiesJar赋值给会话
-        session.cookies = cookiesJar
+		# 将cookiesJar赋值给会话
+		session.cookies = cookiesJar
 
-        # 向目标网站发起请求
-        res = session.get(targetURL, allow_redirects=False)
+		# 向目标网站发起请求
+		res = session.get(targetURL, allow_redirects=False)
 
-        if res.status_code == 200:
-            # if res.url != targetURL:
-            #     session = login_save_cookie(officeId=officeId, userId=userId)
-            #     print('登录遭遇rediret')
-            #     return session
-            # else:
-            print('cookie登录成功')
-            return session
+		if res.status_code == 200:
+			# if res.url != targetURL:
+			#     session = login_save_cookie(officeId=officeId, userId=userId)
+			#     print('登录遭遇rediret')
+			#     return session
+			# else:
+			print('cookie登录成功')
+			return session
 
-        # elif res.status_code == 302:  # https://2.python-requests.org//zh_CN/latest/user/quickstart.html
-        else:
-            print('cookie登录失败，转用户名登录')
-            session = login_save_cookie(officeId=officeId, userId=userId)
-            return session
+		# elif res.status_code == 302:  # https://2.python-requests.org//zh_CN/latest/user/quickstart.html
+		else:
+			print('cookie登录失败，转用户名登录')
+			session = login_save_cookie(officeId=officeId, userId=userId)
+			return session
 
-    else:  # cookie记录文件不存在，则用用户名登录后保存cookie到新建txt
-        session = login_save_cookie(officeId, userId)
-        return session
+	else:  # cookie记录文件不存在，则用用户名登录后保存cookie到新建txt
+		session = login_save_cookie(officeId, userId)
+		return session
 
 
 def login_save_cookie(officeId=122, userId=745):
-    account = "zhangdongliang"
-    passwd = "simaierzdl123"
-    # 登陆参数
-    logURL = "https://simaier.linkedcare.cn/LogOn"
-    agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+	account = "zhangdongliang"
+	passwd = "simaierzdl123"
+	# 登陆参数
+	logURL = "https://simaier.linkedcare.cn/LogOn"
+	agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
-    # print(officeId)
-    payload = {"officeId": officeId, "account": account, "password": passwd, "validationCode": "",
-               "platform": 1, "kickOther": "false", "clientId": "7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
-               "isCheckMobileValidation": "", "mobileValidationCode": ""}
-    # 登录并获得session
-    s = requests.session()
-    res = s.post(logURL, params=payload, allow_redirects=False)
+	# print(officeId)
+	payload = {"officeId": officeId, "account": account, "password": passwd, "validationCode": "",
+	           "platform": 1, "kickOther": "false", "clientId": "7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+	           "isCheckMobileValidation": "", "mobileValidationCode": ""}
+	# 登录并获得session
+	s = requests.session()
+	res = s.post(logURL, params=payload, allow_redirects=False)
 
-    if res.status_code == 200:
-        print('用户名登录成功')
-        # 申明一个用于存储手动cookies的字典
-        manual_cookies = {}
-        # 将CookieJar转为字典：
-        res_cookies_dic = requests.utils.dict_from_cookiejar(res.cookies)
+	if res.status_code == 200:
+		print('用户名登录成功')
+		# 申明一个用于存储手动cookies的字典
+		manual_cookies = {}
+		# 将CookieJar转为字典：
+		res_cookies_dic = requests.utils.dict_from_cookiejar(res.cookies)
 
-        # 将新的cookies信息更新到手动cookies字典
-        for k in res_cookies_dic.keys():
-            manual_cookies[k] = res_cookies_dic[k]
+		# 将新的cookies信息更新到手动cookies字典
+		for k in res_cookies_dic.keys():
+			manual_cookies[k] = res_cookies_dic[k]
 
-        print(manual_cookies)
+		print(manual_cookies)
 
-        # 重新将新的cookies信息写回文本
-        res_manual_cookies_txt = ""
+		# 重新将新的cookies信息写回文本
+		res_manual_cookies_txt = ""
 
-        # 将更新后的cookies写入到文本
-        for k in manual_cookies.keys():
-            res_manual_cookies_txt += k + "=" + manual_cookies[k] + ";"
+		# 将更新后的cookies写入到文本
+		for k in manual_cookies.keys():
+			res_manual_cookies_txt += k + "=" + manual_cookies[k] + ";"
 
-        # 将新的cookies写入到文本中更新原来的cookies
-        with open('manual_cookies.txt', "w", encoding="utf-8") as fwcookie:
-            fwcookie.write(res_manual_cookies_txt)
+		# 将新的cookies写入到文本中更新原来的cookies
+		with open('manual_cookies.txt', "w", encoding="utf-8") as fwcookie:
+			fwcookie.write(res_manual_cookies_txt)
 
 
-    else:
-        print('用户名登录失败')
+	else:
+		print('用户名登录失败')
 
-    return s
+	return s
 
 
 # def logIn(officeId=122, userId = 745):
@@ -167,32 +168,33 @@ def login_save_cookie(officeId=122, userId=745):
 
 # 从cookie中获取token
 def getTokenFromSession(s):
-    cookie = s.cookies.get_dict()
-    temp = cookie['AresToken']
-    tempdict = eval(temp)  # 将字符串转为字典
-    token = tempdict["access_token"]
-    return token
+	cookie = s.cookies.get_dict()
+	temp = cookie['AresToken']
+	tempdict = eval(temp)  # 将字符串转为字典
+	token = tempdict["access_token"]
+	return token
+
 
 # 组装header
 def get_headers(session):
-    agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+	agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
-    # 从cookie中获取token
-    token = getTokenFromSession(session)
-    # 组装header
-    headers = {'authority': 'api.linkedcare.cn:9001',
-               "authorization": "bearer " + token, "access_token": token,
-               # "clientId":"d5724218-5265-4b42-a1b8-fb1191c399bc",
-               "origin": "https://simaier.linkedcare.cn",
-               'Connection': 'keep-alive', 'user-agent': agent,
-               'referer': 'https://simaier.linkedcare.cn/',
-               'content-type': 'application/json;charset=UTF-8'
-               }
-    return headers
+	# 从cookie中获取token
+	token = getTokenFromSession(session)
+	# 组装header
+	headers = {'authority': 'api.linkedcare.cn:9001',
+	           "authorization": "bearer " + token, "access_token": token,
+	           # "clientId":"d5724218-5265-4b42-a1b8-fb1191c399bc",
+	           "origin": "https://simaier.linkedcare.cn",
+	           'Connection': 'keep-alive', 'user-agent': agent,
+	           'referer': 'https://simaier.linkedcare.cn/',
+	           'content-type': 'application/json;charset=UTF-8'
+	           }
+	return headers
 
 
-def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId = 2042):
-    '''
+def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId=2042):
+	'''
     从易看牙同步患者基本信息，并保存到文件
     :param session:
     :param pageindex: 默认1
@@ -201,252 +203,251 @@ def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId = 204
     :param userId: 默认2042
     :return: json列表
     '''
-    # 默认劲松
-    agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
-    s = session
-    # s = logIn()
-    # print("login: " )
+	# 默认劲松
+	agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+	s = session
+	# s = logIn()
+	# print("login: " )
 
-    # 从cookie中获取token
-    token = getTokenFromSession(s)
-    # 组装header
-    headers = {'authority': 'api.linkedcare.cn:9001',
-               "authorization": "bearer " + token, "access_token": token,
-               # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
-               "origin": "https://simaier.linkedcare.cn",
-               'Connection': 'keep-alive', 'user-agent': agent,
-               'referer': 'https://simaier.linkedcare.cn/',
-               'content-type': 'application/json;charset=UTF-8'
-               }
-    searchURL = 'https://api.linkedcare.cn:9001/api/v1/patient/search-config'
-    # searchURL = 'https://api.linkedcare.cn:9001/api/v1/search-config/get-all'
+	# 从cookie中获取token
+	token = getTokenFromSession(s)
+	# 组装header
+	headers = {'authority': 'api.linkedcare.cn:9001',
+	           "authorization": "bearer " + token, "access_token": token,
+	           # "clientId":"7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+	           "origin": "https://simaier.linkedcare.cn",
+	           'Connection': 'keep-alive', 'user-agent': agent,
+	           'referer': 'https://simaier.linkedcare.cn/',
+	           'content-type': 'application/json;charset=UTF-8'
+	           }
+	searchURL = 'https://api.linkedcare.cn:9001/api/v1/patient/search-config'
+	# searchURL = 'https://api.linkedcare.cn:9001/api/v1/search-config/get-all'
 
-    # 搜索本人患者
-    # searchResultFields = [
-    #     {"searchConfigId": 0, "code": "Name", "showOrder": 0, "officeId": 0, "id": 0},
-    #     {"searchConfigId": 0, "code": "PrivateId", "showOrder": 1, "officeId": 0, "id": 0},
-    #     {"searchConfigId": 0, "code": "Sex", "showOrder": 2, "officeId": 0, "id": 0},
-    #     {"searchConfigId": 0, "code": "Birth", "showOrder": 3, "officeId": 0, "id": 0},
-    #     {"searchConfigId": 0, "code": "Mobile", "showOrder": 4, "officeId": 0, "id": 0}]
-    # condFields = []
-    # # condFields= [{"searchConfigId": "", "code": "FirstVisit", "comparator": ">", "value": "2018-10-20"}]
-    # searchConfig = {"searchType": "患者查询", "name": "我的患者", "isPreferred": 'false', "isDefault": 'true',
-    #                 "userId": userId, "isAscending": 'false', "isShowWeiXin": 'false', "orderByField": "p.Id",
-    #                 "searchCondFields": condFields, "searchResultFields": searchResultFields,
-    #                 "officeId": 0, "id": 0}
-    #
-    # searchPayload = {"searchConfig": searchConfig, "pageSize": 200, "pageIndex": pageindex, "searchText": ""}
+	# 搜索本人患者
+	# searchResultFields = [
+	#     {"searchConfigId": 0, "code": "Name", "showOrder": 0, "officeId": 0, "id": 0},
+	#     {"searchConfigId": 0, "code": "PrivateId", "showOrder": 1, "officeId": 0, "id": 0},
+	#     {"searchConfigId": 0, "code": "Sex", "showOrder": 2, "officeId": 0, "id": 0},
+	#     {"searchConfigId": 0, "code": "Birth", "showOrder": 3, "officeId": 0, "id": 0},
+	#     {"searchConfigId": 0, "code": "Mobile", "showOrder": 4, "officeId": 0, "id": 0}]
+	# condFields = []
+	# # condFields= [{"searchConfigId": "", "code": "FirstVisit", "comparator": ">", "value": "2018-10-20"}]
+	# searchConfig = {"searchType": "患者查询", "name": "我的患者", "isPreferred": 'false', "isDefault": 'true',
+	#                 "userId": userId, "isAscending": 'false', "isShowWeiXin": 'false', "orderByField": "p.Id",
+	#                 "searchCondFields": condFields, "searchResultFields": searchResultFields,
+	#                 "officeId": 0, "id": 0}
+	#
+	# searchPayload = {"searchConfig": searchConfig, "pageSize": 200, "pageIndex": pageindex, "searchText": ""}
 
-    # 搜索全部患者
-    searchResultFields = [
-        {"searchConfigId": 0, "code": "Name", "showOrder": 0, "officeId": 0, "id": 0},
-        {"searchConfigId": 0, "code": "PrivateId", "showOrder": 1, "officeId": 0, "id": 0},
-        {"searchConfigId": 0, "code": "Sex", "showOrder": 2, "officeId": 0, "id": 0},
-        {"searchConfigId": 0, "code": "Birth", "showOrder": 3, "officeId": 0, "id": 0},
-        {"searchConfigId": 0, "code": "Mobile", "showOrder": 4, "officeId": 0, "id": 0},
-        {"searchConfigId": 0, "code": "DoctorName", "showOrder": 5, "officeId": 0, "id": 0}]
+	# 搜索全部患者
+	searchResultFields = [
+		{"searchConfigId": 0, "code": "Name", "showOrder": 0, "officeId": 0, "id": 0},
+		{"searchConfigId": 0, "code": "PrivateId", "showOrder": 1, "officeId": 0, "id": 0},
+		{"searchConfigId": 0, "code": "Sex", "showOrder": 2, "officeId": 0, "id": 0},
+		{"searchConfigId": 0, "code": "Birth", "showOrder": 3, "officeId": 0, "id": 0},
+		{"searchConfigId": 0, "code": "Mobile", "showOrder": 4, "officeId": 0, "id": 0},
+		{"searchConfigId": 0, "code": "DoctorName", "showOrder": 5, "officeId": 0, "id": 0}]
 
-    condFields = []
-    searchConfig = {"searchType": "患者查询", "name": "全部患者", "isPreferred": 'true', "isDefault": 'true',
-                    "userId": userId, "isAscending": 'false', "isShowWeiXin": 'false', "orderByField": "p.Id",
-                    "searchCondFields": condFields, "searchResultFields": searchResultFields,
-                    "officeId": 0, "id": 0}
+	condFields = []
+	searchConfig = {"searchType": "患者查询", "name": "全部患者", "isPreferred": 'true', "isDefault": 'true',
+	                "userId": userId, "isAscending": 'false', "isShowWeiXin": 'false', "orderByField": "p.Id",
+	                "searchCondFields": condFields, "searchResultFields": searchResultFields,
+	                "officeId": 0, "id": 0}
 
-    searchPayload = {"searchConfig": searchConfig, "pageSize": pageSize, "pageIndex": pageindex, "searchText": ""}
+	searchPayload = {"searchConfig": searchConfig, "pageSize": pageSize, "pageIndex": pageindex, "searchText": ""}
 
-    # 得到结果处理并返回
-    # searchResult = s.put(searchURL, params=searchPayload, headers=headers)
-    searchResult = s.put(searchURL, headers=headers, data=json.dumps(searchPayload))
+	# 得到结果处理并返回
+	# searchResult = s.put(searchURL, params=searchPayload, headers=headers)
+	searchResult = s.put(searchURL, headers=headers, data=json.dumps(searchPayload))
 
-    # totalcount = eval(r.content)["totalCount"]
-    data = json.loads(searchResult.content.decode('utf-8'))
-    # print(data)
-    print('获取patients 成功')
+	# totalcount = eval(r.content)["totalCount"]
+	data = json.loads(searchResult.content.decode('utf-8'))
+	# print(data)
+	print('获取patients 成功')
 
-    dt = datetime.now()
-    time2 = dt.strftime("%m%d-%H%M%S")
-    # 保存到文件
-    try:
-        fname = BASE_DIR + '/linkedcare/get_patients' + '_' + time2 + '.txt'
-        with open(fname, 'w') as f:
-            json.dump(data, f)
-    except:
-        pass
+	dt = datetime.now()
+	time2 = dt.strftime("%m%d-%H%M%S")
+	# 保存到文件
+	try:
+		fname = BASE_DIR + '/linkedcare/get_patients' + '_' + time2 + '.txt'
+		with open(fname, 'w') as f:
+			json.dump(data, f)
+	except:
+		pass
 
-    return data
-
-
+	return data
 
 
 # 主要函数，
 def get_patients_fill_DB(total=10):
-    '''
+	'''
     批量获取患者基本信息，默认10个
     并新建患者，存入数据库
     :return:
     '''
-    dt = datetime.now()
-    time2 = dt.strftime("%m%d-%H%M%S")
-    # officeId 劲松122 华贸124
-    repeated = []
-    succeded = []
-    office = [124, 122]
-    id=122
-    total_page_num = int(total/10)
-    # i = 1;
-    s = logIn(officeId=id)
+	dt = datetime.now()
+	time2 = dt.strftime("%m%d-%H%M%S")
+	# officeId 劲松122 华贸124
+	repeated = []
+	succeded = []
+	office = [124, 122]
+	id = 122
+	total_page_num = int(total / 10)
+	# i = 1;
+	s = logIn(officeId=id)
 
-    for i in range(total_page_num):
-    # for id in office:
-        data = queryPatients(s, pageindex=i+1)  # 从易看牙获得数据bing保存到文件
+	for i in range(total_page_num):
+		# for id in office:
+		data = queryPatients(s, pageindex=i + 1)  # 从易看牙获得数据bing保存到文件
 
-        totalPages = data['pageCount']
+		totalPages = data['pageCount']
 
-        # 导入到数据库
-        for item in data['items']:
-            if item['doctorName'] == '913':# 筛选张老师的患者
-                n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
-                if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
-                    repeated.append(item['privateId'] + item['name'])
+		# 导入到数据库
+		for item in data['items']:
+			if item['doctorName'] == '913':  # 筛选张老师的患者
+				n = Person.objects.filter(idnum__contains=item['privateId']).filter(name__contains=item['name']).count()
+				if n > 0:  # 先根据id判断是否有重复患者，如果有则登记。没有则新建患者
+					repeated.append(item['privateId'] + item['name'])
 
-                elif n == 0:
-                    if item['birth']:
-                        birth = item['birth'][0:10]
-                    else:
-                        birth = None
-                    p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'],
-                                              mobile=item['mobile'],
-                                              otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'],
-                                              doctor='zdl',
-                                              doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'],
-                                              email=item['email'],
-                                              occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
-                                              identityCard=item['identityCard'], homeAddress=item['homeAddress'],
-                                              patientType=item['patientType'], lastVisit=item['lastVisit'],
-                                              lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
-                                              )
+				elif n == 0:
+					if item['birth']:
+						birth = item['birth'][0:10]
+					else:
+						birth = None
+					p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'],
+					                          mobile=item['mobile'],
+					                          otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'],
+					                          doctor='zdl',
+					                          doctorId=item['doctorId'], officeId=item['officeId'],
+					                          clinic=item['officeId'],
+					                          email=item['email'],
+					                          occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'],
+					                          identityCard=item['identityCard'], homeAddress=item['homeAddress'],
+					                          patientType=item['patientType'], lastVisit=item['lastVisit'],
+					                          lastDoctorId=item['lastDoctorId'], linkedcareId=item['id']
+					                          )
 
-                    succeded.append(item['privateId'] + '.' + item['name'] + '.' + str(id))
+					succeded.append(item['privateId'] + '.' + item['name'] + '.' + str(id))
 
-    # 记录导入log
-    fname2 = BASE_DIR + '/log/log-syncDB' + time2 + '.txt'
-    with open(fname2, 'w') as f:
-        # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
-        f.write('succeded *******************************\n')
-        for i in succeded:
-            f.write(i)
-            f.write('\n')
+	# 记录导入log
+	fname2 = BASE_DIR + '/log/log-syncDB' + time2 + '.txt'
+	with open(fname2, 'w') as f:
+		# f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
+		f.write('succeded *******************************\n')
+		for i in succeded:
+			f.write(i)
+			f.write('\n')
 
-        f.write('\n\n\n')
-        f.write('repeated *******************************\n')
-        for i in repeated:
-            f.write(i)
-            f.write('\n')
+		f.write('\n\n\n')
+		f.write('repeated *******************************\n')
+		for i in repeated:
+			f.write(i)
+			f.write('\n')
 
 
-    # repeated = []
-    # succeded = []
-    #
-    # office =['124', '122']
-    # for id in office:
-    #     s = logIn()
-    #     data = queryPatients(s, id) # 从易看牙获得数据
-    #
-    #     for item in data['items']:
-    #         n = Person.objects.filter(idnum__contains=item['privateId']).count()
-    #
-    #         if n > 0: #  先根据id判断是否有重复患者，如果有则登记。没有则新建患者
-    #             repeated.append(item['privateId'] + item['name'])
-    #         elif n == 0:
-    #             if item['birth']:
-    #                 birth = item['birth'][0:10]
-    #             else:
-    #                 birth = None
-    #             p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'], linkedcareId=item['id'], mobile=item['mobile'],
-    #                                       otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
-    #                                       doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'], email=item['email'],
-    #                                       occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'], identityCard=item['identityCard'],homeAddress=item['homeAddress'],
-    #                                       patientType=item['patientType'], lastVisit=item['lastVisit'], lastDoctorId=item['lastDoctorId']
-    #                                       )
-    #             succeded.append(item['privateId'] + item['name'])
-    #
-    # with open('result.txt', 'w') as f:
-    #     # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
-    #     f.write('repeated \n')
-    #     for i in repeated:
-    #         f.write(i)
-    #         f.write('\n')
-    #         # f.write('\n')
-    #     f.write('\n\n================================================== \n')
-    #
-    #     f.write('succeded: \n')
-    #     f.write(succeded.count())
-    #     for i in succeded:
-    #         f.write(i)
-    #         f.write('\n')
+# repeated = []
+# succeded = []
+#
+# office =['124', '122']
+# for id in office:
+#     s = logIn()
+#     data = queryPatients(s, id) # 从易看牙获得数据
+#
+#     for item in data['items']:
+#         n = Person.objects.filter(idnum__contains=item['privateId']).count()
+#
+#         if n > 0: #  先根据id判断是否有重复患者，如果有则登记。没有则新建患者
+#             repeated.append(item['privateId'] + item['name'])
+#         elif n == 0:
+#             if item['birth']:
+#                 birth = item['birth'][0:10]
+#             else:
+#                 birth = None
+#             p = Person.objects.create(idnum=item['privateId'], name=item['name'], nameCode=item['nameCode'], linkedcareId=item['id'], mobile=item['mobile'],
+#                                       otherPrivateId=item['otherPrivateId'], birth=birth, sex=item['sex'], doctor='zdl',
+#                                       doctorId=item['doctorId'], officeId=item['officeId'], clinic=item['officeId'], email=item['email'],
+#                                       occupation=item['occupation'], qq=item['qq'], weixin=item['weixin'], identityCard=item['identityCard'],homeAddress=item['homeAddress'],
+#                                       patientType=item['patientType'], lastVisit=item['lastVisit'], lastDoctorId=item['lastDoctorId']
+#                                       )
+#             succeded.append(item['privateId'] + item['name'])
+#
+# with open('result.txt', 'w') as f:
+#     # f.write("{}  {}  {}  {}\n".format(title, price, scrible, pic))
+#     f.write('repeated \n')
+#     for i in repeated:
+#         f.write(i)
+#         f.write('\n')
+#         # f.write('\n')
+#     f.write('\n\n================================================== \n')
+#
+#     f.write('succeded: \n')
+#     f.write(succeded.count())
+#     for i in succeded:
+#         f.write(i)
+#         f.write('\n')
 
 
 def search_from_linked_with_string(searchString, session):
-    '''
+	'''
     从易看牙搜索 字符串，将结果json返回
     :param searchString搜索字符串
     :return: 返回 全部搜索数组json
     '''
 
-    # session = logIn()
-    headers = get_headers(session)
-    searchURL = 'https://api.linkedcare.cn:9001/api/v1/patients'
-    # searchURL = 'https://api.linkedcare.cn:9001/api/v1/search-config/get-all'
-    payload = {"isBusyRequest": 'false', "isExactMatchSelected": "false", "pageIndex": 1, "pageSize": 10,
-               "searchString": searchString}
-    searchResult = session.get(searchURL,  params=payload, headers=headers)
+	# session = logIn()
+	headers = get_headers(session)
+	searchURL = 'https://api.linkedcare.cn:9001/api/v1/patients'
+	# searchURL = 'https://api.linkedcare.cn:9001/api/v1/search-config/get-all'
+	payload = {"isBusyRequest": 'false', "isExactMatchSelected": "false", "pageIndex": 1, "pageSize": 10,
+	           "searchString": searchString}
+	searchResult = session.get(searchURL, params=payload, headers=headers)
 
-    # totalcount = eval(r.content)["totalCount"]
-    data = json.loads(searchResult.content.decode('utf-8'))
-    print('按照 %s 共搜到 %d 个' % (searchString, data['totalCount']))
-    return data
+	# totalcount = eval(r.content)["totalCount"]
+	data = json.loads(searchResult.content.decode('utf-8'))
+	print('按照 %s 共搜到 %d 个' % (searchString, data['totalCount']))
+	return data
 
 
 def search_person_from_linked(person, session):
-    '''
+	'''
     根据系统中已经存在的person名字及病历号，去linkedcare搜索
     :param person: Person类
     :param session:
     :return:
     '''
-    # todo 添加 根据病历号搜索人
-    # 根据名字搜索
-    data = search_from_linked_with_string(person.name, session)
-    # print(data['totalCount'])
+	# todo 添加 根据病历号搜索人
+	# 根据名字搜索
+	data = search_from_linked_with_string(person.name, session)
+	# print(data['totalCount'])
 
-    if data['totalCount'] ==0:
-        return None
-    # elif data['totalCount'] ==1:
-    #     return data['items'][0]
-    else:
-        for item in data['items']:
-            if person.idnum:  #  病例库患者有病历号
-                if item['privateId'] == person.idnum:
-                    print('从结果中匹配：pk--%d, %s 对应id--%d' % (person.pk, person.name, item['id']))
-                    return item
-            else:  # 病例库患者无病历号
-                print('患者 %s 搜索结果较多，但是因为病例库无病历号，无法匹配')
-                return None
+	if data['totalCount'] == 0:
+		return None
+	# elif data['totalCount'] ==1:
+	#     return data['items'][0]
+	else:
+		for item in data['items']:
+			if person.idnum:  # 病例库患者有病历号
+				if item['privateId'] == person.idnum:
+					print('从结果中匹配：pk--%d, %s 对应id--%d' % (person.pk, person.name, item['id']))
+					return item
+			else:  # 病例库患者无病历号
+				print('患者 %s 搜索结果较多，但是因为病例库无病历号，无法匹配')
+				return None
 
 
 def add_id_for_person(person):
-    # 为数据库中有些人添加linkedcareId
-    session = logIn()
+	# 为数据库中有些人添加linkedcareId
+	session = logIn()
 
-    data = search_from_linked_with_string(person.name, session)
-    # 处理结果
-    print(data['totalCount'])
-    for item in data['items']:
-        if item['name'] == person.name and item['privateId'] == person.id:
-            person.linkedcareId = item['id']
-            person.save()
-            print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
-            break
+	data = search_from_linked_with_string(person.name, session)
+	# 处理结果
+	print(data['totalCount'])
+	for item in data['items']:
+		if item['name'] == person.name and item['privateId'] == person.id:
+			person.linkedcareId = item['id']
+			person.save()
+			print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
+			break
 
 
 # def addID():
@@ -476,146 +477,145 @@ def add_id_for_person(person):
 #             f.write('\n')
 
 
-
 def read_jsontxt_add_link_id():
-    '''
+	'''
     读取txt中的json数据，并且提取id保存到患者的linkedcareId
     :return:
     '''
-    with open('../linkedcare/get_patients_0225-212429.txt', 'r') as f:
-        data = json.load(f)
+	with open('../linkedcare/get_patients_0225-212429.txt', 'r') as f:
+		data = json.load(f)
 
-    print(data['pageCount'])
-    i = 0
+	print(data['pageCount'])
+	i = 0
 
-    for item in data['items']:
-        persons = Person.objects.filter(idnum__contains=item['privateId'])
-        if persons.count() == 1:
-            person = persons[0]
-            if not person.linkedcareId:
-                person.linkedcareId = item['id']
-                person.save()
-                print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
-                i += 1
+	for item in data['items']:
+		persons = Person.objects.filter(idnum__contains=item['privateId'])
+		if persons.count() == 1:
+			person = persons[0]
+			if not person.linkedcareId:
+				person.linkedcareId = item['id']
+				person.save()
+				print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
+				i += 1
 
-    print('共写入：%d' % i)
-    return None
+	print('共写入：%d' % i)
+	return None
 
 
 def update_baseinfo_for_person_with_item(person, item):
-    '''
+	'''
     使用搜索到的data，更新person的数据
     :param person:
     :param item:
     :return:
     '''
-    if item['birth']:
-        birth = item['birth'][0:10]
-        person.birth=birth
-        person.save()
-    else:
-        birth = None
+	if item['birth']:
+		birth = item['birth'][0:10]
+		person.birth = birth
+		person.save()
+	else:
+		birth = None
 
-    try:
-        person.linkedcareId=item['id']
-        person.mobile=item['mobile']
-        person.nameCode=item['nameCode']
-        person.save()
-        person.sex=item['sex']
-        person.save()
+	try:
+		person.linkedcareId = item['id']
+		person.mobile = item['mobile']
+		person.nameCode = item['nameCode']
+		person.save()
+		person.sex = item['sex']
+		person.save()
 
-        # person.update(otherPrivateId=item['otherPrivateId'],
-        #     doctorId=item['doctorId'], officeId=item['officeId'],
-        #     clinic=item['officeId'],
-        #     email=item['email'],
-        #     occupation=item['occupation'], qq=item['qq'],
-        #     weixin=item['weixin'],
-        #     identityCard=item['identityCard'],
-        #     homeAddress=item['homeAddress'],
-        #     patientType=item['patientType'],
-        #     lastVisit=item['lastVisit'],
-        #     lastDoctorId=item['lastDoctorId'],
-        #     )
-        print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
-        return True
+		# person.update(otherPrivateId=item['otherPrivateId'],
+		#     doctorId=item['doctorId'], officeId=item['officeId'],
+		#     clinic=item['officeId'],
+		#     email=item['email'],
+		#     occupation=item['occupation'], qq=item['qq'],
+		#     weixin=item['weixin'],
+		#     identityCard=item['identityCard'],
+		#     homeAddress=item['homeAddress'],
+		#     patientType=item['patientType'],
+		#     lastVisit=item['lastVisit'],
+		#     lastDoctorId=item['lastDoctorId'],
+		#     )
+		print('成功写入：pk--%d, %s id--%d' % (person.pk, person.name, person.linkedcareId))
+		return True
 
-    except :
-        print('baseinfo 写入失败')
-        return False
+	except:
+		print('baseinfo 写入失败')
+		return False
 
 
 def get_baseinfo_of_patient(session, person):
-    '''
+	'''
     爬取患者基本信息，并存入数据库
     适用于无linkedcareId的患者
     :param s: session
     :param linkedcareId:
     :return: json模型
     '''
-    p=person
-    if not p.linkedcareId:  # 没有id
-        # 先搜索，爬取
-        item = search_person_from_linked(p, session)
-        # data = search_from_linked(p.name, s)
-        if item:  # 判断是否有内容
-            if item['name'] == p.name and item['privateId'] == p.idnum:
-                # print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
-                return update_baseinfo_for_person_with_item(p, item)
+	p = person
+	if not p.linkedcareId:  # 没有id
+		# 先搜索，爬取
+		item = search_person_from_linked(p, session)
+		# data = search_from_linked(p.name, s)
+		if item:  # 判断是否有内容
+			if item['name'] == p.name and item['privateId'] == p.idnum:
+				# print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+				return update_baseinfo_for_person_with_item(p, item)
 
-            else:
-                # print('未写入')
-                return False
-        else:
-            # print('未写入\n')
-            return False
+			else:
+				# print('未写入')
+				return False
+		else:
+			# print('未写入\n')
+			return False
 
-    else:  # 有id
-        url = 'https://api.linkedcare.cn:9001/api/v1/patient/full/' + str(p.linkedcareId)
-        headers = get_headers(session)
-        searchResult = session.get(url, headers=headers)
-        # totalcount = eval(r.content)["totalCount"]
-        item = json.loads(searchResult.content.decode('utf-8'))
-        # print(r2)
-        return update_baseinfo_for_person_with_item(p, item)
+	else:  # 有id
+		url = 'https://api.linkedcare.cn:9001/api/v1/patient/full/' + str(p.linkedcareId)
+		headers = get_headers(session)
+		searchResult = session.get(url, headers=headers)
+		# totalcount = eval(r.content)["totalCount"]
+		item = json.loads(searchResult.content.decode('utf-8'))
+		# print(r2)
+		return update_baseinfo_for_person_with_item(p, item)
 
 
 def update_ortho_record_of_patient(person, items):
-    #  可以根据medicalRecordId，判断是否已经存入
+	#  可以根据medicalRecordId，判断是否已经存入
 
-    utc = pytz.utc
-    for item in items:
+	utc = pytz.utc
+	for item in items:
 
-        if Record.objects.filter(medicalRecordId=item['medicalRecordId']).count() > 0:
-            # 先判断重复
-            print('重复病历，未导入--日期%s' % (item['recordCreatedTime']))
-            continue
-        else:
-            try:
-                record = Record.objects.create()
-                record.person = person
-                record.treatmentPlan = item['content']
-                record.medicalRecordId = item['medicalRecordId']
-                record.teethcode = item['toothCode']
+		if Record.objects.filter(medicalRecordId=item['medicalRecordId']).count() > 0:
+			# 先判断重复
+			print('重复病历，未导入--日期%s' % (item['recordCreatedTime']))
+			continue
+		else:
+			try:
+				record = Record.objects.create()
+				record.person = person
+				record.treatmentPlan = item['content']
+				record.medicalRecordId = item['medicalRecordId']
+				record.teethcode = item['toothCode']
 
-                # record.createdAt = item['recordCreatedTime']
-                record.createdAtLinkedcare = item['recordCreatedTime']
-                record.save()
-                print('正畸病例写入成功 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
-                # return  True
+				# record.createdAt = item['recordCreatedTime']
+				record.createdAtLinkedcare = item['recordCreatedTime']
+				record.save()
+				print('正畸病例写入成功 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
+				# return  True
 
-                # 修改创建时间 #'2018-07-29T09:48:37'
-                dt = datetime.strptime(item['recordCreatedTime'], '%Y-%m-%dT%H:%M:%S')
-                ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
-                record.createdAt = ctime
-                record.save()
+				# 修改创建时间 #'2018-07-29T09:48:37'
+				dt = datetime.strptime(item['recordCreatedTime'], '%Y-%m-%dT%H:%M:%S')
+				ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+				record.createdAt = ctime
+				record.save()
 
-            except:
-                print('正畸病例写入失败 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
-                return False
+			except:
+				print('正畸病例写入失败 患者：%s  病例id %d' % (person.name, item['medicalRecordId']))
+				return False
 
 
 def get_ortho_record_of_patient(session, person):
-    '''
+	'''
     爬取患者的正畸病例
         1, 判断是否有linked id,根据id下载病例，如果没有则搜索该患者
         2， 可以根据medicalRecordId 判断是否已经存入
@@ -623,202 +623,231 @@ def get_ortho_record_of_patient(session, person):
     :param person:
     :return:
     '''
-    p=person
-    if not p.linkedcareId:  # 没有id
-        # 先搜索，爬取
-        item = search_person_from_linked(p, session)
-        # data = search_from_linked(p.name, s)
-        if item:  # 判断是否有内容
-            if item['name'] == p.name and item['privateId'] == p.idnum:
-                # print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
-                update_baseinfo_for_person_with_item(p, item)
-                get_ortho_record_of_patient(session, person)
-                return True
+	p = person
+	if not p.linkedcareId:  # 没有id
+		# 先搜索，爬取
+		item = search_person_from_linked(p, session)
+		# data = search_from_linked(p.name, s)
+		if item:  # 判断是否有内容
+			if item['name'] == p.name and item['privateId'] == p.idnum:
+				# print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+				update_baseinfo_for_person_with_item(p, item)
+				get_ortho_record_of_patient(session, person)
+				return True
 
-            else:
-                # print('未写入')
-                return False
-        else:
-            # print('未写入\n')
-            return False
+			else:
+				print('未搜到患者%s，未写入' % (p.name))
+				return False
+		else:
+			print('未搜到患者%s，未写入' % (p.name))
+			return False
 
-    else:  # 有id
-        url = 'https://api.linkedcare.cn:9001/api/v1/medical-record-summary?id=' + str(p.linkedcareId) +'&type=1'
-        headers = get_headers(session)
-        searchResult = session.get(url, headers=headers)
-        # totalcount = eval(r.content)["totalCount"]
-        items = json.loads(searchResult.content.decode('utf-8'))
-        # print(r2)
+	else:  # 有id
+		url = 'https://api.linkedcare.cn:9001/api/v1/medical-record-summary?id=' + str(p.linkedcareId) + '&type=1'
+		headers = get_headers(session)
+		searchResult = session.get(url, headers=headers)
+		# totalcount = eval(r.content)["totalCount"]
+		items = json.loads(searchResult.content.decode('utf-8'))
+		# print(r2)
 
-        if len(items) > 0:
-            print('下载到record共 %d 个' % (len(items)))
-            return update_ortho_record_of_patient(p, items)
+		if len(items) > 0:
+			print('下载到record共 %d 个' % (len(items)))
+			return update_ortho_record_of_patient(p, items)
 
-        else:
-            return False
+		else:
+			return False
 
 
 def get_charge_record_of_patient(session, person):
-    '''获取收费记录'''
-    p = person
-    if not p.linkedcareId:  # 没有id
-        # 先搜索，爬取
-        item = search_person_from_linked(p, session)
-        # data = search_from_linked(p.name, s)
-        if item:  # 判断是否有内容
-            if item['name'] == p.name and item['privateId'] == p.idnum:
-                # print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
-                update_baseinfo_for_person_with_item(p, item)
-                get_ortho_record_of_patient(session, person)
-                return True
+	'''获取收费记录'''
+	p = person
+	if not p.linkedcareId:  # 没有id
+		# 先搜索，爬取
+		item = search_person_from_linked(p, session)
+		# data = search_from_linked(p.name, s)
+		if item:  # 判断是否有内容
+			if item['name'] == p.name and item['privateId'] == p.idnum:
+				# print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+				update_baseinfo_for_person_with_item(p, item)
+				get_charge_record_of_patient(session, person)
+				return '导入成功'
 
-            else:
-                # print('未写入')
-                return False
-        else:
-            # print('未写入\n')
-            return False
+			else:
+				print('未搜到患者%s pk %d，未写入' % (p.name, p.pk))
+				return '未搜到患者%s pk %d，未写入' % (p.name, p.pk)
+		else:
+			print('未搜到患者%s，未写入' % (p.name))
+			return '未搜到患者%s pk %d，未写入' % (p.name, p.pk)
 
-    else:  # 有id
-        url_sum = 'https://api.linkedcare.cn:9001/api/v1/charge-order/patient-price-info/145330'
-        url_detaillist = 'https://api.linkedcare.cn:9001/api/v1/charge-order/paging?hasCancel=true&hasOverdue=true&hasRefund=true&hasSquare=true&pageIndex=1&pageSize=10&patientId=145330'
+	else:  # 有id
 
-        ''' respond
-        {"pageIndex":1,"pageSize":10,"pageCount":1,"totalCount":3,"items":[{"chargeOrderDetailList":[],"chargeOrderSimpleDetailList":[{"chargeOrderId":255025,"sourceDetailId":105547,"chargeType":"正畸费","chargeSuperType":"缺省大类","originalTotalPrice":10000.00,"totalPrice":10000.00,"allowDiscount":null,"discount":100.0,"discountPrice":0.0,"actualPrice":10000.00,"overdue":0.00,"isReimburse":false,"price":10000.00,"doctorId":913,"doctorName":"张栋梁","nurseId":null,"nurseName":"","consultantId":null,"consultantName":"","sellerId":null,"id":105547}],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":255025,"appointmentId":411973,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":255025,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":10000.00,"planPrice":10000.00,"actualPrice":10000.00,"overdue":0.00,"discountPrice":0.00,"discount":100.0,"payType":"银行卡","actualPrice1":10000.00,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2016-04-17T18:51:40","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2016-04-17T18:51:40","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":913,"doctorName":"张栋梁","nurseId":0,"nurseName":"","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"simple","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false},{"chargeOrderDetailList":[{"chargeOrderId":253613,"sourceDetailId":395605,"chargeItemId":54981,"itemName":"一次性器械","srcCount":0.0,"count":1.0,"unit":"个","price":50.00,"originalTotalPrice":50.00,"srcTotalPrice":0.0,"totalPrice":50.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"综合收费","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":42.50,"srcPlanPrice":0.0,"planPrice":42.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":1,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395605},{"chargeOrderId":253613,"sourceDetailId":395606,"chargeItemId":55032,"itemName":"窝洞充填（3M ESPE Z250）","srcCount":0.0,"count":1.0,"unit":"牙","price":350.00,"originalTotalPrice":350.00,"srcTotalPrice":0.0,"totalPrice":350.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"口内治疗","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":297.50,"srcPlanPrice":0.0,"planPrice":297.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":2,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395606},{"chargeOrderId":253613,"sourceDetailId":395607,"chargeItemId":55030,"itemName":"垫底/深龋安抚","srcCount":0.0,"count":1.0,"unit":"牙","price":150.00,"originalTotalPrice":150.00,"srcTotalPrice":0.0,"totalPrice":150.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"口内治疗","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":127.50,"srcPlanPrice":0.0,"planPrice":127.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":3,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395607},{"chargeOrderId":253613,"sourceDetailId":395608,"chargeItemId":54991,"itemName":"进口麻药","srcCount":0.0,"count":1.0,"unit":"支","price":50.00,"originalTotalPrice":50.00,"srcTotalPrice":0.0,"totalPrice":50.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"麻药费","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":42.50,"srcPlanPrice":0.0,"planPrice":42.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":4,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395608},{"chargeOrderId":253613,"sourceDetailId":395609,"chargeItemId":55002,"itemName":"超声波洁治洁治+抛光","srcCount":0.0,"count":1.0,"unit":"口","price":650.00,"originalTotalPrice":650.00,"srcTotalPrice":0.0,"totalPrice":650.00,"allowDiscount":true,"allowOrderDiscount":null,"discount":100.0,"srcDiscountPrice":null,"discountPrice":0.0,"employeeNo":null,"billDate":null,"procedureCode":null,"itemType":"牙周治疗项目","itemSuperType":"缺省大类","department":null,"fdiToothCodes":null,"notes":null,"diagnoseItemCode":null,"diagnoseItemName":null,"isGift":null,"memberShipId":null,"discountPlanDetailId":null,"actualPrice":552.50,"srcPlanPrice":0.0,"planPrice":552.50,"advancePlanPrice":0.00,"overdue":0.00,"isReimburse":false,"giftCertificateId":null,"giftTransactionId":null,"giftCertificateType":null,"doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":"","extraProviderId":null,"isDeductionEnabled":false,"isFullExecuted":false,"isFullStepExecuted":false,"executedCount":0,"chargeDeductionPlanId":null,"workflowStatus":null,"deductionCode":null,"groupIndex":5,"stepRatio":0.0,"stepName":null,"isPending":false,"confirmTime":null,"itemGroupIndex":null,"productId":null,"sellerId":null,"sellerName":null,"hasRelatedInventoryTakeOrder":false,"relevantExecutionSteps":null,"id":395609}],"chargeOrderSimpleDetailList":[],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":253613,"appointmentId":409972,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":253613,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":1250.00,"planPrice":1250.00,"actualPrice":1062.50,"overdue":0.00,"discountPrice":187.50,"discount":85.0,"payType":"银行卡","actualPrice1":1062.50,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2015-11-01T17:17:02","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2015-11-01T17:17:02","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":895,"doctorName":"任帅","nurseId":901,"nurseName":"姜文","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"detail","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false},{"chargeOrderDetailList":[],"chargeOrderSimpleDetailList":[{"chargeOrderId":245448,"sourceDetailId":102604,"chargeType":"正畸费","chargeSuperType":"缺省大类","originalTotalPrice":10000.00,"totalPrice":10000.00,"allowDiscount":null,"discount":100.0,"discountPrice":0.0,"actualPrice":10000.00,"overdue":0.00,"isReimburse":false,"price":10000.00,"doctorId":913,"doctorName":"张栋梁","nurseId":922,"nurseName":"郑春燕","consultantId":null,"consultantName":"","sellerId":null,"id":102604}],"giftCertificateList":[],"officeAdvancePaymentUsedInfoList":null,"groupBuyCertificateList":null,"chargeDeductionExecution":null,"freeField":null,"id":245448,"appointmentId":419481,"patientId":145330,"memberShipCardId":null,"payOfficeId":122,"giftCertificateId":null,"giftTransactionId":null,"sourceChargeOrderId":245448,"fromChargeOrderId":0,"giftCardId":null,"insuranceOrderId":null,"yibaoOrderId":0,"tenantId":"47d876b6-fc2f-4842-b88e-85ef85425e34","officeId":122,"lisOrderId":null,"totalPrice":10000.00,"planPrice":10000.00,"actualPrice":10000.00,"overdue":0.00,"discountPrice":0.00,"discount":100.0,"payType":"银行卡","actualPrice1":10000.00,"payType2":"","actualPrice2":null,"payType3":"","actualPrice3":null,"advancePlanPrice":0.00,"advancePrice":0.00,"advanceOverdue":0.00,"advancePricePaymentTypes":null,"scenario":0,"recordCreatedTime":"2013-08-18T18:09:36","recordUpdatedTime":"2016-11-22T00:26:26","payDateTime":"2013-08-18T18:09:36","visitingTime":null,"payeeId":975,"payee":"管理员","doctorId":913,"doctorName":"张栋梁","nurseId":922,"nurseName":"郑春燕","consultantId":null,"consultantName":null,"billNo":null,"comments":"","authCode":null,"chargePoint":null,"createBy":null,"recordCreatedUser":-1,"overdueStatus":null,"reason":null,"status":"已收费","orderType":"simple","isHandle":null,"notUseMembershipDiscount":false,"isAppend":null,"feeType":0,"feeSubType":0,"channel":0,"isAliPay":false,"isWeixinPay":false,"isNotAutoCheckOut":false,"isArchived":null,"isNeedConfirm":false,"isConfirmed":false,"isDefaultDeduction":false,"workflowStatus":null,"workflowType":null,"workflowApprovedTime":null,"deviceCode":null,"lastTimeOverdue":0.0,"officeName":null,"isPrompt":false,"allowWeixinBillOrder":false,"openId":null,"isAliPayOrder":null,"membershipTransaction":null,"isOldCharge":false,"isPayOverdue":false,"isOldToNew":false}]}
-        
-        pageIndex	1
-        pageSize	10
-        pageCount	1
-        totalCount	3
-        items	[…]
-            0	{…}
-                chargeOrderDetailList	[]
-                chargeOrderSimpleDetailList	[…]
-                    0	{…}
-                        chargeOrderId	255025
-                        sourceDetailId	105547
-                        chargeType	正畸费
-                        chargeSuperType	缺省大类
-                        originalTotalPrice	10000
-                        totalPrice	10000
-                        allowDiscount	null
-                        discount	100
-                        discountPrice	0
-                        actualPrice	10000
-                        overdue	0
-                        isReimburse	false
-                        price	10000
-                        doctorId	913
-                        doctorName	张栋梁
-                        nurseId	null
-                        nurseName	
-                        consultantId	null
-                        consultantName	
-                        sellerId	null
-                        id	105547
-                giftCertificateList	[]
-                officeAdvancePaymentUsedInfoList	null
-                groupBuyCertificateList	null
-                chargeDeductionExecution	null
-                freeField	null
-                id	255025
-                appointmentId	411973
-                patientId	145330
-                memberShipCardId	null
-                payOfficeId	122
-                giftCertificateId	null
-                giftTransactionId	null
-                sourceChargeOrderId	255025
-                fromChargeOrderId	0
-                giftCardId	null
-                insuranceOrderId	null
-                yibaoOrderId	0
-                tenantId	47d876b6-fc2f-4842-b88e-85ef85425e34
-                officeId	122
-                lisOrderId	null
-                totalPrice	10000
-                planPrice	10000
-                actualPrice	10000
-                overdue	0
-                discountPrice	0
-                discount	100
-                payType	银行卡
-                actualPrice1	10000
-                payType2	
-                actualPrice2	null
-                payType3	
-                actualPrice3	null
-                advancePlanPrice	0
-                advancePrice	0
-                advanceOverdue	0
-                advancePricePaymentTypes	null
-                scenario	0
-                recordCreatedTime	2016-04-17T18:51:40
-                recordUpdatedTime	2016-11-22T00:26:26
-                payDateTime	2016-04-17T18:51:40
-                visitingTime	null
-                payeeId	975
-                payee	管理员
-                doctorId	913
-                doctorName	张栋梁
-                nurseId	0
-                nurseName	
-                consultantId	null
-                consultantName	null
-                billNo	null
-                comments	
-                authCode	null
-                chargePoint	null
-                createBy	null
-                recordCreatedUser	-1
-                overdueStatus	null
-                reason	null
-                status	已收费
-                orderType	simple
-                isHandle	null
-                notUseMembershipDiscount	false
-                isAppend	null
-                feeType	0
-                feeSubType	0
-                channel	0
-                isAliPay	false
-                isWeixinPay	false
-                isNotAutoCheckOut	false
-                isArchived	null
-                isNeedConfirm	false
-                isConfirmed	false
-                isDefaultDeduction	false
-                workflowStatus	null
-                workflowType	null
-                workflowApprovedTime	null
-                deviceCode	null
-                lastTimeOverdue	0
-                officeName	null
-                isPrompt	false
-                allowWeixinBillOrder	false
-                openId	null
-                isAliPayOrder	null
-                membershipTransaction	null
-                isOldCharge	false
-                isPayOverdue	false
-                isOldToNew	false
-        '''
-        url = 'https://api.linkedcare.cn:9001/api/v1/medical-record-summary?id=' + str(p.linkedcareId) + '&type=1'
-        headers = get_headers(session)
-        searchResult = session.get(url, headers=headers)
-        # totalcount = eval(r.content)["totalCount"]
-        items = json.loads(searchResult.content.decode('utf-8'))
-        # print(r2)
+		# 获取 sum 收费汇总
+		url_sum = 'https://api.linkedcare.cn:9001/api/v1/charge-order/patient-price-info/' + str(p.linkedcareId)
+		headers = get_headers(session)
+		# if p.charge_summary.count() == 0:  # 先检查是否存在，没有则创建
+		r = session.get(url_sum, headers=headers)
+		# totalcount = eval(r.content)["totalCount"]
+		if r.status_code == 200:
+			res = json.loads(r.content.decode('utf-8'))
+			# print(r2)
+			print('%s  下载到charge_sum' % (p.name))
+			update_charge_sum_of_patient(p, res)
+		else:
+			print('%s  下载charge_sum失败！' % (p.name))
 
-        if len(items) > 0:
-            print('下载到record共 %d 个' % (len(items)))
-            return update_ortho_record_of_patient(p, items)
+		# 获取 收费条目
+		url = 'https://api.linkedcare.cn:9001/api/v1/charge-order/paging?' \
+		      + 'hasCancel=true&hasOverdue=true&hasRefund=true&hasSquare=true&pageIndex=1&pageSize=10&patientId=' \
+		      + str(p.linkedcareId)
+		r = session.get(url, headers=headers)
+		# totalcount = eval(r.content)["totalCount"]
 
-        else:
-            return False
+		if r.status_code == 200:
+			res = json.loads(r.content.decode('utf-8'))
+			# print(r2)
+			totalCount = res['totalCount']
+			if totalCount > 0:
+				print('%s  下载到charge_record共 %d 个' % (p.name, totalCount))
+				return update_charge_record_of_patient(p, res['items'], session)
 
+			else:
+				return False
+
+
+def update_charge_sum_of_patient(person, items):
+	from charge_record.models import ChargeSummary
+	# try:
+	sum = ChargeSummary.objects.create(person=person,
+	                                   totalActualPrice=items['totalActualPrice'],
+	                                   totalPlanPrice=items['totalPlanPrice'],
+	                                   totalOverdue=items['totalOverdue'],
+	                                   totalAdvacePrice=items['totalAdvacePrice'],
+	                                   importText=str(items))
+	print(' %s charge_summary 写入成功' % (person.name))
+
+
+# except:
+# 	print('导入时， %s charge_summary 写入失败' % (person.name))
+
+
+def update_charge_record_of_patient(person, items, session):
+	#  可以根据medicalRecordId，判断是否已经存入
+	from charge_record.models import ChargeOrder, ChargeDetails
+
+	utc = pytz.utc
+	for item in items:
+		if ChargeOrder.objects.filter(id2=item['id']).count() > 0:
+			# 先判断重复
+			print(' %s 重复收费id，未导入--id %s' % (person.name, item['id']))
+			continue
+		else:
+			if 1:
+				record = ChargeOrder.objects.create(isImported=True, person=person, import_text=str(item),
+				                                    id2=item['id'],
+				                                    totalPrice=item['totalPrice'],
+				                                    # planPrice=item['planPrice'],
+				                                    actualPrice=item['actualPrice'],
+				                                    overdue=item['overdue'],
+				                                    discountPrice=item['discountPrice'],
+				                                    discount=item['discount'],
+				                                    actualPrice1=item['actualPrice1'],
+				                                    payType=item['payType'],
+				                                    recordCreatedTime_text=item['recordCreatedTime'],
+				                                    doctorId=item['doctorId'],
+				                                    doctorName=item['doctorName'],
+				                                    comments=item['comments'],
+				                                    patientId=item['patientId'],
+				                                    appointmentId=item['appointmentId'],
+				                                    sourceChargeOrderId=item['sourceChargeOrderId'],
+				                                    status=item['status'],
+				                                    isAliPay=item['isAliPay'],
+				                                    isWeixinPay=item['isWeixinPay'],
+				                                    )
+
+				print(' 收费写入成功 患者：%s  收费id %d' % (person.name, item['id']))
+				# return  True
+
+				# 修改创建时间 #'2018-07-29T09:48:37'  recordCreatedTime
+				dt = datetime.strptime(item['recordCreatedTime'], '%Y-%m-%dT%H:%M:%S')
+				ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+				record.recordCreatedTime = ctime
+				record.save()
+
+				# 导入child——bill
+				update_child_charge_record_of_record(person, record, session)
+
+		# except:
+		#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
+		#     return False
+
+
+def update_child_charge_record_of_record(person, charge_record, session):
+	# todo 导入child——bill
+	# 收费条目item下面的收费账单说明（child - bill）
+	# 例如交了28000，18000是微信，10000是现金
+
+	url_child = 'https://api.linkedcare.cn:9001/api/v1/charge-order/bill-child/' + str(charge_record.id2)
+	headers = get_headers(session)
+
+	r = session.get(url_child, headers=headers)
+	# totalcount = eval(r.content)["totalCount"]
+	if r.status_code == 200:
+		res = json.loads(r.content.decode('utf-8'))
+		# print(r2)
+		# totalCount = res['totalCount']
+		if len(res) > 0:
+			print('%s  下载到child_charge_record共 %d 个' % (person.name, len(res)))
+			#  可以根据medicalRecordId，判断是否已经存入
+			from charge_record.models import ChargeOrder, ChargeDetails, ChildChargeOrder
+
+			# 导入
+			items = res
+			utc = pytz.utc
+			for item in items:
+				if ChildChargeOrder.objects.filter(id2=item['id']).count() > 0:
+					# 先判断重复
+					print(' %s 重复child收费id，未导入--id %s' % (person.name, item['id']))
+					continue
+				else:
+					# try:
+					if 1:
+						record = ChildChargeOrder.objects.create(sourceChargeOrder=charge_record,
+						                                         isImported=True, person=person, import_text=str(item),
+						                                         id2=item['id'],
+						                                         totalPrice=item['totalPrice'],
+						                                         # planPrice=item['planPrice'],
+						                                         actualPrice=item['actualPrice'],
+						                                         overdue=item['overdue'],
+						                                         discountPrice=item['discountPrice'],
+						                                         discount=item['discount'],
+						                                         actualPrice1=item['actualPrice1'],
+						                                         payType=item['payType'],
+						                                         recordCreatedTime_text=item['recordCreatedTime'],
+						                                         doctorId=item['doctorId'],
+						                                         doctorName=item['doctorName'],
+						                                         comments=item['comments'],
+						                                         patientId=item['patientId'],
+						                                         appointmentId=item['appointmentId'],
+						                                         sourceChargeOrderId=item['sourceChargeOrderId'],
+						                                         status=item['status'],
+						                                         isAliPay=item['isAliPay'],
+						                                         isWeixinPay=item['isWeixinPay'],
+						                                         )
+
+						print(' child收费写入成功 患者：%s  收费id %d' % (person.name, item['id']))
+						# return  True
+
+						# 修改创建时间 #'2018-07-29T09:48:37'  recordCreatedTime
+						dt = datetime.strptime(item['recordCreatedTime'], '%Y-%m-%dT%H:%M:%S')
+						ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+						record.recordCreatedTime = ctime
+						record.save()
+
+				# except:
+				#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
+				#     return False
 
 
 if __name__ == '__main__':
-    pass
-    # read_jsontxt_add_link_id()
+	pass
+# read_jsontxt_add_link_id()

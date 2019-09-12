@@ -27,9 +27,11 @@
             <a onclick="gotoNewPic()" class="btn btn-primary btn-sm">添加图像 <span class="fa fa-plus-circle"></span></a>
         {% endif %}
     </div>
-    <div class="col-md-1 col-sm-1 col-xs-2 col-md-offset-8">
+    <div class="col-md-1 col-sm-2 col-xs-6 col-md-offset-8">
         <a href="{% url 'boards:down_posts' patient.pk %}" class="label label-default">
-            打包下载 <span class="fa fa-arrow-circle-o-down"></span> </a>
+            下载原图 <span class="fa fa-arrow-circle-o-down"></span> </a>
+        <a href="{% url 'boards:down_mid' patient.pk %}" class="label label-default">
+            下载小图 <span class="fa fa-arrow-circle-o-down"></span> </a>
     </div>
     <br>
 
@@ -72,7 +74,12 @@
                 <!-- timeline icon -->
                 <i class="fa fa-camera bg-blue"></i>
                 <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+                    <span class="time"><i class="fa fa-clock-o"></i> 12:00
+                        <a href="{% url 'boards:down_post_mid' post.pk %}">
+                                小图 <span class="fa fa-arrow-circle-o-down"></span> </a>
+                        <a href="{% url 'boards:down_post_full' post.pk %}">
+                                原图 <span class="fa fa-arrow-circle-o-down"></span> </a>
+                    </span>
 
                     <h3 class="timeline-header"><a href="#"></a> {{ post.comment|default:_('') }}</h3>
 

@@ -85,6 +85,106 @@ def down_zip(request, pk):
 		return HttpResponse(" 无法打开该文件，请检查文件名 ")
 
 
+def down_mid_zip(request, pk):
+	"""
+    查询person的所有image，根据地址打包所有文件到zip文件
+    """
+	# todo 下载文件夹可能有两个
+	p = Person.objects.get(pk=pk)
+	# source_dir = BASE_DIR + '/' + p.privateDir
+	output_filename = '/tmp/all.zip'
+	zipf = zipfile.ZipFile(output_filename, 'w')  # zip文件
+
+	imgs = p.images.all()
+	for img in imgs:
+		pathfile = BASE_DIR + img.size_m  # 要打包的文件
+		if os.path.exists(pathfile):
+			# 在zip中的相对路径
+			relative_path = os.path.basename(os.path.dirname(pathfile))
+			arcname = relative_path + os.path.sep + os.path.basename(pathfile)
+			zipf.write(pathfile, arcname)
+	zipf.close()
+
+	content_type, encoding = mimetypes.guess_type(str(output_filename))
+	content_type = content_type or 'application/octet-stream'
+
+	try:
+		f = open(output_filename, 'rb')
+		response = FileResponse(f, content_type=content_type)
+		# response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
+		response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
+		# response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
+
+		return response
+	except IOError:
+		return HttpResponse(" 无法打开该文件，请检查文件名 ")
+
+
+def down_post_mid_zip(requet, postpk):
+	# todo 下载文件夹可能有两个
+	p = Post.objects.get(pk=postpk)
+	# source_dir = BASE_DIR + '/' + p.privateDir
+	output_filename = '/tmp/all.zip'
+	zipf = zipfile.ZipFile(output_filename, 'w')  # zip文件
+
+	imgs = p.images.all()
+	for img in imgs:
+		pathfile = BASE_DIR + img.size_m  # 要打包的文件
+		if os.path.exists(pathfile):
+			# 在zip中的相对路径
+			relative_path = os.path.basename(os.path.dirname(pathfile))
+			arcname = relative_path + os.path.sep + os.path.basename(pathfile)
+			zipf.write(pathfile, arcname)
+	zipf.close()
+
+	content_type, encoding = mimetypes.guess_type(str(output_filename))
+	content_type = content_type or 'application/octet-stream'
+
+	try:
+		f = open(output_filename, 'rb')
+		response = FileResponse(f, content_type=content_type)
+		# response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
+		response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
+		# response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
+
+		return response
+	except IOError:
+		return HttpResponse(" 无法打开该文件，请检查文件名 ")
+
+
+def down_post_zip(requet, postpk):
+	# todo 下载文件夹可能有两个
+	p = Post.objects.get(pk=postpk)
+	# source_dir = BASE_DIR + '/' + p.privateDir
+	output_filename = '/tmp/all.zip'
+	zipf = zipfile.ZipFile(output_filename, 'w')  # zip文件
+
+	imgs = p.images.all()
+	for img in imgs:
+		pathfile = BASE_DIR + img.path  # 要打包的文件
+		if os.path.exists(pathfile):
+			# 在zip中的相对路径
+			relative_path = os.path.basename(os.path.dirname(pathfile))
+			arcname = relative_path + os.path.sep + os.path.basename(pathfile)
+			zipf.write(pathfile, arcname)
+	zipf.close()
+
+	content_type, encoding = mimetypes.guess_type(str(output_filename))
+	content_type = content_type or 'application/octet-stream'
+
+	try:
+		f = open(output_filename, 'rb')
+		response = FileResponse(f, content_type=content_type)
+		# response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
+		response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
+		# response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
+
+		return response
+	except IOError:
+		return HttpResponse(" 无法打开该文件，请检查文件名 ")
+
+
+
 def get_person_list_from_stringlist(string):
 	if string:
 		person_list = []
@@ -256,7 +356,8 @@ def save_upload_file_make_logo(file, dir):
 				im.save(logoPath, "JPEG")
 				return logoPath
 			except IOError:
-				print("cannot create thumbnail")
+				print("cannot create logo")
+				# print(IOError)
 				return False
 
 
@@ -306,9 +407,9 @@ def handle_file(request, person, post):
 		if not os.path.exists(mediumdir):
 			os.makedirs(icondir)
 		# 文件名及路径
-		# n2 = f.name
-		# # suf = n2.split('.')[-1]
-		suf = 'jpg'
+		n2 = f.name
+		suf = n2.split('.')[-1]
+		# suf = 'jpg'
 		# 文件名   张飞_20180101_S0_041411.jpg
 		fname = person.name + sep + datestr + sep + 'S' + str(post.type) + sep + str(i) + times + '.' + suf
 		# 相对全路径 static / picture / 张飞_233 / 张飞_20180101_041411.jpg
@@ -413,7 +514,7 @@ def new_person(request):
 			os.makedirs(privateDir)
 
 		if Person.objects.filter(name=name, idnum=idnum, doctor=docname).exists():
-			return redirect('wrong')
+			return redirect('boards:wrong')
 		else:
 			person = Person.objects.create(name=name, idnum=idnum, doctor=docname, privateDir=privateDir)
 			# TODO 添加新患者信息

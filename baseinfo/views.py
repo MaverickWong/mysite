@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from boards.models import Person
 from django import forms
 # Create your views here.
@@ -23,7 +23,6 @@ class EditForm(forms.Form):
 		(3, '已收到'),
 		(4, '已戴走'),
 	)
-
 
 	name = forms.CharField(label='名称', required=True, max_length=100,
 	                       widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -90,7 +89,9 @@ def edit_comment_label(request, pk):
 			p.save()
 
 			message = '添加成功'
-			return redirect('/detail/'+str(pk), {'msg': message})
+			# return redirect('/detail/'+str(pk), {'msg': message})
+			return redirect(reverse('boards:person_detail', args=(str(pk),)), {'msg': message})
+
 	else:  # get
 		p = Person.objects.get(pk=pk)
 		form = EditCommentLabelForm(

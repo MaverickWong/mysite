@@ -15,6 +15,29 @@ from datetime import datetime
 from mysite.settings import STATICFILES_DIRS
 
 
+def login2(request):
+	re = {'token': 'admin'}
+	re = {'code': 20000,
+	      'data': {
+		      'token': "admin-token"
+	      }}
+	return JsonResponse(re)
+
+
+def getinfo(request):
+	super_admin = {
+		'roles': ['admin'],
+		'introduction': 'I am a super administrator',
+		'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+		'name': 'Super Admin'}
+	re = {'code': 20000,
+	      'data': super_admin,
+	      }
+	return JsonResponse(re)
+
+
+'''======================'''
+
 # @login_required()
 def show_home(request):
 	return render(request, 'show-index2.html')

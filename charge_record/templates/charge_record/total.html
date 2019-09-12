@@ -18,7 +18,7 @@
 {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <div {% if message.tags %} class="{{ message.tags }} alert alert-success"{% endif %}>{{ message }}</div>
         {% endfor %}
     </ul>
 {% endif %}
@@ -70,14 +70,14 @@
         </style>
 
 
-        <table width="100%">
-            <tr class="biaoti">
-                <td>收费详单</td>
-            </tr>
-        </table>
+        {#        <table width="100%">#}
+        {#            <tr class="biaoti">#}
+        {#                <td>收费详单</td>#}
+        {#            </tr>#}
+        {#        </table>#}
 
         {% if summary %}
-            <table>
+            <table style="margin-bottom: 20px; margin-top: 20px;">
                 <tr class="summary">
                     <td>应收总额：{{ summary.totalPlanPrice }}</td>
                     <td style="color: red">欠费总额：{{ summary.totalOverdue }} </td>
@@ -108,7 +108,7 @@
                 <td>{{ record.doctorName }}</td>
                 <td>{{ record.comments }}</td>
                 <td>{% if record.isImported %}* {% else %} {% endif %} </td>
-                <td><span onclick="printDiv({{ record.pk }})" class="fa fa-print">打印</span>
+                <td><a><span onclick="printDiv({{ record.pk }})" class="fa fa-print">打印</span></a>
                 </td>
             </tr>
         {% endfor %}
@@ -141,7 +141,7 @@
             newWin = window.open("");
             newWin.document.write(r);
             newWin.print();
-            newWin.close();
+            //newWin.close();
         });
     }
 

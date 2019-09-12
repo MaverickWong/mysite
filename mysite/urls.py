@@ -21,12 +21,18 @@ from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
 from record import urls as recordurls
 
-# filemanager
-# from filemanager import path_end
-# from mysite.views import filemanager
+# 测试 restful-api
+from charge_record.views import ChargeOrderViewSet
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'chargeorder', ChargeOrderViewSet)
 
 
 urlpatterns = [
+	url(r'^api/', include(router.urls)),  # 测试restful
+	url('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
     url(r'^admin/', admin.site.urls),
     # url(r'^$', home, name='home'),
     # url(r'^$', bad, name='home'),  # 维护升级用
@@ -62,7 +68,10 @@ urlpatterns = [
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^login/$', accounts_views.login, name='login'),
-    # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 
+	url(r'^user/login$', login2, name='login2'),
+	url(r'^user/info', getinfo),
+
+    # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 
 ]

@@ -4,9 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
     <script src="{% static '/js/moment.js' %}"></script>
     <script src="{% static '/js/bootstrap-datetimepicker.min.js' %}"></script>
     <link rel="stylesheet" href="{% static '/css/bootstrap-datetimepicker.min.css' %}">
+
+    <style>
+        table {
+            width: 80%;
+            position: center;
+        }
+
+        h4 {
+            color: #00a65a
+        }
+    </style>
 </head>
 <body>
 
@@ -16,15 +28,16 @@
         &times;
     </button>
     <h4 class="modal-title" id="myModalLabel">
-        添加任务
+        添加新物品
     </h4>
 </div>
-
 <div class="modal-body">
 
     <form id="fileupload" action="{% url 'storage:additem' %}" method="post">
         {% csrf_token %}
-        {{ form }}
+        <table border="1px" class="table">
+            {{ form }}
+        </table>
 
         <!--标签-->
         {#            <div class="col-lg-12" style="padding-left: 0px;  padding-bottom: 12px">#}
@@ -39,7 +52,8 @@
         {#                </div>#}
         {#            </div>#}
 
-        <input type="submit" value="保存"/>
+        <input class="button " type="submit" value="保存"/>
+
     </form>
 
 

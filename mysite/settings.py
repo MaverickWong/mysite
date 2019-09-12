@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'corsheaders',
+
     # 'easy_thumbnails',
     # 'filer',
     # 'mptt',
@@ -54,6 +56,7 @@ INSTALLED_APPS = [
     'charge_record',
     # 'filemanager',
     # 'linkedcare',
+	'rest_framework',
     'baseinfo',
 	'summary',
 	'appointment',
@@ -66,10 +69,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+	# 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -156,3 +161,17 @@ STATICFILES_DIRS = [
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home2'
+
+REST_FRAMEWORK = {
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+	'PAGE_SIZE': 10
+}
+
+# CORS
+CORS_ORIGIN_WHITELIST = [
+	'http://localhost:8000',
+	'http://192.168.11.17:8001',
+	'http://localhost:8001',
+	'http://localhost:8000',
+]
+CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作。

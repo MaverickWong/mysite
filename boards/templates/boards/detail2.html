@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}患者详情: {{ patient.name }}{% endblock %}
+{% block stylesheet %}
+    <style>
+        h3 {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        p.idnum {
+            font-size: 16px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    </style>
+
+{% endblock %}
 
 
 {% block content %}
@@ -60,26 +75,25 @@
                         <img src="{% static 'logo.png' %} " style="height: 60px">
                     {% endif %}
                 </div>
-                <!---患者姓名-->
-                <div class=" col-md-2 col-sm-4 col-xs-4">
-                    <h2><a href= {% url 'boards:person_detail' patient.pk %}>{{ patient.name|default:_('') }}</a></h2>
+                <!---患者姓名 病历号-->
+                <div id="patient_name" class=" col-md-2 col-sm-4 col-xs-4">
+                    <h3><a href= {% url 'boards:person_detail' patient.pk %}>{{ patient.name|default:_('') }}</a></h3>
+                    <p class="idnum">{{ patient.idnum |default:_('') }}</p>
                 </div>
                 <!---标签-->
-                <div class=" col-md-1 col-sm-4 col-xs-8">
-                    医生：
+                <div class=" col-md-1 col-sm-4 col-xs-8" style="background-color: #8ce488">
+                    <p>医生<a href="{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal"
+                            data-target="#myModal-editlabel">
+                        <i class="fa fa-edit"> </i></a></p>
                     {% if patient.comment_label %}
-                        <span class="label label-default">{{ patient.comment_label }} </span>
+                        <p><span class="label label-warning">{{ patient.comment_label }} </span></p>
                     {% endif %}
-                    <a href="{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal"
-                       data-target="#myModal-editlabel">
-                        <span class="fa fa-edit"> </span></a>
-                    <br>
-                    {#                    <a href="{{ ykyurl }}">易看牙</a>#}
+
+
                 </div>
 
                 <!---其余信息-->
                 <div class="row col-md-8 col-sm-8 col-xs-8">
-                    <div class="col-md-2 col-sm-2 col-xs-10">病历号：{{ patient.idnum |default:_('') }}</div>
                     <div class="col-md-4 col-sm-4 hidden-xs">备注：{{ patient.comment |default:_('') }}</div>
                     <div class="col-md-1 col-sm-1 col-xs-1">
                         <a href="/admin/boards/person/{{ patient.pk }}/change/">

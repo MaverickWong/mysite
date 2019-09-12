@@ -26,7 +26,7 @@ class AddForm(forms.Form):
 	                       widget=forms.TextInput(attrs={'class': 'form-control'}))
 	shortname = forms.CharField(label='名称首字母', required=True, max_length=10, widget=forms.TextInput(attrs={}))
 	count = forms.IntegerField(label='数量', required=True)
-	min_count = forms.IntegerField(label='报警数量', required=True)
+	min_count = forms.IntegerField(label='报警数量', required=True, help_text='库存低于报警数量时，自动红色标记')
 	comment = forms.CharField(label='备注', required=False, max_length=200)
 	group = forms.ChoiceField(label='分组', required=False, choices=DrugItem.big_group_choice)
 	status = forms.ChoiceField(label='状态', required=False, choices=DrugItem.status_choice)
@@ -68,8 +68,11 @@ def add(request):
 			task.endTime = endTime
 			task.save()
 
-			detail = InOutDetail.objects.create(prop='+', count=count, comment=comment, drugitem=task)
-			detail.save()
+			# 创建时即增加初始记录
+			if count > 0:
+				detail = InOutDetail.objects.create(prop='+', count=count, comment=comment, drugitem=task)
+				detail.save()
+
 			# 标签
 			# tag_list = request.POST['newTags']
 			# new_tag_list = tag_list.split(' ')

@@ -20,7 +20,8 @@ urlpatterns = [
 
 	# 新建患者
 	url(r'^new/$', new_person, name='new_person'),
-	# url(r'^wrong/', wrong, name='wrong'),
+
+	url(r'^wrong/', wrong, name='wrong'),  # 重复患者
 	# url(r'^test/', test, name='test'),
 	# url(r'^testdata/', testdata),
 
@@ -31,6 +32,10 @@ urlpatterns = [
 
 	# 下载所有照片
 	url(r'^down/(?P<pk>\d+)/$', down_zip, name='down_posts'),
+	url(r'^downm/(?P<pk>\d+)/$', down_mid_zip, name='down_mid'),
+	url(r'^downpost/(?P<postpk>\d+)/', down_post_mid_zip, name='down_post_mid'),
+	url(r'^downpostfull/(?P<postpk>\d+)/', down_post_zip, name='down_post_full'),
+
 	# 为person添加tag
 	url(r'^addtag/(?P<pk>\d+)/', add_tag_for_person, name='add_tag'),
 

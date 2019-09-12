@@ -28,6 +28,9 @@ class ApptItem(models.Model):
 	endDateTime = models.DateTimeField(null=True, blank=True)
 	createDateTime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
+	assistantId = models.IntegerField(null=True, blank=True)
+	assistantName = models.CharField(max_length=16, null=True)
+
 	comment = models.TextField(max_length=100, null=True, blank=True)
 
 	# status = models.IntegerField(choices=status, null=False, blank=True)

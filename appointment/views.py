@@ -107,6 +107,7 @@ def get_appointments_of_date(date_str, isUpdate=False):
 
 				newitem = ApptItem.objects.create(linkedApptID=item['appointId'], comment=item['notes'],
 				                                  patient=p, patientName=item['patientName'],
+				                                  # assistantId=item['assistantId'], assistantName=item['assistantName'],
 				                                  dateForAppt=newDateforAppoint,
 				                                  isFirstVisit=item['isFirstVisit'],
 				                                  isCharged=item['hasChargeOrder'], hasRevisit=item['hasRevisit'],

@@ -25,6 +25,8 @@ venv/
 newenv/
 bower_components/
 migrations/
+src/
+static/plugins/
 
 .tox
 node_modules/

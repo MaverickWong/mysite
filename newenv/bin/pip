@@ -1,5 +1,4 @@
-#!/Users/wcy/Documents/mysite2/newenv/bin/python3
-
+#!/Users/wang/Documents/mysite2/newenv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

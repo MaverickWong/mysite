@@ -1,0 +1,349 @@
+############################
+收费
+    ################################
+    收费统计
+        https://api.linkedcare.cn:9001/api/v1/charge-order/patient-price-info/145330'
+
+        totalPlanPrice	40072
+        totalActualPrice	28072
+        totalOverdue	12000
+        totalAdvacePrice	0
+
+
+    ##########################
+    收费细节item
+        url_detaillist = 'https://api.linkedcare.cn:9001/api/v1/charge-order/paging?hasCancel=true&hasOverdue=true&hasRefund=true&hasSquare=true&pageIndex=1&pageSize=10&patientId=145330'
+
+        pageIndex	1
+        pageSize	10
+        pageCount	1
+        totalCount	3
+        items	[…]
+            0	{…}
+                chargeOrderDetailList	[]
+                chargeOrderSimpleDetailList	[…]
+                    0	{…}
+                        chargeOrderId	255025
+                        sourceDetailId	105547
+                        chargeType	正畸费
+                        chargeSuperType	缺省大类
+                        originalTotalPrice	10000
+                        totalPrice	10000
+                        allowDiscount	null
+                        discount	100
+                        discountPrice	0
+                        actualPrice	10000
+                        overdue	0
+                        isReimburse	false
+                        price	10000
+                        doctorId	913
+                        doctorName	张栋梁
+                        nurseId	null
+                        nurseName
+                        consultantId	null
+                        consultantName
+                        sellerId	null
+                        id	105547
+                giftCertificateList	[]
+                officeAdvancePaymentUsedInfoList	null
+                groupBuyCertificateList	null
+                chargeDeductionExecution	null
+                freeField	null
+                id	255025
+                appointmentId	411973
+                patientId	145330
+                memberShipCardId	null
+                payOfficeId	122
+                giftCertificateId	null
+                giftTransactionId	null
+                sourceChargeOrderId	255025
+                fromChargeOrderId	0
+                giftCardId	null
+                insuranceOrderId	null
+                yibaoOrderId	0
+                tenantId	47d876b6-fc2f-4842-b88e-85ef85425e34
+                officeId	122
+                lisOrderId	null
+                totalPrice	10000
+                planPrice	10000
+                actualPrice	10000
+                overdue	0
+                discountPrice	0
+                discount	100
+                payType	银行卡
+                actualPrice1	10000
+                payType2
+                actualPrice2	null
+                payType3
+                actualPrice3	null
+                advancePlanPrice	0
+                advancePrice	0
+                advanceOverdue	0
+                advancePricePaymentTypes	null
+                scenario	0
+                recordCreatedTime	2016-04-17T18:51:40
+                recordUpdatedTime	2016-11-22T00:26:26
+                payDateTime	2016-04-17T18:51:40
+                visitingTime	null
+                payeeId	975
+                payee	管理员
+                doctorId	913
+                doctorName	张栋梁
+                nurseId	0
+                nurseName
+                consultantId	null
+                consultantName	null
+                billNo	null
+                comments
+                authCode	null
+                chargePoint	null
+                createBy	null
+                recordCreatedUser	-1
+                overdueStatus	null
+                reason	null
+                status	已收费
+                orderType	simple
+                isHandle	null
+                notUseMembershipDiscount	false
+                isAppend	null
+                feeType	0
+                feeSubType	0
+                channel	0
+                isAliPay	false
+                isWeixinPay	false
+                isNotAutoCheckOut	false
+                isArchived	null
+                isNeedConfirm	false
+                isConfirmed	false
+                isDefaultDeduction	false
+                workflowStatus	null
+                workflowType	null
+                workflowApprovedTime	null
+                deviceCode	null
+                lastTimeOverdue	0
+                officeName	null
+                isPrompt	false
+                allowWeixinBillOrder	false
+                openId	null
+                isAliPayOrder	null
+                membershipTransaction	null
+                isOldCharge	false
+                isPayOverdue	false
+                isOldToNew	false
+        '''
+
+
+    ############################
+    收费条目item下面的收费账单说明（child-bill）
+        例如交了28000，18000是微信，10000是现金
+
+    https://api.linkedcare.cn:9001/api/v1/charge-order/bill-child/855336
+
+        chargeOrderDetailList	[]
+        chargeOrderSimpleDetailList	[…]
+        giftCertificateList	[]
+        officeAdvancePaymentUsedInfoList	null
+        groupBuyCertificateList	null
+        chargeDeductionExecution	null
+        freeField	null
+        id	855336
+        appointmentId	1438679
+        patientId	484991
+        memberShipCardId	null
+        payOfficeId	122
+        giftCertificateId	0
+        giftTransactionId	null
+        sourceChargeOrderId	855336
+        fromChargeOrderId	0
+        giftCardId	0
+        insuranceOrderId	null
+        yibaoOrderId	0
+        tenantId	47d876b6-fc2f-4842-b88e-85ef85425e34
+        officeId	122
+        lisOrderId	null
+        totalPrice	40000
+        planPrice	40000
+        actualPrice	10000
+        overdue	30000
+        discountPrice	0
+        discount	100
+        payType	微信支付
+        actualPrice1	10000
+        payType2
+        actualPrice2	0
+        payType3
+        actualPrice3	0
+        advancePlanPrice	0
+        advancePrice	0
+        advanceOverdue	0
+        advancePricePaymentTypes	null
+        scenario	0
+        recordCreatedTime	2019-07-14T10:28:32
+        recordUpdatedTime	2019-07-14T10:28:32
+        payDateTime	2019-07-14T10:28:10
+        visitingTime	null
+        payeeId	2191
+        payee	骆瑞
+        doctorId	913
+        doctorName	张栋梁
+        nurseId	null
+        nurseName
+        consultantId	null
+        consultantName	null
+        billNo	0016635
+        comments
+        authCode	null
+        chargePoint	null
+        createBy	null
+        recordCreatedUser	1429
+        overdueStatus	null
+        reason
+        status	已收费
+        orderType	simple
+        isHandle	false
+        notUseMembershipDiscount	null
+        isAppend	false
+        feeType	0
+        feeSubType	0
+        channel	1
+        isAliPay	false
+        isWeixinPay	false
+        isNotAutoCheckOut	false
+        isArchived	null
+        isNeedConfirm	false
+        isConfirmed	false
+        isDefaultDeduction	false
+        workflowStatus	null
+        workflowType	null
+        workflowApprovedTime	null
+        deviceCode	null
+        lastTimeOverdue	0
+        officeName	null
+        isPrompt	false
+        allowWeixinBillOrder	false
+        openId	null
+        isAliPayOrder	null
+        membershipTransaction	null
+        isOldCharge	false
+        isPayOverdue	false
+        isOldToNew	false
+
+
+###########################
+
+
+'''  预约列表
+https://api.linkedcare.cn:9001/api/v1/appointment-record/patient/145330
+
+    0	{…}
+        id	1443910
+        officeId	122
+        startTime	2019-07-19T08:00:00
+        endTime	2019-07-19T08:30:00
+        doctorId	913
+        doctorName	张栋梁
+        department
+        assistantId	null
+        assistantName	null
+        consultantId	null
+        consultantName	null
+        appointmentType	0
+        isFirstVisit	false
+        isConfirmed	false
+        isCheckedIn	false
+        isSeated	false
+        isCompleted	false
+        isCheckedOut	false
+        isLeft	false
+        isCancelled	false
+        isFailed	false
+        isPending	false
+        notes	甄浩，佩戴保持器。
+        recordCreatedUser	592
+        recordCreatedUserName	钟娜
+        recordCreatedTime	2019-07-18T09:03:31
+        procedures	[…]
+        drugorderId	0
+        imageId	0
+        generalExamId	0
+        patientDocumentId	0
+        outProcessorderId	0
+        medicalRecordId	0
+        chargeOrderId	0
+        sourceType	null
+        medicalRecordLites	[]
+        checkInType	复诊
+'''
+
+
+
+
+
+####################################
+# 根据预约id找相对应的图片list
+每张图的内容
+}
+        appointmentId: 1222210
+        categoryId: 1
+        comment: null
+        examId: null
+        fullImageUrl: "http://imaging.oss-cn-hangzhou.aliyuncs.com/47d876b6-fc2f-4842-b88e-85ef85425e34/124/432349/2018/c498985e-0e0b-47c6-879b-55fbc9b08e94/C1.jpg?Expires=1540245541&OSSAccessKeyId=w0hFljLIV1wbGBWX&Signature=Zzo3pPukAy%2FG6NYB%2Bxq96TIJKA8%3D"
+        height: 1615
+        id: 100975
+        imageType: "normal"
+        instanceUID: null
+        marketCenterAccount: null
+        mediumSizeImageUrl: "http://imaging.oss-cn-hangzhou.aliyuncs.com/47d876b6-fc2f-4842-b88e-85ef85425e34/124/432349/2018/c498985e-0e0b-47c6-879b-55fbc9b08e94/C1.medium.jpg?Expires=1540245541&OSSAccessKeyId=w0hFljLIV1wbGBWX&Signature=JAbMTW07Qqqwo0%2BJ0DRFDNJVF6I%3D"
+        officeId: 124
+        orthoImagePostion: 0
+        orthoImageType: null
+        patientId: 432349
+        position: ""
+        providerId: 2753
+        seriesUID: null
+        studyUID: null
+        thumbnailUrl: "http://imaging.oss-cn-hangzhou.aliyuncs.com/47d876b6-fc2f-4842-b88e-85ef85425e34/124/432349/2018/c498985e-0e0b-47c6-879b-55fbc9b08e94/C1.thumnail.jpg?Expires=1540245541&OSSAccessKeyId=w0hFljLIV1wbGBWX&Signature=qeo9Q9sbDIHoI5j%2FvkwsCc9dfI4%3D"
+        width: 1236
+}
+
+
+
+###################################
+# 根据预约id找相对应的预约列表
+{
+    appointmentType: 0
+    assistantId: null
+    assistantName: null
+    chargeOrderId: 0
+    checkInType: null
+    consultantId: null
+    consultantName: null
+    doctorId: 913
+    doctorName: "张栋梁"
+    drugorderId: 0
+    endTime: "2018-11-10T16:00:00"
+    generalExamId: 0
+    id: 1222594
+    imageId: 0
+    isCancelled: false
+    isCheckedIn: false
+    isCheckedOut: false
+    isCompleted: false
+    isConfirmed: false
+    isFailed: false
+    isFirstVisit: true
+    isLeft: false
+    isPending: false
+    isSeated: false
+    medicalRecordId: 0
+    medicalRecordLites: []
+    notes: null
+    officeId: 124
+    outProcessorderId: 0
+    patientDocumentId: 0
+    procedures: []
+    recordCreatedTime: "2018-10-13T18:45:43"
+    recordCreatedUser: 1903
+    sourceType: null
+    startTime: "2018-11-10T15:30:00"
+}

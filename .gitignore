@@ -1,4 +1,5 @@
-
+**/node_modules/
+**/node_modules
 static/picture/
 db.sqlite3
 
@@ -18,8 +19,13 @@ tmp
 .settings
 
 .idea
-/env
-/envs
+env/
+envs/
+venv/
+newenv/
+bower_components/
+migrations/
+
 .tox
 node_modules/
 .python-version

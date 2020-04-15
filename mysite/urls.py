@@ -20,18 +20,26 @@ from mysite.views import *
 from accounts import views as accounts_views
 from django.contrib.auth import views as auth_views
 from record import urls as recordurls
+from django.views.generic.base import TemplateView
+
+from rest_framework.authtoken.views import obtain_auth_token
+
 
 # 测试 restful-api
-from charge_record.views import ChargeOrderViewSet
+from charge_record.views import ChargeOrderViewSet, ChargeSummaryViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'chargeorder', ChargeOrderViewSet)
+router.register(r'chargesum', ChargeSummaryViewSet)
+
 
 
 urlpatterns = [
 	url(r'^api/', include(router.urls)),  # 测试restful
 	url('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-token-auth/', obtain_auth_token), # api认证返回token
+    url('test3', TemplateView.as_view(template_name='index.html')),
 
     url(r'^admin/', admin.site.urls),
     # url(r'^$', home, name='home'),

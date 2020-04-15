@@ -15,6 +15,9 @@ urlpatterns = [
     url(r'^import/(?P<pk>\d+)/$', import_record, name='importRecord'),
 
     url(r'^api/$', ChargeOrderView.as_view(), name='api'),
+    url(r'^api/chargesum_person/(?P<pk>\d+)/$', ChargeSumOfPatient.as_view(), name='api3'),
+    url(r'^api/charge_person/(?P<pk>\d+)/$', ChargeOfPatient.as_view(), name='api4'),
+
     url(r'^api/test/$', testViewSet.as_view({'get': 'list', 'post': 'create'}), name='api2'),
     url(r'^login', login),
 

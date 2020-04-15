@@ -1,36 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="zdlteam.com" deleteMissingItems="true" createEmptyFolders="true" uploadOnCheckin="73730ef1-0b0b-428f-a8a5-a16d95a7fc2a">
-    <serverData>
-      <paths name="caresmile.cn">
-        <serverdata>
-          <mappings>
-            <mapping deploy="mysite" local="$PROJECT_DIR$" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="dell">
-        <serverdata>
-          <mappings>
-            <mapping deploy="mysite2" local="$PROJECT_DIR$" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="pi_local">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/mysite" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="zdlteam.com">
-        <serverdata>
-          <mappings>
-            <mapping deploy="mysite2" local="$PROJECT_DIR$" />
-          </mappings>
-        </serverdata>
-      </paths>
-    </serverData>
-    <option name="myUploadOnCheckinName" value="zdlteam.com" />
-  </component>
+  <component name="PublishConfigData" serverName="zdlteam.com" />
 </project>

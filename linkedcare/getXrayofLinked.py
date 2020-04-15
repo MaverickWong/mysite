@@ -39,10 +39,14 @@ picDir = base + '/static/picture'
 # linkedcareId = 432349
 UrlGetApptList = "https://api.linkedcare.cn:9001/api/v1/appointment-record/patient/"
 # https: // api.linkedcare.cn: 9001 / api / v1 / appointment - record / patient / 432349
+UrlGetApptList = "https://api.linkedcare.cn:9001/api/v1/appointments/search-with-images?cancel=false&isPending=false&patientId="
 
 UrlGetImage = "https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId="
-# https://api.linkedcare.cn:9001/api/v1/imaging?appointmentId=1222210
-# s = logIn()
+
+# 2019.12.6
+# 先请求这个地址，返回很多复诊日期数组，从里面挑出images数组（不是null就行），
+#'https://api.linkedcare.cn:9001/api/v1/appointments/search-with-images?cancel=false&endTime=2019-12-07&isPending=false&patientId=357726'
+
 
 # 从cookie中获取token
 token = None
@@ -70,6 +74,7 @@ def getXrayOfperson(s, person):
         re = s.get(UrlGetApptList + str(person.linkedcareId), headers=headers)
         # json  {id: 1222594, officeId: 124, startTime: "2018-11-10T15:30:00", endTime: "2018-11-10T16:00:00",…}
 
+        # 提前修改文件夹，防止出错
         # person = Person.objects.get(linkedcareId=linkedcareId)
         # privDir = picDir + '/' + person.name + '_' + str(person.idnum) + '/'
         if person.privateDir:
@@ -186,4 +191,4 @@ def mainfunc():
 
 
 if __name__ == '__main__':
-    pass
+    mainfunc()

@@ -56,7 +56,9 @@ INSTALLED_APPS = [
     'charge_record',
     # 'filemanager',
     # 'linkedcare',
+    # 'api-utils',
 	'rest_framework',
+	'rest_framework.authtoken',
     'baseinfo',
 	'summary',
 	'appointment',
@@ -82,7 +84,10 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                 # os.path.join(BASE_DIR, 'vue-admin-template/dist'),
+				os.path.join(BASE_DIR, 'vue-element/dist'),
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -155,19 +160,26 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    # '/Users/Wang/static',
+	os.path.join(BASE_DIR, 'vue-admin-template/dist/static'),
+	os.path.join(BASE_DIR, 'vue-element/dist/static'),
+
+	# '/Users/Wang/static',
 ]
 
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home2'
 
+
+# api-设置
 REST_FRAMEWORK = {
-	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-	'PAGE_SIZE': 10
+	# 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+	'DEFAULT_PAGINATION_CLASS': 'api_utils.custom_pagination.UserPagination',
+	'PAGE_SIZE': 10,
+	'EXCEPTION_HANDLER': 'api_utils.custom_exception.custom_exception_handler',
 }
 
-# CORS
+# CORS-跨域访问
 CORS_ORIGIN_WHITELIST = [
 	'http://localhost:8000',
 	'http://192.168.11.17:8001',
@@ -175,3 +187,4 @@ CORS_ORIGIN_WHITELIST = [
 	'http://localhost:8000',
 ]
 CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作。
+

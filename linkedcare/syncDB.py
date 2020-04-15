@@ -21,6 +21,11 @@ from mysite.settings import BASE_DIR
 
 agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
+account = "zhangdongliang"
+passwd = "hehe58761678"
+
+
+# officeId 劲松122 华贸124 禾禾 326
 
 def test():
 	print('tesst')
@@ -31,12 +36,13 @@ def logIn(officeId=122, userId=745):
 	'''
     先判断是否有cookie保存，如果有，则用cookie登录。
     如果没有cookie，则调用用户名登录，并保存cookie
-    :param officeId:
-    :param userId:
+    :param officeId: 劲松122 华贸124 禾禾 326
+    :param userId: 没用 5103
     :return:
     '''
-	# officeId 劲松122 华贸124
-	targetURL = 'http://simaier.linkedcare.cn/'
+
+	# targetURL = 'http://simaier.linkedcare.cn/'
+	targetURL = 'http://bjhhkq.linkedcare.cn/'
 
 	# 设置头UA
 	headers = {
@@ -90,15 +96,18 @@ def logIn(officeId=122, userId=745):
 
 
 def login_save_cookie(officeId=122, userId=745):
-	account = "zhangdongliang"
-	passwd = "simaierzdl123"
+	officeId = 326
+	# account = "zhangdongliang"
+	# passwd = "simaierzdl123"
 	# 登陆参数
 	logURL = "https://simaier.linkedcare.cn/LogOn"
+	logURL = 'https://bjhhkq.linkedcare.cn/LogOn'
+
 	agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
 
 	# print(officeId)
 	payload = {"officeId": officeId, "account": account, "password": passwd, "validationCode": "",
-	           "platform": 1, "kickOther": "false", "clientId": "7c378f28-6bc8-4c1a-a40e-3ba38a0b48fd",
+	           "platform": 1, "kickOther": "false", "clientId": "fa28b13b-3161-4605-ae95-c6d4f35c5064",
 	           "isCheckMobileValidation": "", "mobileValidationCode": ""}
 	# 登录并获得session
 	s = requests.session()
@@ -199,8 +208,8 @@ def queryPatients(session, pageindex=1, pageSize=100, officeId=122, userId=2042)
     :param session:
     :param pageindex: 默认1
     :param pageSize: 默认1000
-    :param officeId: 劲松122 华贸124 默认劲松
-    :param userId: 默认2042
+    :param officeId: 劲松122 华贸124 禾禾 326 默认劲松
+    :param userId: 默认2042 呵呵5103
     :return: json列表
     '''
 	# 默认劲松
@@ -509,14 +518,15 @@ def update_baseinfo_for_person_with_item(person, item):
     :param item:
     :return:
     '''
-	if item['birth']:
-		birth = item['birth'][0:10]
-		person.birth = birth
-		person.save()
-	else:
-		birth = None
 
 	try:
+		if item['birth']:
+			birth = item['birth'][0:10]
+			person.birth = birth
+			person.save()
+		else:
+			birth = None
+
 		person.linkedcareId = item['id']
 		person.mobile = item['mobile']
 		person.nameCode = item['nameCode']
@@ -540,7 +550,7 @@ def update_baseinfo_for_person_with_item(person, item):
 		return True
 
 	except:
-		print('baseinfo 写入失败')
+		print('baseinfo 写入失败 %s' % person.name)
 		return False
 
 
@@ -776,9 +786,9 @@ def update_charge_record_of_patient(person, items, session):
 				# 导入child——bill
 				update_child_charge_record_of_record(person, record, session)
 
-		# except:
-		#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
-		#     return False
+	# except:
+	#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
+	#     return False
 
 
 def update_child_charge_record_of_record(person, charge_record, session):
@@ -843,9 +853,122 @@ def update_child_charge_record_of_record(person, charge_record, session):
 						record.recordCreatedTime = ctime
 						record.save()
 
-				# except:
-				#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
-				#     return False
+			# except:
+			#     print('收费写入失败 患者：%s  收费id %d' % (person.name, item['id']))
+			#     return False
+
+
+'''
+
+搜索iamge也就是预约数组
+https://api.linkedcare.cn:9001/api/v1/appointments/search-with-images?cancel=false&endTime=2020-02-26&isPending=false&patientId=353317
+	返回的数组内images不是空，则对应的有图
+	
+图片post地址
+	https://api.linkedcare.cn:9201/api/v1/image-upload?appointmentId=1833516&categoryId=1
+'''
+
+
+def uploadImageToLinkedcare(session, person):
+	'''获取收费记录'''
+	p = person
+	if not p.linkedcareId:  # 没有id
+		# 先搜索，爬取
+		item = search_person_from_linked(p, session)
+		# data = search_from_linked(p.name, s)
+		if item:  # 判断是否有内容
+			if item['name'] == p.name and item['privateId'] == p.idnum:
+				# print('成功写入：pk--%d, %s id--%d' % (p.pk, p.name, p.linkedcareId))
+				update_baseinfo_for_person_with_item(p, item)
+				# get_charge_record_of_patient(session, person)
+				# todo
+				return '导入成功'
+
+			else:
+				# todo
+				print('未搜到患者%s pk %d，未写入' % (p.name, p.pk))
+				return '未搜到患者%s pk %d，未写入' % (p.name, p.pk)
+		else:
+			print('未搜到患者%s，未写入' % (p.name))
+			return '未搜到患者%s pk %d，未写入' % (p.name, p.pk)
+
+	else:  # 有id
+
+		# 获取预约列表
+		url_sum = 'https://api.linkedcare.cn:9001/api/v1/appointments/search-with-images?cancel=false' + \
+		          '&endTime=2020-02-26&isPending=false&patientId=' + str(p.linkedcareId)
+
+		headers = get_headers(session)
+		# if p.charge_summary.count() == 0:  # 先检查是否存在，没有则创建
+		r = session.get(url_sum, headers=headers)
+		# totalcount = eval(r.content)["totalCount"]
+		if r.status_code == 200:
+			res = json.loads(r.content.decode('utf-8'))
+			# print(r2)
+			print('%s  下载到预约列表' % (p.name))
+			update_image_for_apptslist(p, res)
+		else:
+			print('%s  下载预约失败！' % (p.name))
+
+
+# post 如果有name，且为日期，则按照name的日期，
+#   没有日期，是汉字啥的，则放到第一个。
+#   没有name则按照upLoadTime日期。
+'''
+
+'''
+from boards.models import Person, Post
+
+def update_image_for_apptslist(person, apptItems):
+	import re, time
+
+	d2 = u"[d]+"  # 匹配 数字
+	patternDigt = re.compile(r'\d+')  # 查找数字
+	# pass
+	utc = pytz.utc
+
+	for post in person.posts:
+
+		if post.name:  # post 有name
+			timelist = patternDigt.findall(post.name)
+			if len(timelist):  # 同时name中能提取到数字
+				# 开始比较数字日期，挑选合适的
+				s_time = time.mktime(time.strptime(timelist[0], '%Y%m%d'))
+				for item in apptItems:
+					# if not len(item['images']) == 0: #imges 不为空
+					dt = datetime.strptime(item['startTime'], '%Y-%m-%dT%H:%M:%S')
+					ctime = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+
+			else:  # 取不到数字
+				# 放入第一个
+				pass
+
+		else:  #post 没有name
+			# 按照upLoadTime日期 选择复诊日期并上传
+			pass
+
+
+
+
+
+
+
+	#record.recordCreatedTime = ctime
+
+
+	# id， startTime，endTime
+	# 修改创建时间 #'2018-07-29T09:48:37'  recordCreatedTime
+
+	# try:
+	# sum = ChargeSummary.objects.create(person=person,
+	#                                    totalActualPrice=items['totalActualPrice'],
+	#                                    totalPlanPrice=items['totalPlanPrice'],
+	#                                    totalOverdue=items['totalOverdue'],
+	#                                    totalAdvacePrice=items['totalAdvacePrice'],
+	#                                    importText=str(items))
+	# print(' %s charge_summary 写入成功' % (person.name))
+
+
 
 
 if __name__ == '__main__':

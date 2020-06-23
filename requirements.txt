@@ -14,7 +14,7 @@ idna==2.7
 kombu==4.3.0
 libmagic==1.0
 numpy==1.15.2
-opencv-python==3.4.3.18
+
 Pillow==5.3.0
 prometheus-client==0.2.0
 python-magic==0.4.15

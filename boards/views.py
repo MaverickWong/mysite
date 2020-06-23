@@ -144,7 +144,7 @@ def down_post_mid_zip(requet, postpk):
 		f = open(output_filename, 'rb')
 		response = FileResponse(f, content_type=content_type)
 		# response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
-		response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
+		response['Content-Disposition'] = 'attachment; filename="' + str(p.id) + '.zip"'
 		# response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
 
 		return response
@@ -176,7 +176,7 @@ def down_post_zip(requet, postpk):
 		f = open(output_filename, 'rb')
 		response = FileResponse(f, content_type=content_type)
 		# response['Content-Disposition'] = 'attachment;filename="example.tar.gz"'
-		response['Content-Disposition'] = 'attachment; filename="' + smart_str(p.name) + '.zip"'
+		response['Content-Disposition'] = 'attachment; filename="' + str(p.id) + '.zip"'
 		# response['Content-Disposition'] = 'attachment;filename="{0}"'.format(p.name.encode('utf-8'))
 
 		return response
@@ -432,9 +432,9 @@ def handle_file(request, person, post):
 			if im:
 				try:
 					im.thumbnail(msize)
-					im.save(mediumpath, "JPEG")
+					im.save(mediumpath)
 					im.thumbnail(ssize)
-					im.save(iconpath, "JPEG")
+					im.save(iconpath)
 
 				except IOError:
 					print("cannot create thumbnail")

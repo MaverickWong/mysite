@@ -19,6 +19,8 @@ tmp
 .settings
 
 .idea
+
+#folder
 env/
 envs/
 venv/

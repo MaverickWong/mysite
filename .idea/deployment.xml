@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="zdlteam.com" />
+  <component name="PublishConfigData" serverName="ubuntu">
+    <serverData>
+      <paths name="ubuntu">
+        <serverdata>
+          <mappings>
+            <mapping deploy="mysite2" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="zdlteam.com">
+        <serverdata>
+          <mappings>
+            <mapping deploy="mysite2" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
 </project>

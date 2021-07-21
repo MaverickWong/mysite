@@ -13,6 +13,8 @@ from datetime import datetime
 import os
 import json
 from PIL import Image as Image2
+# from Pillow import Image as Image2
+
 
 import mimetypes, zipfile
 from django.utils.encoding import smart_str
@@ -371,7 +373,7 @@ def handle_file(request, person, post):
 	# 返回结果
 	results = {}
 	results["files"] = []
-	print(files)
+	# print(files)
 
 	i = 0
 	for f in files:
@@ -426,10 +428,42 @@ def handle_file(request, person, post):
 
 		# 制作缩略图函数
 		if os.path.exists(path):
+			# im = Image2.open(path)
+			# ssize = (400, 400)
+			# msize = (1200, 1200)
+			# if im:
+			# 	try:
+			# 		im.thumbnail(msize)
+			# 		im.save(mediumpath)
+			# 		im.thumbnail(ssize)
+			# 		im.save(iconpath)
+			#
+			# 	except IOError:
+			# 		print("cannot create thumbnail")
+
+			# 2020.12.25增加图像旋转
 			im = Image2.open(path)
-			ssize = (400, 400)
-			msize = (1200, 1200)
+			from PIL import ExifTags
 			if im:
+				try:
+					for orientation in ExifTags.TAGS.keys():
+						if ExifTags.TAGS[orientation] == 'Orientation':
+							break
+
+					exif = dict(im._getexif().items())
+					if exif[orientation] == 3:
+						im = im.rotate(180, expand=True)
+
+					elif exif[orientation] == 6:
+						im = im.rotate(270, expand=True)
+
+					elif exif[orientation] == 8:
+						im = im.rotate(90, expand=True)
+				except:
+					print("cannot rotate")
+
+				ssize = (400, 400)
+				msize = (1200, 1200)
 				try:
 					im.thumbnail(msize)
 					im.save(mediumpath)
@@ -489,7 +523,7 @@ def handle_file(request, person, post):
 def new_person(request):
 	# board = get_object_or_404(Board, pk=pk)
 	if request.method == 'POST':
-
+  
 		docname = request.user.username
 		# message = request.POST['ID']
 		tag_list = request.POST['newTags']
@@ -505,11 +539,15 @@ def new_person(request):
 
 		# dir = 'static/picture/' + name + '_' + idnum + '/'
 		# 根据每个医生user名生成文件夹
+
 		docDir = 'static/picture/' + docname + '/'
+		# docDir = doc.encode('utf-8')
 		if not os.path.exists(docDir):
 			os.makedirs(docDir)
 		#  创建privateDir
+		# privateDir = docDir + name + sep + str(idnum) + '/'
 		privateDir = docDir + name + sep + str(idnum) + '/'
+
 		if not os.path.exists(privateDir):
 			os.makedirs(privateDir)
 

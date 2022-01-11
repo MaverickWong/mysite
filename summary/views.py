@@ -5,6 +5,7 @@ from boards.models import Person, Post, Image, Tag
 from record.models import Record
 from mysite.views import get_client_ip
 
+
 # Create your views here.
 
 
@@ -66,11 +67,12 @@ def home(request):
 from django.db.models.functions import ExtractYear, ExtractMonth
 from django.db.models import Count
 
-def num_of_month(request):
 
-	q = Person.objects.filter(creatAt__gt="2019-04-30").annotate(year=ExtractYear('creatAt'), month=ExtractMonth('creatAt'))\
+def num_of_month(request):
+	q = Person.objects.filter(creatAt__gt="2019-04-30").annotate(year=ExtractYear('creatAt'),
+	                                                             month=ExtractMonth('creatAt')) \
 		.values('year', 'month').order_by('year', 'month').reverse().annotate(num=Count('id'))
 
-	contx = { 'sum':q,}
+	contx = {'sum': q, }
 
 	return render(request, 'summary/num_of_month.html', contx)

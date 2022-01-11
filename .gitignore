@@ -1,6 +1,6 @@
 **/node_modules/
 **/node_modules
-static/picture/
+/static/picture/
 db.sqlite3
 
 #Python
@@ -145,6 +145,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+newenv/
 
 # Spyder project settings
 .spyderproject
@@ -155,6 +156,8 @@ venv.bak/
 
 # mkdocs documentation
 /site
+/static/boards
+/static/bower_components
 
 # mypy
 .mypy_cache/
@@ -163,3 +166,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+/log/

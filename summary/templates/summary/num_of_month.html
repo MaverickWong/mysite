@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}病历管理系统
+{% endblock %}
+
+{% block link %}
+    <script src="{% static 'jschart/jchart.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'jschart/main.css'%}">
+{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
+{% endblock %}
+
+{% block stylesheet %}
+{% endblock %}
+
+
+{% block content %}
+
+    <!---  图表  jschart
+        {# http://www.htmleaf.com/jQuery/Chart/201510172678.html #}
+    --->
+    <div id="bar_of_pies"  class="jChart chart-lg" name="月增人数统计">
+        {% for month in sum %}
+            <div class="define-chart-row" data-color="blue" title="{{month.year}}-{{month.month}} "> {{month.num}} </div>
+        {% endfor %}
+
+        <div class="define-chart-footer">100</div>
+        <div class="define-chart-footer">200</div>
+        <div class="define-chart-footer">300</div>
+        <div class="define-chart-footer">400</div>
+        <div class="define-chart-footer">500</div>
+
+    </div>
+
+    <script>
+        $("#bar_of_pies").jChart();
+    </script>
+
+    <!--- 统计表格  --->
+    <div class="col-lg-12 col-sm-12  row">
+        <table border="1">
+            <tr>
+                <th>月份</th> <th>人数</th>
+            </tr>
+
+            {% for month in sum %}
+                <tr >
+                    <td > {{month.year}}-{{month.month}}  </td>
+                    <td align="right"> {{month.num}}   </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

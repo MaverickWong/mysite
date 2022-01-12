@@ -1,7 +1,6 @@
 **/node_modules/
 **/node_modules
 /static/picture/
-db.sqlite3
 
 #Python
 *.pyc
@@ -156,7 +155,6 @@ newenv/
 
 # mkdocs documentation
 /site
-/static/boards
 /static/bower_components
 
 # mypy

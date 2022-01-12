@@ -45,7 +45,7 @@ urlpatterns = [
     # url(r'^$', home, name='home'),
     # url(r'^$', bad, name='home'),  # 维护升级用
     url(r'^$', show_home, name='home'),   # 第1主页入口
-    url(r'^home2', home, name='home2'),  # 第二主页入口
+    url(r'^list_by_page', list_by_page, name='list_by_page'),  # 第二主页入口
 
     url(r'^syncDB/', syncDB, name='syncdb'),  # 从易看牙同步数据
     url(r'^sync_xray/(?P<pk>\d+)/$', sync_xray_of_linkedcare_for_person, name='sync_xray'),  # 从易看牙同步数据

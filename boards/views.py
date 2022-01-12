@@ -261,7 +261,7 @@ def person_detail(request, pk):
 		          'ykyurl': yky, 'today_person_list': today_person_list,
 		          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post, }
 
-	return render(request, 'boards/detail2.html', contex)
+	return render(request, 'boards/detail.html', contex)
 
 
 @login_required()
@@ -295,7 +295,7 @@ def today_person_detail(request):
 		          'today_person_list': today_person_list,
 		          'num_xray': num_xray, }
 
-	return render(request, './boards/detail2.html', contex)
+	return render(request, './boards/detail.html', contex)
 
 
 @login_required()
@@ -316,7 +316,7 @@ def person_detail_without_sidebar(request, pk):
 		contex = {'patient': p, 'posts': posts, 'first_tab': t,
 		          'ykyurl': yky}
 
-	return render(request, 'boards/detail2.html', contex)
+	return render(request, 'boards/detail.html', contex)
 
 
 @login_required()
@@ -790,7 +790,7 @@ def posts(request, pk):
 	posts = p.posts.filter(type__lte=99).order_by('-type')
 	contex = {'patient': p, 'posts': posts}
 
-	return render(request, 'boards/detail3.html', contex)
+	return render(request, 'boards/posts_in_detail.html', contex)
 
 
 def posts_xray(request, pk):
@@ -811,7 +811,7 @@ def posts_xray(request, pk):
 	posts = p.posts.filter(type__gte=100)
 	contex = {'patient': p, 'posts': posts, 'isXray': True}
 
-	return render(request, 'boards/detail3.html', contex)
+	return render(request, 'boards/posts_in_detail.html', contex)
 
 
 def wrong(request):

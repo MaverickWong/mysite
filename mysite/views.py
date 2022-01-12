@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, FileResponse
 from boards.models import Person, Tag, Post, Image
@@ -9,10 +9,9 @@ from mysite.settings import BASE_DIR
 
 import socket
 
-from linkedcare.syncDB import get_patients_fill_DB, logIn, get_baseinfo_of_patient, add_id_for_person
+from linkedcare.syncDB import logIn, get_baseinfo_of_patient
 from linkedcare.getXrayofLinked import getXrayOfperson
 from datetime import datetime
-from mysite.settings import STATICFILES_DIRS
 
 
 def login2(request):
@@ -44,7 +43,7 @@ def show_home(request):
 
 
 @login_required()
-def home(request):
+def list_by_page(request):
 	get_client_ip(request)  # 记录ip地址
 
 	docname = request.user.username
@@ -87,7 +86,7 @@ def home(request):
 		         'total_img_num': total_img_num, 'total_record_num': total_record_num,
 		         'tgroups': tgroups, 'tags': tags, 'tag_islink': True}
 
-		return render(request, 'index.html', contx)
+		return render(request, 'list_by_page.html', contx)
 	else:
 		return redirect('login')
 
@@ -143,8 +142,6 @@ def allposts(request):
 	return render(request, 'log_counPostNum0219-152149.html')
 
 
-from celery import shared_task
-
 # @dramatiq.actor
 # @shared_task
 # def sync_db_worker():
@@ -196,7 +193,7 @@ def importFolders(request):
 	"""
     导入图像文件夹
     """
-	import readFoldersWithNameIdDate
+	from tool import readFoldersWithNameIdDate
 
 	fname = readFoldersWithNameIdDate.start()
 	import mimetypes

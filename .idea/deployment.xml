@@ -2,6 +2,13 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
+      <paths name="lenovo">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/mysite2" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="zdlteam.com">
         <serverdata>
           <mappings>

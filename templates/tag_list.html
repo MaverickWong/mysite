@@ -1,15 +1,10 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Title</title>#}
-{#</head>#}
-{#<body>#}
-<script scr="/static/js/jquery-3.3.1.min.js"></script>
+{% load staticfiles %}
+
 <table>
 {% for tgroup in tgroups %}
 {#        <hr style="margin-top: 3px;margin-bottom:3px">#}
 
+    <!-- 标签分类 -->
     <tr>
         <td >
             {% if   forloop.counter0 == 1 %} <h5 style="margin-top: 0px; margin-bottom: 0px">总分类：   </h5>
@@ -26,6 +21,8 @@
 
         </td>
     </tr>
+
+    <!-- 列出各分类下的所有标签-->
     <tr>
         <td>
            {% for t in tgroup %}
@@ -43,6 +40,7 @@
         </td>
     </tr>
 {% endfor %}
+
 
 {% if tags %}
     <tr id="showAllTags">
@@ -79,7 +77,3 @@ $(document).ready(function(){
   });
 });
 </script>
-
-
-{#</body>#}
-{#</html>#}

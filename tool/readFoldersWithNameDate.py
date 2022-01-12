@@ -22,9 +22,8 @@ django.setup()
 from boards.models import *
 import re,shutil
 # from PIL  import Image as Image2
-from pathlib import PurePosixPath
-from datetime import date, time, datetime
-from imgeprocess2 import processImg
+from datetime import datetime
+from tool.imgeprocess2 import processImg
 from mysite.settings import  BASE_DIR
 
 def is_img(ext):

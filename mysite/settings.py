@@ -85,8 +85,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 # os.path.join(BASE_DIR, 'vue-admin-template/dist'),
-				os.path.join(BASE_DIR, 'vue-element/dist'),
+                 # os.path.join(BASE_DIR, 'vue-admin-template/adminlte'),
+				os.path.join(BASE_DIR, 'vue-element/adminlte'),
                  ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -161,8 +161,8 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-	os.path.join(BASE_DIR, 'vue-admin-template/dist/static'),
-	os.path.join(BASE_DIR, 'vue-element/dist/static'),
+	os.path.join(BASE_DIR, 'vue-admin-template/adminlte/static'),
+	os.path.join(BASE_DIR, 'vue-element/adminlte/static'),
 
 	# '/Users/Wang/static',
 ]

@@ -16,14 +16,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css'%}">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css'%}">
+{#  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css'%}">#}
   <!-- Theme style -->
-  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css'%}">
+  <link rel="stylesheet" href="{% static 'adminlte/css/AdminLTE.min.css' %}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
-{#  <link rel="stylesheet" href="{% static 'dist/css/skins/skin-blue.min.css'%}">#}
-    <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css'%}">
+{#  <link rel="stylesheet" href="{% static 'adminlte/css/skins/skin-blue.min.css'%}">#}
+    <link rel="stylesheet" href="{% static 'adminlte/css/skins/_all-skins.min.css' %}">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,7 +42,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Bootstrap 3.3.7 -->
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
     <!-- AdminLTE App -->
-    <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+    <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 
 
     <script src="{% static 'js/bootstrap-suggest.js' %}"></script>
@@ -94,7 +94,7 @@ desired effect
       <span class="logo-lg">病历系统</span>
     </a>
 
-    <!-- Header Navbar -->
+    <!-- 顶部导航栏Header Navbar -->
     <nav class="navbar navbar-static-top" role="navigation">
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
@@ -102,7 +102,7 @@ desired effect
       </a>
 
       <div class="navbar-left hidden-md hidden-xs" style="padding-top: 10px">
-          <a href="{% url 'home2' %} }}" class="btn btn-primary btn-sm">首页 <span class="fa fa-home"></span></a>
+          <a href="{% url 'list_by_page' %} }}" class="btn btn-primary btn-sm">首页 <span class="fa fa-home"></span></a>
       </div>
 
       <div class="navbar-left  ">
@@ -241,7 +241,7 @@ desired effect
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
               <li class="user-header">
-                <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
+                <img src="{% static 'adminlte/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
 
                 <p>
                   {{ user }} - 正畸医生
@@ -282,13 +282,13 @@ desired effect
       </div>
     </nav>
   </header>
-  <!-- 左边栏 Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
 
+  <!-- 左边栏  -->
+  <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
 
-      <!-- Sidebar user panel (optional) -->
+      <!-- 侧边用户面板-->
       <div class="user-panel">
         <div class="pull-left image">
           <img src="{% static 'logo2.png' %}" class="img-circle" alt="User Image">
@@ -300,26 +300,14 @@ desired effect
         </div>
       </div>
 
-      <!-- search form (Optional)
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
-          <span class="input-group-btn">
-              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-              </button>
-            </span>
-        </div>
-      </form>
-      <!-- /.search form -->
-
-      <!-- Sidebar Menu -->
+      <!-- 侧边栏菜单 -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">业务</li>
         <!-- Optionally, you can add icons to the links -->
           <li class="active"><a href="/sum/">
               <i class="fa fa-bar-chart-o"></i> <span>汇总</span></a></li>
-          {#          <li class=""><a href="/home2/">#}
-          {#              <i class="fa fa-address-card-o"></i> <span>病例</span></a></li>#}
+
+          <!---
           <li class="treeview">
               <a href="#"><i class="fa fa-address-card-o"></i> <span>病例</span>
                   <span class="pull-right-container">
@@ -328,35 +316,44 @@ desired effect
               </a>
               <ul class="treeview-menu">
                   <li><a href="{% url 'boards:today_person' %}" class="fa fa-circle-o text-red"> 今日患者 </a></li>
-                  <li><a href="{% url 'home2' %}"><i class="fa fa-address-card-o"></i> <span>所有病例</span></a></li>
+                  <li><a href="{% url 'list_by_page' %}"><i class="fa fa-address-card-o"></i> <span>所有病例</span></a></li>
               </ul>
           </li>
+          --->
+
+          <li><a href="{% url 'list_by_page' %}">
+              <i class="fa fa-address-card-o"></i> <span>病例列表</span></a></li>
+          <!--- 预约
           <li><a href="{% url 'appointment:apptHome' %}">
             <i class="fa fa-calendar"></i> <span>预约</span></a></li>
+            --->
+
           <li><a href="#" onclick="gotoSearch()">
               <i class="fa fa-search"></i> <span>查询</span></a></li>
+
           <li><a href="{% url 'storage:home' %}"><i class="fa fa-database"></i> <span>库存</span></a></li>
-          <li><a href="{% url 'tasklist:taskhome' %}"><i class="fa fa-tasks"></i> <span>代办事项</span></a></li>
-          <li><a href="//zdlteam.com:999"><i class="fa fa-tasks"></i> <span>网盘</span></a></li>
+
+          <li><a href="{% url 'tasklist:taskhome' %}"><i class="fa fa-calendar-check-o"></i> <span>代办事项</span></a></li>
+
+          <li><a href="//zdlteam.com:999"><i class="fa fa-jsfiddle"></i> <span>网盘</span></a></li>
         
         <li class="treeview">
-            <a href="#"><i class="fa fa-user-secret"></i> <span>其他</span>
+            <a href="#"><i class="fa fa-cogs"></i> <span>其他</span>
             <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-          </a>
+                <i class="fa fa-angle-left pull-right"></i></span></a>
           <ul class="treeview-menu">
-            <li><a href="{% url 'syncdb' %}" class="fa fa-circle-o text-red"> 同步易看牙</a></li>
             <li><a href="/allposts" class="fa fa-circle-o">病例统计</a></li>
               <li><a href="/sum/month" class="fa fa-circle-o">月增统计</a></li>
               <li><a href="/netdisk/log/ip.txt" class="fa fa-circle-o">访客IP</a></li>
-              <li><a href="/netdisk/db.sqlite3" class="fa fa-circle-o">备份</a></li>
+              <li><a href="/netdisk/db.sqlite3" class="fa fa-circle-o">下载数据库</a></li>
               <li><a href="/netdisk" class="fa fa-circle-o">网盘应用</a></li>
             <li><a href="{% url 'hostip' %}" class="fa fa-circle-o">局域网IP</a></li>
             <li><a href="{% url 'importFolder' %}" class="fa fa-circle-o">导入文件夹图像</a></li>
+            <li><a href="{% url 'syncdb' %}" class="fa fa-circle-o "> 同步易看牙</a></li>
           </ul>
         </li>
       </ul>
+
       <!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->
@@ -369,6 +366,9 @@ desired effect
         });
     }
 </script>
+
+
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- 主体标题 Content Header (Page header) -->
@@ -402,15 +402,16 @@ desired effect
   </div>
   <!-- /.content-wrapper -->
 
-  <!-- Main Footer -->
-    {#  <footer class="main-footer">#}
-    {#    <!-- To the right -->#}
-    {#    <div class="pull-right hidden-xs">#}
-    {##}
-    {#    </div>#}
-    {#    <!-- Default to the left -->#}
-    {#    <strong>Copyright &copy; 2019 <a href="#">ZDLteam</a>.</strong> All rights reserved.#}
-    {#  </footer>#}
+  <!--- Main Footer -->
+{#      <footer class="main-footer">#}
+{#        <!-- To the right -->#}
+{#        <div class="pull-right hidden-xs">#}
+{##}
+{#        </div>#}
+{#        <!-- Default to the left -->#}
+{#        <strong>Copyright &copy; 2019 <a href="#">ZDLteam</a>.</strong> All rights reserved.#}
+{#      </footer>#}
+
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -491,7 +492,7 @@ desired effect
 </div>
 <!-- ./wrapper -->
 
-
+<!-- 搜索js -->
 <script type="text/javascript">
     //激活标签
     $("ul.sidebar-menu li").click(function () {

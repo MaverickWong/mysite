@@ -4,37 +4,24 @@
     添加新病历
 {% endblock %}
 
-{% block link %}
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    <script src="{% static 'upload/js/jquery.min.js' %}"></script>
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/newPerson.css' %}" />#}
-
-
-{% endblock %}
-
-{% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'home' %}">首页</a></li>
-  <li class="breadcrumb-item active">添加新病例</li>
-{% endblock %}
+{% block link %}   {% endblock %}
 
 {% block content %}
- <style type="text/css">
-        #result{
-            width: 300px;
-            height:140px;
-            border:1px solid #eee;
-        }
-        #result img{
-            width: 300px;
-        }
-        input{
-            alignment: center;
-            width: 200px;
-            margin-top: 10px;
-        }
- </style>
-
+{# <style type="text/css">#}
+{#        #result{#}
+{#            width: 300px;#}
+{#            height:140px;#}
+{#            border:1px solid #eee;#}
+{#        }#}
+{#        #result img{#}
+{#            width: 300px;#}
+{#        }#}
+{#        input{#}
+{#            alignment: center;#}
+{#            width: 200px;#}
+{#            margin-top: 10px;#}
+{#        }#}
+{# </style>#}
 
 <div class="container">
     <h2 class="lead">输入患者信息</h2>

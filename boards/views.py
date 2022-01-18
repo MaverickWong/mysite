@@ -628,20 +628,20 @@ def new_person(request):
 			tgroup = Tag.objects.filter(type=i)
 			tgroups.append(tgroup)
 		tags = Tag.objects.all()
-		return render(request, 'upload/newPerson.html', {'tgroups': tgroups, "tags": tags})
+		return render(request, 'boards/newPerson.html', {'tgroups': tgroups, "tags": tags})
 
 
 # 新建患者之后，导入患者信息，x线，病历等后续
 @receiver(person_created, sender=new_person)
 def person_created_todo(sender, **kwargs):
-	person_pk = kwargs['person_pk']
-	p = Person.objects.get(pk=person_pk)
-
-	print('新建患者完成后开始导入其他信息')
-	s = logIn()
-	get_baseinfo_of_patient(s, p)
-	get_ortho_record_of_patient(s, p)
-	getXrayOfperson(s, p)
+	# person_pk = kwargs['person_pk']
+	# p = Person.objects.get(pk=person_pk)
+	#
+	# print('新建患者完成后开始导入其他信息')
+	# s = logIn()
+	# get_baseinfo_of_patient(s, p)
+	# get_ortho_record_of_patient(s, p)
+	# getXrayOfperson(s, p)
 
 	return None
 
@@ -660,7 +660,7 @@ def addpost_xray(request, pk):
 		# TODO 应该获取posts总数，然后发到网页内部
 		tags = Tag.objects.all()
 		# print(tags)
-		return render(request, 'upload/addpost_xray.html', {'patient': p})
+		return render(request, 'boards/addpost_xray.html', {'patient': p})
 
 	if request.method == 'POST':
 		# p = Person.objects.get(pk=pk)
@@ -710,7 +710,7 @@ def addpost(request, pk):
 		#     tgroups.append(tgroup)
 		tags = Tag.objects.all()
 		# print(tags)
-		return render(request, 'upload/addpost.html', {'patient': p, "tags": tags})
+		return render(request, 'boards/addpost.html', {'patient': p, "tags": tags})
 
 	if request.method == 'POST':
 		# p = Person.objects.get(pk=pk)
@@ -815,7 +815,7 @@ def posts_xray(request, pk):
 
 
 def wrong(request):
-	return render(request, 'upload/wrong.html', {})
+	return render(request, 'boards/wrong.html', {})
 
 
 def get_tag_groups():

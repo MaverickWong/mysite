@@ -544,14 +544,16 @@ def new_person(request):
 
 		# dir = 'static/picture/' + name + '_' + idnum + '/'
 		# 根据每个医生user名生成文件夹
+		dt = datetime.now()
+		datestr = dt.strftime("%Y-%m")
 
 		docDir = 'static/picture/' + docname + '/'
 		# docDir = doc.encode('utf-8')
 		if not os.path.exists(docDir):
 			os.makedirs(docDir)
 		#  创建privateDir
-		# privateDir = docDir + name + sep + str(idnum) + '/'
-		privateDir = docDir + name + sep + str(idnum) + '/'
+		# 按照年月 把患者分文件夹
+		privateDir = docDir + datestr + '/' + name + sep + str(idnum) + '/'
 
 		if not os.path.exists(privateDir):
 			os.makedirs(privateDir)

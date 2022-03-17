@@ -65,6 +65,7 @@ INSTALLED_APPS = [
 	'search',
 	'testapp',
 	'storage',
+	'django_filters',
 ]
 
 MIDDLEWARE = [

@@ -380,6 +380,7 @@ def handle_file(request, person, post):
 		dt = datetime.now()
 		times = dt.strftime("%f")
 		datestr = dt.strftime("%Y%m%d")
+		year_month_str = dt.strftime("%Y%m")  # b+ year_month_str + '/'
 		# static / picture / 张飞_233 /
 		dir = 'static/picture/' + docname + '/' + person.name + sep + str(person.idnum) + '/'
 		post.dir = dir  # 保存post的文件夹

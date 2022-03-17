@@ -60,8 +60,16 @@
                     </h3>
 
                     <div class="timeline-body">
-                            治疗： {{ record.treatmentPlan|default:_('')  }}<br>
-                            医嘱： {{ record.note|default:_('')  }}<br>
+                        <div style="background-color: #F0FFF0">
+                            诊疗：<hr style="margin:5px;">
+                            {{ record.treatmentPlan|default:_('')|linebreaksbr   }}
+
+                        </div>
+                        <div style="background-color: #F0FFFF; margin-top: 10px">
+                            医嘱：<hr style="margin:5px;">
+                            {{ record.note|default:_('')|linebreaksbr  }}
+                        </div>
+
                     </div>
 
 {#                    <div class="timeline-footer">#}

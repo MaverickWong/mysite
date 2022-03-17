@@ -375,40 +375,44 @@ def handle_file(request, person, post):
 	results["files"] = []
 	# print(files)
 
+	dt = datetime.now()
+	times = dt.strftime("%f")
+	datestr = dt.strftime("%Y%m%d")
+	year_month_str = dt.strftime("%Y%m")  # b+ year_month_str + '/'
+	# static / picture / 张飞_233 /
+	dir = 'static/picture/' + docname + '/' + person.name + sep + str(person.idnum) + '/'
+	post.dir = dir  # 保存post的文件夹
+	post.save()
+	# 保存到person作为私人文件夹
+	if person.privateDir:
+		if person.privateDir[-1] == '/':  # 检查末尾是否有 '/'，如果没有，添加
+			dir = person.privateDir + year_month_str + '/'
+		else:
+			dir = person.privateDir + '/' + year_month_str + '/'
+	else:
+		person.privateDir = dir
+		person.save()
+
+	if dir[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
+		dir = dir[1:]
+	# icondir = dir  + 'small' + '/'
+	if not dir[-1] == '/':  # 检查末尾是否有 '/'，如果没有，添加
+		dir = dir + '/'
+
+	# TODO 相对目录有时容易出问题
+	dir = os.path.join(BASE_DIR, dir)
+
+	icondir = dir
+	mediumdir = dir
+	if not os.path.exists(dir):
+		os.makedirs(dir)
+	if not os.path.exists(icondir):
+		os.makedirs(icondir)
+	if not os.path.exists(mediumdir):
+		os.makedirs(icondir)
+
 	i = 0
 	for f in files:
-		dt = datetime.now()
-		times = dt.strftime("%f")
-		datestr = dt.strftime("%Y%m%d")
-		year_month_str = dt.strftime("%Y%m")  # b+ year_month_str + '/'
-		# static / picture / 张飞_233 /
-		dir = 'static/picture/' + docname + '/' + person.name + sep + str(person.idnum) + '/'
-		post.dir = dir  # 保存post的文件夹
-		post.save()
-		# 保存到person作为私人文件夹
-		if person.privateDir:
-			dir = person.privateDir
-		else:
-			person.privateDir = dir
-			person.save()
-
-		if dir[0] == '/':  # 检查开头是否有 '/'，如果有，则去除
-			dir = dir[1:]
-		# icondir = dir  + 'small' + '/'
-		if not dir[-1] == '/':  # 检查末尾是否有 '/'，如果没有，添加
-			dir = dir + '/'
-
-		# TODO 相对目录有时容易出问题
-		dir = os.path.join(BASE_DIR, dir)
-
-		icondir = dir
-		mediumdir = dir
-		if not os.path.exists(dir):
-			os.makedirs(dir)
-		if not os.path.exists(icondir):
-			os.makedirs(icondir)
-		if not os.path.exists(mediumdir):
-			os.makedirs(icondir)
 		# 文件名及路径
 		n2 = f.name
 		suf = n2.split('.')[-1]
@@ -417,8 +421,8 @@ def handle_file(request, person, post):
 		fname = person.name + sep + datestr + sep + 'S' + str(post.type) + sep + str(i) + times + '.' + suf
 		# 相对全路径 static / picture / 张飞_233 / 张飞_20180101_041411.jpg
 		path = dir + fname
-		iconpath = icondir + 'small' + fname
-		mediumpath = mediumdir + 'medium' + fname
+		iconpath = icondir + 'small_' + fname
+		mediumpath = mediumdir + 'medium_' + fname
 
 		# 保存文件
 		ff = open(path, 'wb+')

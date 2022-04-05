@@ -67,11 +67,12 @@ def delRecord(request, personPk, recordPk):
 
 
 class EditForm(forms.Form):
-	treat = forms.CharField(label='处置', required=True, max_length=100,
+	treat = forms.CharField(label='处置（100字）', required=True, max_length=100,
 	                        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
 	# idnum = forms.CharField(label='病历号', required=True, max_length=30)
 	# linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
-	note = forms.CharField(label='医嘱', required=False, max_length=200)
+	note = forms.CharField(label='医嘱（200字）', required=False, max_length=200,
+						   widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
 
 
 def editRecord(request, personPk, recordPk):

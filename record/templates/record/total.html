@@ -60,13 +60,18 @@
                     </h3>
 
                     <div class="timeline-body">
-                        <div style="background-color: #F0FFF0">
-                            诊疗：<hr style="margin:5px;">
-                            {{ record.treatmentPlan|default:_('')|linebreaksbr   }}
-
+                        <div style="margin-top: 1px;">
+                            <div style="background-color: #F0FFF0; font-size: 18px; "> 检查：<hr style="margin:4px;"> </div>
+                            {{ record.exam|default:_('')|linebreaksbr   }}
                         </div>
-                        <div style="background-color: #F0FFFF; margin-top: 10px">
-                            医嘱：<hr style="margin:5px;">
+
+                        <div style="margin-top: 10px;">
+                            <div style="background-color: #F0FFF0; font-size: 18px; "> 处置：<hr style="margin:4px;"> </div>
+                            {{ record.treatmentPlan|default:_('')|linebreaksbr   }}
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <div style="background-color: #F0FFF0; font-size: 18px; "> 医嘱<hr style="margin:4px;"> </div>
                             {{ record.note|default:_('')|linebreaksbr  }}
                         </div>
 

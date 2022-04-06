@@ -18,13 +18,17 @@
 {#        <label for="exam" class="control-label">检查</label>#}
 {#        <textarea id="exam" name="exam" cols="40" rows="3" class="form-control"></textarea>#}
 {#      </div>#}
+        <div class="form-group">
+            <label for="exam" class="control-label">检查(512字)</label>
+            <textarea id="exam" name="exam" cols="40" rows="6" class="form-control"></textarea>
+        </div>
       <div class="form-group">
-        <label for="treat" class="control-label">处置(100字)</label>
+        <label for="treat" class="control-label">处置(512字)</label>
         <textarea id="treat" name="treat" cols="40" rows="6" class="form-control"></textarea>
       </div>
       <div class="form-group">
-        <label for="note" class="control-label">医嘱（200字）</label>
-        <textarea id="note" name="note" cols="40" rows="4" class="form-control"></textarea>
+        <label for="note" class="control-label">医嘱（128字）</label>
+        <textarea id="note" name="note" cols="40" rows="3" class="form-control"></textarea>
       </div>
       <div class="form-group">
         <button id="btn2" name="submit" type="submit" class="btn btn-primary">保存</button>
@@ -38,7 +42,7 @@
         $.post('/record/new/{{ pk }}/',
             {
                 //complain: $('[name="complain"]').val(),
-                //exam: $('[name="exam"]').val(),
+                exam: $('[name="exam"]').val(),
                 treat: $('[name="treat"]').val(),
                 note: $('[name="note"]').val(),
                 csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()

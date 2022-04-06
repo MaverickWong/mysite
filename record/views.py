@@ -7,6 +7,7 @@ from record.models import *
 from django import forms
 from linkedcare.syncDB import logIn, get_ortho_record_of_patient
 
+
 # Create your views here.
 
 
@@ -49,11 +50,11 @@ def newRecord(request, personPk):
 		p = Person.objects.get(pk=personPk)
 		records = p.records.order_by('createdAt').reverse()
 		return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 1})
-		# except:
-		# 	# return HttpResponse('保存失败')
-		# 	p = Person.objects.get(pk=personPk)
-		# 	records = p.records.order_by('createdAt').reverse()
-		# 	return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
+	# except:
+	# 	# return HttpResponse('保存失败')
+	# 	p = Person.objects.get(pk=personPk)
+	# 	records = p.records.order_by('createdAt').reverse()
+	# 	return render(request, 'record/total.html', {'records': records, 'pk': personPk, 'succeed': 0})
 
 
 def delRecord(request, personPk, recordPk):
@@ -67,16 +68,18 @@ def delRecord(request, personPk, recordPk):
 
 
 class EditForm(forms.Form):
-	treat = forms.CharField(label='处置（100字）', required=True, max_length=100,
+	exam = forms.CharField(label='检查（512字）', required=False, max_length=512,
+	                       widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
+	treat = forms.CharField(label='处置（512字）', required=True, max_length=512,
 	                        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
-	# idnum = forms.CharField(label='病历号', required=True, max_length=30)
-	# linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
-	note = forms.CharField(label='医嘱（200字）', required=False, max_length=200,
-						   widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
+
+	note = forms.CharField(label='医嘱（128字）', required=False, max_length=128,
+	                       widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
+# idnum = forms.CharField(label='病历号', required=True, max_length=30)
+# linkedcareId = forms.IntegerField(label='易看牙后台序号', required=False)
 
 
 def editRecord(request, personPk, recordPk):
-
 	if request.method == 'POST':
 		edit_form = EditForm(request.POST)
 
@@ -84,11 +87,14 @@ def editRecord(request, personPk, recordPk):
 		if edit_form.is_valid():
 			note = edit_form.cleaned_data['note']
 			treat = edit_form.cleaned_data['treat']
+			exam = edit_form.cleaned_data['exam']
+
 			# linkedcareId = edit_form.cleaned_data['linkedcareId']
 
 			p = Record.objects.get(pk=recordPk)
 			p.treatmentPlan = treat
 			p.note = note
+			p.exam = exam
 			# p.doctor = request.user
 			# p.linkedcareId = linkedcareId
 			# task.startTime=startTime
@@ -106,6 +112,7 @@ def editRecord(request, personPk, recordPk):
 			initial={
 				'treat': p.treatmentPlan,
 				'note': p.note,
+				'exam': p.exam,
 			}
 		)
 

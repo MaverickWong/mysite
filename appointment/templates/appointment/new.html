@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+<body>
+
+
+{% load  static %}
+{#<script src="{% static '/js/jquery.min.js' %}"></script>#}
+
+<script src="{% static '/js/moment.js' %}"></script>
+<script src="{% static '/plugins/datetimepicker/jquery.datetimepicker.full.js' %}"></script>
+<link rel="stylesheet" type="text/css"
+      href="{% static '/plugins/datetimepicker/jquery.datetimepicker.min.css' %}"/>
+    <!---- 新选择器 www.datetimepicker.cn--->
+
+{% csrf_token %}
+
+<div class="row">
+
+    <div class='col-sm-6 col-md-3 '>
+        <div class="control-group inline">
+            <label class="control-label">日期：</label>
+            <input id='datetimepicker' type='text' class="form-control"  placeholder="{{ date_str }}"/>
+        </div>
+        <label for="note" class="control-label">备注</label>
+        <textarea id="note" name="note" cols="40" rows="3" class="form-control"></textarea>
+        <button id="submit" name="submit" type="submit" class="btn btn-primary">保存</button>
+    </div>
+
+</div>
+
+
+<script>
+    $('#submit').click(function () {
+
+        $.post('/appt/new/{{ pk }}/',
+            {
+                //complain: $('[name="complain"]').val(),
+                //exam: $('[name="exam"]').val(),
+                date: $('#datetimepicker').val(),
+                comment: $('[name="note"]').val(),
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            function(data) {
+                $("#detail3").html(data);
+            }
+        );
+
+    })
+
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker').datetimepicker({
+            format:'Y-m-d H:i',
+            step:30,
+            minTimeime: '8:00',
+            maxTime: '18:00',
+        });
+        $.datetimepicker.setLocale('zh');//使用中文
+    });
+
+    function queryAppts() {
+        var url = '/appt/?date=' + $('#datetimepicker').val()
+        {#window.location.href(url)#}
+        location.assign(url)
+    }
+
+    function changeColor(line) {
+        $('.dataLine').css('backgroundColor', '');
+        line.style.backgroundColor = '#339999';
+    }
+</script>
+</body>
+</html>

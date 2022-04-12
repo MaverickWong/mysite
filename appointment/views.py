@@ -2,9 +2,10 @@ from django.shortcuts import render
 import time, json
 import datetime
 import pytz
-
+from django.utils import timezone
 from linkedcare.syncDB import logIn, get_headers
 from appointment.models import *
+from django.shortcuts import render, redirect, reverse, Http404, HttpResponse
 
 
 # Create your views here.
@@ -24,8 +25,8 @@ def home(request):
 	all_appitem = ApptItem.objects.filter(startDateTime__date=adate)
 
 	# 如果数据库没有该日期的数据，则联网查询
-	if all_appitem.count() == 0:
-		get_appointments_of_date(adate.strftime(fmt))
+	# if all_appitem.count() == 0:
+	# 	get_appointments_of_date(adate.strftime(fmt))
 
 	cntx = {'apptItem': all_appitem, 'date_str': date_str}
 
@@ -40,12 +41,101 @@ def update_today_appts(request):  # 只刷新当天的预约
 	adate = datetime.datetime.now()
 	fmt = '%Y-%m-%d'
 
-	get_appointments_of_date(adate.strftime(fmt), isUpdate=True)
+	# get_appointments_of_date(adate.strftime(fmt), isUpdate=True)
+	bdate = adate + datetime.timedelta(days=30)
 
-	all_appitem = ApptItem.objects.filter(startDateTime__date=adate)
+	all_appitem = ApptItem.objects.filter(startDateTime__date__range=(adate, bdate))
 	cntx = {'apptItem': all_appitem}
 
 	return render(request, 'appointment/index.html', context=cntx)
+
+
+def newRecord(request, personPk):
+	if request.method == 'GET':
+		return render(request, 'appointment/new.html', {'pk': personPk})
+	else:
+		# complain = request.POST.get('complain')
+		# exam = request.POST.get('exam')
+		date = request.POST.get('date')
+		note = request.POST.get('comment')
+
+		p = Person.objects.get(pk=personPk)
+		# try:
+		dt = get_timezone_date_from_string(date)
+		new_record = ApptItem.objects.create(startDateTime=dt,
+			comment=note,
+		                                   )
+		new_record.patient = p
+		new_record.save()
+		# url = reverse('person_detail', kwargs={'pk':personPk}) + '?tab=3'
+		# return HttpResponse('保存成功')
+		# return redirect(url)
+
+		# todo 保存后应该只返回状态，让前端出通知，不用后面的再查询浪费
+		p = Person.objects.get(pk=personPk)
+		records = p.apptItems.order_by('createDateTime').reverse()
+		return render(request, 'appointment/total.html', {'records': records, 'pk': personPk, 'succeed': 1})
+
+
+from django import forms
+class EditForm(forms.Form):
+
+	# treat = forms.CharField(label='时间', required=True, max_length=512,
+	#                         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 1}))
+	time = forms.DateTimeField(label='时间',  required=True, widget=forms.TextInput(attrs={'id':'datetimepicker', 'class': 'form-control'}))
+	note = forms.CharField(label='备注', required=True, max_length=128,
+	                       widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
+
+
+def edit(request, personPk, recordPk):
+	# from django.shortcuts import render, redirect, reverse
+
+	if request.method == 'POST':
+		edit_form = EditForm(request.POST)
+
+		message = '请检查填写内容'
+		if edit_form.is_valid():
+			note = edit_form.cleaned_data['note']
+			time = edit_form.cleaned_data['time']
+
+			p = ApptItem.objects.get(pk=recordPk)
+			p.startDateTime = time
+			p.comment = note
+			p.save()
+			message = '保存成功'
+			# todo 保存后刷新
+			# return HttpResponse('ok', content_type='Application/json')
+			# return redirect('/detail/' + str(personPk), {'msg': message})
+			return redirect(reverse('boards:person_detail', args=(str(personPk),)), {'msg': message})
+		else:
+			return HttpResponse('fuck')
+
+	else:  # get
+		p = ApptItem.objects.get(pk=recordPk)
+		dt = p.startDateTime
+		stime = datetime.datetime(dt.year, dt.month, dt.day, dt.hour+8, dt.minute, dt.second)
+
+		form = EditForm(
+			initial={
+				'time': stime,
+				'note': p.comment,
+			}
+		)
+
+		return render(request, 'appointment/edit.html', {'form': form, 'pk': recordPk, 'ppk': personPk})
+
+
+
+def list_all(request, personPk):
+	p = Person.objects.get(pk=personPk)
+	# if p.records.count()>0:
+	#     return render(request, 'record/total.html', {'records': p.records})
+	# else:
+	#     return render(request, 'record/total.html')
+
+	appt = p.apptItems.order_by('-createDateTime')
+
+	return render(request, 'appointment/total.html', {'records': appt, 'pk': personPk})
 
 
 def get_date_from_string(str):  # '2017-10-19'
@@ -65,8 +155,13 @@ def get_date_from_string(str):  # '2017-10-19'
 
 def get_timezone_date_from_string(str):
 	utc = pytz.timezone('Asia/Shanghai')
-	dt = datetime.datetime.strptime(str, '%Y-%m-%dT%H:%M:%S')
-	atime = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+	dt = datetime.datetime.strptime(str, '%Y-%m-%d %H:%M')
+	# atime = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
+	atime = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+	tz = timezone.get_default_timezone()
+	tz.localize(atime)
+
 	return atime
 
 
@@ -78,68 +173,23 @@ def get_appointments_of_date(date_str, isUpdate=False):
 	enddate = startdate + oneday
 	enddate_str = enddate.strftime(fmt)
 
-	url = 'https://api.linkedcare.cn:9001/api/v1/dashboard/appt-work?doctorId=913&endTime=%s&startTime=%s' % (
-		enddate_str, date_str)
 
-	s = logIn()
-	headers = get_headers(s)
 
-	r = s.get(url, headers=headers)
+	utc = pytz.timezone('Asia/Shanghai')
 
-	# totalcount = eval(r.content)["totalCount"]
-	data = json.loads(r.content.decode('utf-8'))
-	print('患者')
-	# print('按照 %s 共搜到 %d 个' % (searchString, data['totalCount']))
-	if len(data) > 0:
-		utc = pytz.timezone('Asia/Shanghai')
+	newDateforAppoint = DateForAppoint.objects.create(date=startdate)
 
-		newDateforAppoint = DateForAppoint.objects.create(date=startdate)
-		for item in data:
-			items = ApptItem.objects.filter(linkedApptID=item['appointId'])
-			num = items.count()
-			if num == 0:
-				ps = Person.objects.filter(linkedcareId=item['patientId'])
-				if ps.count() == 0:
-					p = Person.objects.create(name=item['patientName'], linkedcareId=item['patientId'],
-					                          idnum=item['privateId'], nameCode=item['patientNameCode'], doctor='zdl')
-				else:
-					p = ps[0]
 
-				newitem = ApptItem.objects.create(linkedApptID=item['appointId'], comment=item['notes'],
+	newitem = ApptItem.objects.create(linkedApptID=item['appointId'], comment=item['notes'],
 				                                  patient=p, patientName=item['patientName'],
 				                                  # assistantId=item['assistantId'], assistantName=item['assistantName'],
-				                                  dateForAppt=newDateforAppoint,
-				                                  isFirstVisit=item['isFirstVisit'],
-				                                  isCharged=item['hasChargeOrder'], hasRevisit=item['hasRevisit'],
-				                                  isCheckedIn=item['isCheckedIn'], checkInType=item['checkInType'],
-				                                  isFinished=item['isCompleted'], isLeft=item['isLeft'],
-				                                  isFail=item['isFailed'], isPending=item['isPending'],
-				                                  isConfirmed=item['isConfirmed'], isSeated=item['isSeated'],
-				                                  isCancel=item['isCancelled']
+				                                  dateForAppt=newDateforAppoint,)
 
-				                                  )
 
-				# 修改时间 #'2018-07-29T09:48:37'
-				if item['appointDateTime']:
-					# dt = datetime.datetime.strptime(item['appointDateTime'], '%Y-%m-%dT%H:%M:%S')
-					# ctime = datetime.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, tzinfo=utc)
-					newitem.startDateTime = get_timezone_date_from_string(item['appointDateTime'])
-					newitem.save()
-				if item['checkInTime']:
-					newitem.checkInTime = get_timezone_date_from_string(item['checkInTime'])
-					newitem.save()
-				if item['seatTime']:
-					newitem.seatTime = get_timezone_date_from_string(item['seatTime'])
-					newitem.save()
 
-				print('保存预约记录%s' % (item['appointDateTime']))
+	newitem.startDateTime = get_timezone_date_from_string(item['appointDateTime'])
+	newitem.save()
 
-			elif num == 1 and isUpdate:
-				appt = items.first()
-				items.update(isFirstVisit=item['isFirstVisit'], isCheckedIn=item['isCheckedIn'],
-				             isFinished=item['isCompleted'], isLeft=item['isLeft'],
-				             isPending=item['isPending'], hasRevisit=item['hasRevisit'],
-				             isSeated=item['isSeated'],
-				             )
+
 
 	return data

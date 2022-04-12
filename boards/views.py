@@ -215,6 +215,7 @@ def get_last_person_pk_from_stringlist(string):
 		return None
 
 
+from appointment.models import ApptItem
 @login_required()
 def person_detail(request, pk):
 	person_list = ''
@@ -249,17 +250,18 @@ def person_detail(request, pk):
 	num_post = posts.count()
 	num_xray = Post.objects.filter(type__gte=99).filter(person=p).count()
 	num_record = Record.objects.filter(person=p).count()
+	appoint = p.apptItems.last()
 
 	contex = {'patient': p, 'posts': posts, 'first_tab': 0, 'ykyurl': yky,
 	          'today_person_list': today_person_list,
-	          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post,
+	          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post, 'appoint':appoint
 	          }
 
 	if request.GET.get('tab'):
 		t = request.GET.get('tab')
 		contex = {'patient': p, 'posts': posts, 'first_tab': t,
 		          'ykyurl': yky, 'today_person_list': today_person_list,
-		          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post, }
+		          'num_xray': num_xray, 'num_record': num_record, 'num_post': num_post, 'appoint':appoint}
 
 	return render(request, 'boards/detail.html', contex)
 

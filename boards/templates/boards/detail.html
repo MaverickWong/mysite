@@ -81,26 +81,30 @@
                             <p class="idnum">{{ patient.idnum |default:_('') }}</p>
                         </div>
                         <!---标签-->
-                        <div class=" col-md-1 col-sm-4 col-xs-8" style="background-color: #8ce488">
-                            <p>医生<a href="{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal"
-                                    data-target="#myModal-editlabel">
-                                <i class="fa fa-edit"> </i></a></p>
-                            {% if patient.comment_label %}
-                                <p><span class="label label-warning">{{ patient.comment_label }} </span></p>
-                            {% endif %}
+{#                        <div class=" col-md-1 col-sm-4 col-xs-8" style="background-color: #8ce488">#}
+{#                            <p>医生<a href="{% url 'baseinfo:edit_label' patient.pk %}" data-toggle="modal"#}
+{#                                    data-target="#myModal-editlabel">#}
+{#                                <i class="fa fa-edit"> </i></a></p>#}
+{#                            {% if patient.comment_label %}#}
+{#                                <p><span class="label label-warning">{{ patient.comment_label }} </span></p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
 
 
-                        </div>
 
                         <!---其余信息-->
                         <div class="row col-md-8 col-sm-8 col-xs-8">
-                            <div class="col-md-4 col-sm-4 hidden-xs">备注：{{ patient.comment |default:_('') }}</div>
+                            <div class="col-md-6 col-sm-6 hidden-xs" style="font-size:16px; background-color: #aadcc5">
+                                最近预约：{{ appoint.startDateTime|default:_('') }}</div>
+                            <div class="col-md-4 col-sm-4 hidden-xs" style="font-size:16px; background-color: #E9C46A">
+                                备注：{{ patient.comment |default:_('') }}</div>
                             <div class="col-md-1 col-sm-1 col-xs-1">
                                 <a href="/admin/boards/person/{{ patient.pk }}/change/">
                                     <span class="fa fa-edit"></span></a>
                             </div>
                             <!---标签列表-->
-                            <div class="col-md-12 col-xs-12">标签：
+                            <div class="col-md-12 col-xs-12"  >
+                                标签：
                                 {% for t in patient.tags.all %}
                                     <a class="label label-default"
                                        style="display: inline-block; {% include 'tag/tag_color.html' %};"
@@ -130,6 +134,7 @@
                     <li onclick="gotoRecord()"><a href="#">病历-<span class="label label-success">{{ num_record }}</span></a>
                     </li>
                     <li onclick="gotoCharge()"><a href="#">收费</a></li>
+                    <li onclick="gotoAppointment()"><a href="#">预约</a></li>
                     <li><a href="#">其他</a></li>
                 </ul>
 
@@ -196,6 +201,12 @@
 
         function gotoCharge() {
             $.get('/charge/{{ patient.pk }}/', function (r) {
+                $("#detail3").html(r);
+            });
+        }
+
+        function gotoAppointment() {
+            $.get('/appt/{{ patient.pk }}/', function (r) {
                 $("#detail3").html(r);
             });
         }

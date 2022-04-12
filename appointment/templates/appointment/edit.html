@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    {% load  static %}
+    {#<script src="{% static '/js/jquery.min.js' %}"></script>#}
+
+    <script src="{% static '/js/moment.js' %}"></script>
+    <script src="{% static '/plugins/datetimepicker/jquery.datetimepicker.full.js' %}"></script>
+    <link rel="stylesheet" type="text/css"
+          href="{% static '/plugins/datetimepicker/jquery.datetimepicker.min.css' %}"/>
+</head>
+<body>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <h4 class="modal-title" id="myModalLabel">
+        编辑预约
+    </h4>
+</div>
+
+<div class="modal-body">
+    <form action="{% url 'appointment:edit' ppk  pk %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <br>
+        <input class="btn btn-primary" type="submit" value="提交" />
+    </form>
+</div>
+
+<script type="text/javascript">
+    //日期时间选择器
+    $('#datetimepicker').datetimepicker({
+        format:'Y-m-d H:i',
+        step:30,
+        minTimeime: '8:00',
+        maxTime: '18:00',
+    });
+    $.datetimepicker.setLocale('zh');//使用中文
+</script>
+
+</body>
+</html>

@@ -10,8 +10,8 @@
     {#<div class="container">#}
     <div class="row">
 
-        <div class='col-sm-6 col-md-2 '>
-            <div class="control-group inline">
+        <div class='col-sm-6 col-md-4 '>
+            <div >
                 <label class="control-label">日期：</label>
                 <input type='text' class="form-control" id='datetimepicker' placeholder="{{ date_str }}"/>
 
@@ -19,7 +19,7 @@
 
         </div>
         <a class="btn btn-default" onclick="queryAppts(this)"> 查询</a>
-        <a class="btn btn-default" href="{% url 'appointment:update_today' %}"> 刷新今天</a>
+        <a class="btn btn-default" href="{% url 'appointment:appts_one_month' %}"> 未来30天预约</a>
     </div>
 
     <div class="col-md-12">
@@ -29,75 +29,34 @@
                 <th>序号</th>
                 <th>患者</th>
                 <th>预约时间</th>
-                <th>挂号时间</th>
-                <th>类型</th>
-                {#                <th>助手</th>#}
-                <th>医生</th>
                 <th>备注</th>
-                <th>状态</th>
-                <th>checkin</th>
-                <th>入座</th>
-                <th>预约</th>
-                <th>结束</th>
             </tr>
             </thead>
 
+            {% if apptItem %}
+                {% for appt in apptItem %}
+                    <tr class="dataLine" onclick="changeColor(this)">
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'boards:person_detail' appt.patient.pk %}">
+                            <strong style="color: #0a0a0a">{{ appt.patient }}</strong> </a></td>
+                        <td>{{ appt.startDateTime }}</td>
+    {#                    <td>{{ appt.checkInTime|time:"H:i" }}</td>#}
 
-            {% for appt in apptItem %}
-                <tr class="dataLine" onclick="changeColor(this)">
-                    <td>{{ forloop.counter }}</td>
-                    <td><a href="{% url 'boards:person_detail' appt.patient.pk %}">
-                        <strong style="color: #0a0a0a">{{ appt.patient }}</strong> </a></td>
-                    <td>{{ appt.startDateTime |time:"H:i" }}</td>
-                    <td>{{ appt.checkInTime|time:"H:i" }}</td>
+    {#                    <td>{% if appt.checkInType == '初诊' %}  {{ appt.checkInType }}#}
+    {#                        <i class="fa fa-check-circle-o " style="color: #00a157"></i>#}
+    {#                    {% else %}  {{ appt.checkInType }}#}
+    {#                    {% endif %}#}
+                        </td>
+    {#                    <td>{{ appt.doctorName|default_if_none:'_' }}</td>#}
+                        {#                    <td>{{ appt.assistantName|default_if_none:'_' }}</td>#}
 
-                    <td>{% if appt.checkInType == '初诊' %}  {{ appt.checkInType }}
-                        <i class="fa fa-check-circle-o " style="color: #00a157"></i>
-                    {% else %}  {{ appt.checkInType }}
-                    {% endif %}
-                    </td>
-                    <td>{{ appt.doctorName|default_if_none:'_' }}</td>
-                    {#                    <td>{{ appt.assistantName|default_if_none:'_' }}</td>#}
+                        <td>{{ appt.comment|default_if_none:'' }}</td>
 
-                    <td>{{ appt.comment|default_if_none:'' }}</td>
-                    <!---状态-->
-                    {% if appt.isCancel %}
-                        <td><strong>已取消</strong></td>
-                    {% elif appt.isLeft %}
-                        <td style="background-color: #93C763"><strong>已离开</strong></td>
-                    {% elif appt.isFinished %}
-                        <td style="background-color: #93C763"><strong>已完成</strong></td>
-                    {% elif appt.isCheckedIn %}
-                        <td style="background-color: #FFFF66"><strong>已挂号</strong></td>
-                    {% elif appt.isSeated %}
-                        <td><strong>已接诊</strong></td>
-                    {% elif appt.isPending %}
-                        <td style="background-color: #c74e55"><strong>在等待</strong></td>
-                    {% else %}
-                        <td><strong>迟到</strong></td>
-                    {% endif %}
-
-                    <td>{% if appt.isCheckedIn %}  <i class="fa fa-check-circle-o fa-2x" style="color: #00a157"></i>
-                    {% else %}  <i class="fa fa-circle-o"></i>
-                    {% endif %}
-                    </td>
-                    {% if appt.isSeated %}
-                        <td><i class="fa fa-check-circle-o fa-2x" style="color: #00a157"></i></td>
-                    {% else %}
-                        <td><i class="fa fa-circle-o"></i></td>
-                    {% endif %}
-                    <td>{% if appt.hasRevisit %}  <i class="fa fa-check-circle-o fa-2x" style="color: #00a157"></i>
-                    {% else %}  <i class="fa fa-circle-o"></i>
-                    {% endif %}
-                    </td>
-                    <td>{% if appt.isFinished %}  <i class="fa fa-check-circle-o fa-2x" style="color: #00a157"></i>
-                    {% else %}  <i class="fa fa-circle-o"></i>
-                    {% endif %}
-                    </td>
-                </tr>
-            {% empty %}
-                <li>抱歉，列表为空</li>
-            {% endfor %}
+                    </tr>
+                {% empty %}
+                    <li>今日无预约</li>
+                {% endfor %}
+            {% endif %}
 
         </table>
 
